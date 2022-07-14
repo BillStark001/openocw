@@ -1,0 +1,376 @@
+[
+  {
+    "school": "理学院",
+    "schoolEn": "School of Science",
+    "department": [
+      {
+        "id": 1,
+        "nameJa": "数学系",
+        "nameEn": "Undergraduate major in Mathematics"
+      },
+      {
+        "id": 2,
+        "nameJa": "物理学系",
+        "nameEn": "Undergraduate major in Physics"
+      },
+      {
+        "id": 3,
+        "nameJa": "化学系",
+        "nameEn": "Undergraduate major in Chemistry"
+      },
+      {
+        "id": 4,
+        "nameJa": "地球惑星科学系",
+        "nameEn": "Undergraduate major in Earth and Planetary Sciences"
+      },
+      {
+        "id": 5,
+        "nameJa": "数学コース",
+        "nameEn": "Graduate major in Mathematics"
+      },
+      {
+        "id": 6,
+        "nameJa": "物理学コース",
+        "nameEn": "Graduate major in Physics"
+      },
+      {
+        "id": 7,
+        "nameJa": "化学コース",
+        "nameEn": "Graduate major in Chemistry"
+      },
+      {
+        "id": 8,
+        "nameJa": "地球惑星科学コース",
+        "nameEn": "Graduate major in Earth and Planetary Sciences"
+      },
+      {
+        "id": 9,
+        "nameJa": "理学院共通専門科目",
+        "nameEn": "School of Science Common courses"
+      }
+    ]
+  },
+  {
+    "school": "工学院",
+    "schoolEn": "School of Engineering",
+    "department": [
+      {
+        "id": 10,
+        "nameJa": "機械系",
+        "nameEn": "Undergraduate major in Mechanical Engineering"
+      },
+      {
+        "id": 11,
+        "nameJa": "システム制御系",
+        "nameEn": "Undergraduate major in Systems and Control Engineering"
+      },
+      {
+        "id": 12,
+        "nameJa": "電気電子系",
+        "nameEn": "Undergraduate major in Electrical and Electronic Engineering"
+      },
+      {
+        "id": 13,
+        "nameJa": "情報通信系",
+        "nameEn": "Undergraduate major in Information and Communications  Engineering"
+      },
+      {
+        "id": 14,
+        "nameJa": "経営工学系",
+        "nameEn": "Undergraduate major in Industrial Engineering and Economics"
+      },
+      {
+        "id": 15,
+        "nameJa": "機械コース",
+        "nameEn": "Graduate major in Mechanical Engineering"
+      },
+      {
+        "id": 16,
+        "nameJa": "システム制御コース",
+        "nameEn": "Graduate major in Systems and Control Engineering"
+      },
+      {
+        "id": 17,
+        "nameJa": "電気電子コース",
+        "nameEn": "Graduate major in Electrical and Electronic Engineering"
+      },
+      {
+        "id": 18,
+        "nameJa": "情報通信コース",
+        "nameEn": "Graduate major in Information and Communications  Engineering"
+      },
+      {
+        "id": 19,
+        "nameJa": "経営工学コース",
+        "nameEn": "Graduate major in Industrial Engineering and Economics"
+      },
+      {
+        "id": 20,
+        "nameJa": "工学院共通専門科目",
+        "nameEn": "School of Engineering Common courses"
+      }
+    ]
+  },
+  {
+    "school": "物質理工学院",
+    "schoolEn": "School of Materials and Chemical Technology",
+    "department": [
+      {
+        "id": 21,
+        "nameJa": "材料系",
+        "nameEn": "Undergraduate major in Materials Science and Engineering"
+      },
+      {
+        "id": 22,
+        "nameJa": "応用化学系",
+        "nameEn": "Undergraduate major in Chemical Science and Engineering"
+      },
+      {
+        "id": 23,
+        "nameJa": "材料コース",
+        "nameEn": "Graduate major in Materials Science and Engineering"
+      },
+      {
+        "id": 24,
+        "nameJa": "応用化学コース",
+        "nameEn": "Graduate major in Chemical Science and Engineering"
+      },
+      {
+        "id": 25,
+        "nameJa": "物質理工学院共通専門科目",
+        "nameEn": "School of Materials and Chemical Technology Common courses"
+      }
+    ]
+  },
+  {
+    "school": "情報理工学院",
+    "schoolEn": "School of Computing",
+    "department": [
+      {
+        "id": 26,
+        "nameJa": "数理・計算科学系",
+        "nameEn": "Undergraduate major in Mathematical and Computing Science"
+      },
+      {
+        "id": 27,
+        "nameJa": "情報工学系",
+        "nameEn": "Undergraduate major in Computer Science"
+      },
+      {
+        "id": 28,
+        "nameJa": "数理・計算科学コース",
+        "nameEn": "Graduate major in Mathematical and Computing Science"
+      },
+      {
+        "id": 29,
+        "nameJa": "情報工学コース",
+        "nameEn": "Graduate major in Computer Science"
+      },
+      {
+        "id": 30,
+        "nameJa": "情報理工学院共通専門科目",
+        "nameEn": "School of Computing Common courses"
+      }
+    ]
+  },
+  {
+    "school": "生命理工学院",
+    "schoolEn": "School of Life Science and Technology",
+    "department": [
+      {
+        "id": 31,
+        "nameJa": "生命理工学系",
+        "nameEn": "Undergraduate major in Life Science and Technology"
+      },
+      {
+        "id": 32,
+        "nameJa": "生命理工学コース",
+        "nameEn": "Graduate major in Life Science and Technology"
+      },
+      {
+        "id": 33,
+        "nameJa": "生命理工学院共通専門科目",
+        "nameEn": "School of Life Science and Technology Common courses"
+      }
+    ]
+  },
+  {
+    "school": "環境・社会理工学院",
+    "schoolEn": "School of Environment and Society",
+    "department": [
+      {
+        "id": 34,
+        "nameJa": "建築学系",
+        "nameEn": "Undergraduate major in Architecture and Building Engineering"
+      },
+      {
+        "id": 35,
+        "nameJa": "土木・環境工学系",
+        "nameEn": "Undergraduate major in Civil and Environmental Engineering"
+      },
+      {
+        "id": 36,
+        "nameJa": "融合理工学系",
+        "nameEn": "Undergraduate major in Transdisciplinary Science and Engineering"
+      },
+      {
+        "id": 37,
+        "nameJa": "建築学コース",
+        "nameEn": "Graduate major in Architecture and Building Engineering"
+      },
+      {
+        "id": 38,
+        "nameJa": "土木工学コース",
+        "nameEn": "Graduate major in Civil Engineering"
+      },
+      {
+        "id": 39,
+        "nameJa": "地球環境共創コース",
+        "nameEn": "Graduate major in Global Engineering for Development, Environment and Society"
+      },
+      {
+        "id": 40,
+        "nameJa": "社会・人間科学コース",
+        "nameEn": "Graduate major in Social and Human Sciences"
+      },
+      {
+        "id": 41,
+        "nameJa": "イノベーション科学コース",
+        "nameEn": "Graduate major in Innovation Science"
+      },
+      {
+        "id": 42,
+        "nameJa": "技術経営専門職学位課程",
+        "nameEn": "Graduate major in Technology and Innovation Management"
+      },
+      {
+        "id": 43,
+        "nameJa": "環境・社会理工学院共通専門科目",
+        "nameEn": "School of Environment and Society Common courses"
+      }
+    ]
+  },
+  {
+    "school": "教養科目群",
+    "schoolEn": "Transdisciplinary Graduate Majors",
+    "department": [
+      {
+        "id": 44,
+        "nameJa": "文系教養科目",
+        "nameEn": "Humanities and social science courses"
+      },
+      {
+        "id": 45,
+        "nameJa": "英語科目",
+        "nameEn": "English language courses"
+      },
+      {
+        "id": 46,
+        "nameJa": "第二外国語科目",
+        "nameEn": "Second foreign language courses"
+      },
+      {
+        "id": 47,
+        "nameJa": "日本語・日本文化科目",
+        "nameEn": "Japanese language and culture courses"
+      },
+      {
+        "id": 48,
+        "nameJa": "教職科目",
+        "nameEn": "Teacher education courses"
+      },
+      {
+        "id": 49,
+        "nameJa": "キャリア科目",
+        "nameEn": "Career development courses"
+      },
+      {
+        "id": 50,
+        "nameJa": "広域教養科目",
+        "nameEn": "Breadth courses"
+      },
+      {
+        "id": 51,
+        "nameJa": "理工系教養科目",
+        "nameEn": "Basic science and technology courses"
+      }
+    ]
+  },
+  {
+    "school": "領域横断的な大学院コース",
+    "schoolEn": "Transdisciplinary Graduate majors",
+    "department": [
+      {
+        "id": 52,
+        "nameJa": "エネルギーコース",
+        "nameEn": "Graduate major in Energy Science and Engineering"
+      },
+      {
+        "id": 53,
+        "nameJa": "原子核工学コース",
+        "nameEn": "Graduate major in Nuclear Engineering"
+      },
+      {
+        "id": 54,
+        "nameJa": "ライフエンジニアリングコース",
+        "nameEn": "Graduate major in Human Centered Science and Biomedical Engineering"
+      },
+      {
+        "id": 55,
+        "nameJa": "エンジニアリングデザインコース",
+        "nameEn": "Graduate major in Engineering Sciences and Design"
+      },
+      {
+        "id": 56,
+        "nameJa": "知能情報コース",
+        "nameEn": "Graduate major in Artificial Intelligence"
+      },
+      {
+        "id": 57,
+        "nameJa": "都市・環境学コース",
+        "nameEn": "Graduate major in Urban Design and Built Environment"
+      }
+    ]
+  },
+  {
+    "school": "学位プログラムとして特別に設けた教育課程",
+    "schoolEn": "Specially offered degree programs for graduate students",
+    "department": [
+      {
+        "id": 58,
+        "nameJa": "リーダーシップ教育課程",
+        "nameEn": "Tokyo Tech Academy for Leadership"
+      },
+      {
+        "id": 59,
+        "nameJa": "グローバルリーダー教育課程",
+        "nameEn": "Academy for Global Leadership"
+      },
+      {
+        "id": 60,
+        "nameJa": "環境エネルギー協創教育課程",
+        "nameEn": "Academy for Co-creative Education of Environment and Energy Science"
+      },
+      {
+        "id": 61,
+        "nameJa": "情報生命博士教育課程",
+        "nameEn": "Education Academy of Computational Life Sciences"
+      },
+      {
+        "id": 62,
+        "nameJa": "物質・情報卓越教育課程",
+        "nameEn": "Tokyo Tech Academy for Convergence of Materials and Informatics"
+      },
+      {
+        "id": 63,
+        "nameJa": "超スマート社会卓越教育課程",
+        "nameEn": "Academy for Super Smart Society"
+      },
+      {
+        "id": 64,
+        "nameJa": "エネルギー・情報卓越教育課程",
+        "nameEn": "Tokyo Tech Academy of Energy and Informatics program"
+      }
+    ]
+  }
+]
