@@ -1,6 +1,7 @@
 import React from "react";
 import { createRef } from "react";
 
+import L from '../base/localization';
 
 import svgSearch from '../assets/svg/search.svg';
 import './common.css';
@@ -33,7 +34,8 @@ class SearchBar extends React.Component {
                         className="search-input"
                         value={this.state.input}
                         onChange={this.handleInputChange}
-                        placeholder="搜索" aria-label="在文档中搜索..." 
+                        onKeyUp={(e) => {if (e.key === 'Enter' || e.keyCode === 13) this.triggerSearch(); }}
+                        placeholder={L('searchbar.search')} aria-label={L('searchbar.search.aria')}
                         autoComplete="off" 
                         spellCheck="false"
                         role="combobox" aria-autocomplete="list" aria-expanded="false" aria-labelledby="algolia-doc-search"
