@@ -5,6 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import NavBar from './controls/NavBar';
 import PageFrame from './pages/PageFrame';
+import Footer from './controls/Footer';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -105,9 +106,7 @@ root.render(
       <div>test</div>
       <div>test</div>
     </PageFrame>
-    <footer>
-      footer test
-    </footer>
+    <Footer></Footer>
   </React.StrictMode>
 );
 
