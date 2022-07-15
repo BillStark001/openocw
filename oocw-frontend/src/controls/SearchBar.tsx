@@ -35,7 +35,7 @@ class SearchBar extends React.Component {
             value={this.state.input}
             onChange={this.handleInputChange}
             onKeyUp={(e) => { if (e.key === 'Enter' || e.keyCode === 13) this.triggerSearch(); }}
-            placeholder={L('searchbar.search')} aria-label={L('searchbar.search.aria')}
+            placeholder={L('searchbar.search')} aria-label={L('searchbar.search.hint')}
             autoComplete="off"
             spellCheck="false"
             role="combobox" aria-autocomplete="list" aria-expanded="false" aria-labelledby="algolia-doc-search"

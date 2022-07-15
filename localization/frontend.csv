@@ -1,1 +1,48 @@
 ﻿key,en,ja-JP,zh-CN
+product.name,OpenOCW,OpenOCW,OpenOCW
+product.version,v0.1.0,v0.1.0,v0.1.0
+product.developer,Bill Stark,Bill Stark,Bill Stark
+,,,
+navbar.homepage,Home,ホール,主页
+navbar.database,Database,データベース,数据库
+navbar.discussion,Discussion,ディスカッション,讨论
+navbar.info,Info.,お問い合わせ,信息
+,,,
+searchbar.search,Search,検索,搜索
+searchbar.search.hint,Type to search,科目名・講師名・シラバス内容検索,根据科目、讲师、关键词等搜索
+,,,
+hp.search.hint,Search by: ,,按：
+hp.search.kw,Keywords,キーワード,关键词
+hp.search.faculty,Faculty,教員,讲师
+hp.search.code,Course Code,科目コード,科目编号
+hp.search.name,Course Name,科目名,科目名称
+hp.search.hint.rear,,で探す,搜索
+,,,
+flt.name,Filterer,条件で探す,筛选工具
+,,,
+flt.cond.inc,Includes,,包含
+flt.cond.exc,Excludes,,不包含
+flt.cond.and,And,かつ,与
+flt.cond.or,Or,または,或
+flt.cond.not,Not,,非
+flt.cond.xor,Xor,と,异或
+flt.cond.group,Group,グループ,组
+flt.cond.eq,Equals,は,等于
+,,,
+flt.cond.inc.rear,,を含む,
+flt.cond.exc.rear,,を含まない,
+flt.cond.and.rear,,,
+flt.cond.or.rear,,,
+flt.cond.not.rear,,ではない,
+flt.cond.xor.rear,,のいずれか,
+flt.cond.eq.rear,,に等しい,
+,,,
+flt.sel.major,Major,開講元,授课单位
+flt.sel.quarter,Quarter,クォーター,学季
+flt.sel.day,Day,曜日,一周的指定时间
+flt.sel.time,Period,時限,时限
+flt.sel.lecturer,Lecturer,講師,讲师
+flt.sel.lvl,Level,番台,编号第1位数字（番台）
+flt.sel.lang,Language,言語,语言
+flt.sel.kw.name,Keywords(Course Name),キーワード（科目名）,关键词（科目）
+flt.sel.kw.lect,Keywords(Lecturer Name),キーワード（講師名）,关键词（讲师）
