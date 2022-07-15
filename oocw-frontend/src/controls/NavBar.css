@@ -1,19 +1,17 @@
-ul {
+#navbar ul {
     overflow: hidden;
     list-style-type: none
 }
 
-li {
+#navbar li {
     margin: 1px;
     float: left;
     width: auto;
 }
 
-.noticebar {
+#navbar .noticebar {
     text-align: center;
     background-color: blueviolet;
-    height: 25px;
-    line-height: 25px;
 }
 
 header#navbar {
@@ -23,6 +21,7 @@ header#navbar {
     top: 0;
     left: 0;
     width: 100%;
+    z-index: 1;
 }
 
 #navbar-occ {
@@ -30,7 +29,7 @@ header#navbar {
     height:75px;
 }
 
-.navbar-inner {
+#navbar .navbar-inner {
     position: static;
     width: 90%;
     height: 50px;
@@ -41,23 +40,19 @@ header#navbar {
     justify-content: center;
 }
 
-.navbar-inner li {
+#navbar .navbar-inner li {
     float: bottom;
     list-style: none;
     line-height: 50px;
     margin: 0 auto;
 }
 
-.logo {
-    float: left;
-    margin-left: 0;
-}
 
-.titles {
+#navbar .navbar-titles {
     display: block;
 }
 
-li.search-bar {
+#navbar li.search-bar {
     height:40px;
     margin: 5px;
     border-radius: 20px;
@@ -69,27 +64,27 @@ li.search-bar {
     transition: all 0.3s;
 }
 
-li.search-bar > * {
+#navbar li.search-bar > * {
     width: 100%;
     padding: 0 10px;
 }
 
-li.search-bar:hover {
+#navbar li.search-bar:hover {
     width: 300px;
     background-color: rgba(255, 254, 254, 0.151);
 }
-li.search-bar:focus-within {
+#navbar li.search-bar:focus-within {
     width: 300px;
     background-color: rgba(255, 254, 254, 0.151);
 }
 
-.align-right {
+#navbar .align-right {
     float: right;
     margin-right: 0;
     display: block;
 }
 
-.item {
+#navbar .item {
     float: left;
     height: 100%;
     position: relative;
@@ -102,21 +97,21 @@ li.search-bar:focus-within {
     transition: all 0.2s;
 }
 
-.item:hover {
+#navbar .item:hover {
     background-color: #ffffff27;
 }
-.item:active {
+#navbar .item:active {
     background-color: #ffffff07;
 }
 
-.item img {
+#navbar .item img {
     position: relative;
     height: 24px;
     top: 6px;
     filter: invert(100%);
 }
 
-.item.active::after {
+#navbar .item.active::after {
     display: block;
     content: '';
     width: 100%;
@@ -127,7 +122,7 @@ li.search-bar:focus-within {
     left: 0;
 }
 
-span.bottom-highlight {
+#navbar span.bottom-highlight {
     position: relative;
     bottom: -1px;
     height: 4px;

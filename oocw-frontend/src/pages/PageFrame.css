@@ -1,0 +1,41 @@
+.page-frame {
+  height: 100%;
+  width: 100%;
+  
+  align-items: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.page-frame #pf-top {
+  width: 100%;
+  float: top;
+}
+
+.page-frame #pf-bottom {
+  width: 100%;
+  float:bottom;
+}
+
+.page-frame #pf-inner {
+  max-width: 1440px;
+  width: 100%;
+  position: relative;
+  height:auto;
+  display: flex;
+  flex-direction: row;
+}
+
+.page-frame #pf-left {
+  width: 300px;
+}
+
+.page-frame #pf-middle {
+  width: auto;
+}
+
+.page-frame #pf-right {
+  width: 300px;
+}
