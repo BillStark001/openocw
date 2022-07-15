@@ -1,0 +1,98 @@
+﻿key,en,ja-JP,zh-CN
+org.tokyotech,Tokyo Institute of Technology,東京工業大学,东京工业大学
+org.tokyotech.brief,Tokyo Tech,東工大,东工大
+geo.campus.ooo,Ookayama Campus,大岡山キャンパス,大冈山校区
+geo.campus.suzu,Suzukakedai Campus,すずかけ台キャンパス,铃悬台校区
+geo.campus.tmc,Tamachi Campus,田町キャンパス,田町校区
+,,,
+crs.u,Undergraduate Level Courses,学士課程,本科课程
+crs.g,Graduate Level courses,大学院課程,研究生课程
+,,,
+,,,
+,,,
+org.sos,School of Science,理学院,理学院
+org.soe,School of Engineering,工学院,工学院
+org.somct,School of Materials and Chemical Technology,物質理工学院,物质理工学院
+org.soc,School of Computing,情報理工学院,情报理工学院
+org.solst,School of Life Science and Technology,生命理工学院,生命理工学院
+org.soes,School of Environment and Society,環境・社会理工学院,环境与社会理工学院
+,,,
+crs.la,Liberal Arts Courses,教養科目,教养科目
+crs.prof,Professional Courses,専門科目,专业科目
+,,,
+crs.la.la,Humanities and social science courses,文系教養科目,文科教养科目
+crs.la.en,English language courses,英語科目,英语科目
+crs.la.sfl,Second foreign language courses,第二外国語科目,第二外语科目
+crs.la.jp,Japanese language and culture courses,日本語・日本文化科目,日语与日本文化科目
+crs.la.edu,Teacher education courses,教職科目,教职科目
+crs.la.car,Career development courses,キャリア科目,生涯规划科目
+crs.la.brd,Breadth courses,広域教養科目,广域教养科目
+crs.la.se,Basic science and technology courses,理工系教養科目,理工科教养科目
+,,,
+crs.prof.common,Common Courses,共通専門科目,共通专业科目
+,,,
+org.m.u.mth,Undergraduate major in Mathematics,数学系,数学系
+org.m.u.phy,Undergraduate major in Physics,物理学系,物理学系
+org.m.u.chm,Undergraduate major in Chemistry,化学系,化学系
+org.m.u.eps,Undergraduate major in Earth and Planetary Sciences,地球惑星科学系,地球行星科学系
+,,,
+org.m.g.mth,Graduate major in Mathematics,数学コース,
+org.m.g.phy,Graduate major in Physics,物理学コース,
+org.m.g.chm,Graduate major in Chemistry,化学コース,
+org.m.g.eps,Graduate major in Earth and Planetary Sciences,地球惑星科学コース,
+,,,
+org.m.u.mec,Undergraduate major in Mechanical Engineering,機械系,机械系
+org.m.u.sce,Undergraduate major in Systems and Control Engineering,システム制御系,系统控制系
+org.m.u.eee,Undergraduate major in Electrical and Electronic Engineering,電気電子系,电气电子系
+org.m.u.ict,Undergraduate major in Information and Communications  Engineering,情報通信系,情报通信系
+org.m.u.iee,Undergraduate major in Industrial Engineering and Economics,経営工学系,经营工学系
+,,,
+org.m.g.mec,Graduate major in Mechanical Engineering,機械コース,
+org.m.g.sce,Graduate major in Systems and Control Engineering,システム制御コース,
+org.m.g.eee,Graduate major in Electrical and Electronic Engineering,電気電子コース,
+org.m.g.ict,Graduate major in Information and Communications  Engineering,情報通信コース,
+org.m.g.iee,Graduate major in Industrial Engineering and Economics,経営工学コース,
+,,,
+org.m.u.mat,Undergraduate major in Materials Science and Engineering,材料系,材料系
+org.m.u.cap,Undergraduate major in Chemical Science and Engineering,応用化学系,应用化学系
+,,,
+org.m.g.mat,Graduate major in Materials Science and Engineering,材料コース,
+org.m.g.cap,Graduate major in Chemical Science and Engineering,応用化学コース,
+,,,
+org.m.u.mcs,Undergraduate major in Mathematical and Computing Science,数理・計算科学系,数理与计算科学系
+org.m.u.cse,Undergraduate major in Computer Science,情報工学系,情报工学系
+,,,
+org.m.g.mcs,Graduate major in Mathematical and Computing Science,数理・計算科学コース,
+org.m.g.cse,Graduate major in Computer Science,情報工学コース,
+,,,
+org.m.u.lst,Undergraduate major in Life Science and Technology,生命理工学系,生命理工学系
+,,,
+org.m.g.lst,Graduate major in Life Science and Technology,生命理工学コース,
+,,,
+org.m.u.arc,Undergraduate major in Architecture and Building Engineering,建築学系,建筑学系
+org.m.u.cve,Undergraduate major in Civil and Environmental Engineering,土木・環境工学系,土木与环境工学系
+org.m.u.tse,Undergraduate major in Transdisciplinary Science and Engineering,融合理工学系,融合理工学系
+org.m.u.shs,Undergraduate major in Social and Human Sciences,社会・人間科学系,社会与人类科学系
+,,,
+org.m.g.arc,Graduate major in Architecture and Building Engineering,建築学コース,
+org.m.g.cve,Graduate major in Civil Engineering,土木工学コース,
+org.m.g.tse,"Graduate major in Global Engineering for Development, Environment and Society",地球環境共創コース,
+org.m.g.shs,Graduate major in Social and Human Sciences,社会・人間科学コース,
+org.m.g.isc,Graduate major in Innovation Science,イノベーション科学コース,
+org.m.g.tim,Graduate major in Technology and Innovation Management,技術経営専門職学位課程,
+,,,
+org.m.g.enr,Graduate major in Energy Science and Engineering,エネルギーコース,
+org.m.g.ncl,Graduate major in Nuclear Engineering,原子核工学コース,
+org.m.g.hcb,Graduate major in Human Centered Science and Biomedical Engineering,ライフエンジニアリングコース,
+org.m.g.esd,Graduate major in Engineering Sciences and Design,エンジニアリングデザインコース,
+org.m.g.art,Graduate major in Artificial Intelligence,知能情報コース,
+org.m.g.ude,Graduate major in Urban Design and Built Environment,都市・環境学コース,
+org.m.g.els,,地球生命コース,
+,,,
+org.ac.ldsp,Tokyo Tech Academy for Leadership,リーダーシップ教育課程,
+org.ac.glb_ldsp,Academy for Global Leadership,グローバルリーダー教育課程,
+org.ac.env_enr_coc,Academy for Co-creative Education of Environment and Energy Science,環境エネルギー協創教育課程,
+61,Education Academy of Computational Life Sciences,情報生命博士教育課程,
+62,Tokyo Tech Academy for Convergence of Materials and Informatics,物質・情報卓越教育課程,
+63,Academy for Super Smart Society,超スマート社会卓越教育課程,
+64,Tokyo Tech Academy of Energy and Informatics program,エネルギー・情報卓越教育課程,
