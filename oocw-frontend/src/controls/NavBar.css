@@ -16,13 +16,18 @@ li {
     line-height: 25px;
 }
 
-header.navbar {
+header#navbar {
     background-color: #301145;
     color: #ffffff;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
+}
+
+#navbar-occ {
+    width: 100%;
+    height:75px;
 }
 
 .navbar-inner {
@@ -50,6 +55,17 @@ header.navbar {
 
 .titles {
     display: block;
+}
+
+li.search-bar {
+    line-height: 50px;
+    justify-content: center;
+}
+
+li.search-bar * {
+    float:right;
+    line-height: 50px;
+    padding-left: 10px;
 }
 
 .align-right {
