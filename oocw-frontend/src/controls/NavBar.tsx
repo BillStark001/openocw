@@ -35,11 +35,6 @@ class NavBar extends React.Component {
                                 <a className="item" href="/community/support.html">Info</a>
                             </li>
 
-                            <li className="search-bar">
-                                <SearchBar/>
-
-                            </li>
-
                             <li className="align-right">
                                 <a className="item subtle" href="/versions">v0.1.0</a>
                                 <a className="item" href="/languages">
@@ -49,6 +44,13 @@ class NavBar extends React.Component {
                                     <img src={svgGitHub}></img>
                                 </a>
                             </li>
+                            
+                            <li className="search-bar align-right">
+                            <SearchBar/>
+                                
+                            </li>
+
+                            
                         </ul>
                     </div>
                 </header>
