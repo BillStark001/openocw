@@ -12,10 +12,12 @@ li {
 .noticebar {
     text-align: center;
     background-color: blueviolet;
+    height: 25px;
+    line-height: 25px;
 }
 
 header.navbar {
-    background-color: #114514;
+    background-color: #301145;
     color: #ffffff;
     position: fixed;
     top: 0;
@@ -37,6 +39,7 @@ header.navbar {
 .navbar-inner li {
     float: bottom;
     list-style: none;
+    line-height: 50px;
     margin: 0 auto;
 }
 
@@ -56,18 +59,23 @@ header.navbar {
 }
 
 .item {
+    float: left;
+    height: 100%;
     position: relative;
     color: #ffffff;
     padding-left: 12px;
     padding-right: 12px;
     line-height: 50px;
     font-weight: 300;
+    
+    transition: all 0.2s;
 }
 
-.item :hover {
-    background-color: #fc5531;
-    font-weight: 600;
-    color: #dddddd;
+.item:hover {
+    background-color: #ffffff27;
+}
+.item:active {
+    background-color: #ffffff07;
 }
 
 .item img {
@@ -81,10 +89,10 @@ header.navbar {
     display: block;
     content: '';
     width: 100%;
-    height: 2px;
-    background: #fc5531;
+    height: 40px;
+    background: rgb(170, 127, 211);
     position: absolute;
-    top: 0;
+    top: 47px;
     left: 0;
 }
 

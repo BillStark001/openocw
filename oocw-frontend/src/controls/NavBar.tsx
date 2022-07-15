@@ -16,19 +16,19 @@ class NavBar extends React.Component {
                 <div className="navbar-main">
                     <ul className="navbar-inner">
                         <li>
-                        <a className="item logo" href="/">
-                            <img src={svgLogo} alt="" height="20" style={{marginRight: '4px'}}/>
+                            <a className="item" href="/">
+                                <img src={svgLogo} style={{ marginRight: '4px' }} />
                                 <span className="logo-text">OpenOCW</span>
-                        </a>
+                            </a>
                         </li>
-                        
+
                         <li className="titles">
                             <a className="item active" href="/docs/getting-started.html">Home</a>
                             <a className="item" href="/tutorial/tutorial.html"> Database </a>
                             <a className="item" href="/blog/">Discussion</a>
                             <a className="item" href="/community/support.html">Info</a>
                         </li>
-                        
+
                         <li className="align-right">
                             <a className="item subtle" href="/versions">v0.1.0</a>
                             <a className="item" href="/languages">
@@ -40,7 +40,7 @@ class NavBar extends React.Component {
                         </li>
                     </ul>
                 </div>
-    
+
             </header>
         );
     }
