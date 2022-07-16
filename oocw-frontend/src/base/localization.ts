@@ -1,31 +1,31 @@
-import util from 'util';
-import i18next from 'i18next';
-import {initReactI18next, useTranslation} from 'react-i18next';
-import XHR from 'i18next-xhr-backend';
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
 import LanguageDetector from 'i18next-browser-languagedetector';
 
-i18next.use(XHR).use(LanguageDetector).use(initReactI18next).init({
-    backend: {
-        loadPath:'./locales/{{lng}}.json'
-    },
-    react: {
-        useSuspense: true
-    },
-    fallbackLng: 'en',
-    preload: [
-        'en', 'zh-cn', 'ja'
-    ],
-    keySeparator: false,
-    interpolation: {
-        escapeValue: false
+import zh from '../locales/zh-CN.json'
+import ja from '../locales/ja-JP.json'
+import en from '../locales/en.json'
+const resources = {
+  zh: {
+    translation: zh
+  },
+  ja: {
+    translation: ja
+  },
+  en: {
+    translation: en
+  },
+};
+
+i18n
+.use(LanguageDetector) 
+.use(initReactI18next) 
+  .init({ 
+    resources, 
+    fallbackLng: "ja", 
+    detection: {
+      caches: ['localStorage', 'sessionStorage', 'cookie'],
     }
-});
+  })
 
-const t = (x: any) => x;//useTranslation();
-
-function L(key: string, ...params: any[]) {
-    var loc = t(key); // TODO
-    return util.format(loc, ...params);
-}
-
-export default L;
+export default i18n

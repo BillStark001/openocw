@@ -22,6 +22,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "build-lang": "ipython ../localization/output.py ./src/locales/", 
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

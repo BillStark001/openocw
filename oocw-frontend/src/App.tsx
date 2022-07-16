@@ -2,9 +2,25 @@ import React from 'react';
 import logo from './logo.svg';
 import './general.css';
 
+import NavBar from './controls/NavBar';
+import PageFrame from './pages/PageFrame';
+import Footer from './controls/Footer';
+
+import { useTranslation, withTranslation } from 'react-i18next';
+
 function App() {
+  const {t} = useTranslation();
   return (
-    <div className="App">
+    <>
+    <NavBar>
+      <div>test notice</div>
+
+    </NavBar>
+    <PageFrame
+      left={<div>left</div>}
+      right={<div>right</div>}
+    >
+      <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
@@ -20,7 +36,94 @@ function App() {
         </a>
       </header>
     </div>
+      <div>test translation</div>
+      <div>org.tokyotech</div>
+      <div>{t('crs.u')}</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+      <div>test</div>
+    </PageFrame>
+    <Footer></Footer>
+    </>
   );
 }
 
-export default App;
+export default withTranslation()(App);

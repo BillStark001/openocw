@@ -1,13 +1,13 @@
 import React from "react";
 import { createRef } from "react";
 
-import L from '../base/localization';
+import { withTranslation, WithTranslation } from 'react-i18next';
 
 import svgSearch from '../assets/svg/search.svg';
 import './common.css';
 import './SearchBar.css';
 
-class SearchBar extends React.Component {
+class SearchBar extends React.Component<WithTranslation> {
 
   state = {
     expand: false,
@@ -26,6 +26,7 @@ class SearchBar extends React.Component {
   }
 
   render() {
+    const {t} = this.props;
     return (
       <form className="search-bar">
         <span className="search-bar-inner">
@@ -35,7 +36,7 @@ class SearchBar extends React.Component {
             value={this.state.input}
             onChange={this.handleInputChange}
             onKeyUp={(e) => { if (e.key === 'Enter' || e.keyCode === 13) this.triggerSearch(); }}
-            placeholder={L('searchbar.search')} aria-label={L('searchbar.search.hint')}
+            placeholder={t('searchbar.search')} aria-label={t('searchbar.search.hint')}
             autoComplete="off"
             spellCheck="false"
             role="combobox" aria-autocomplete="list" aria-expanded="false" aria-labelledby="algolia-doc-search"
@@ -56,4 +57,4 @@ class SearchBar extends React.Component {
   }
 }
 
-export default SearchBar;
+export default withTranslation()(SearchBar);
