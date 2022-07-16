@@ -12,7 +12,7 @@ function App() {
   const {t} = useTranslation();
   return (
     <>
-    <NavBar>
+    <NavBar page={0}>
       <div>test notice</div>
 
     </NavBar>

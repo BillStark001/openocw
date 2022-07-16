@@ -57,7 +57,7 @@ class NavBar extends React.Component<NavBarNotice> {
               <li>
                 <a className="item" href="/">
                   <img src={svgLogo} style={{ marginRight: '4px' }} />
-                  <span className="logo-text">{t('navbar.title')}</span>
+                  <span className="logo-text">{t('product.name')}</span>
                 </a>
               </li>
 
@@ -69,7 +69,7 @@ class NavBar extends React.Component<NavBarNotice> {
               </li>
 
               <li className="align-right">
-                <a className="item subtle" href="/versions">v0.1.0</a>
+                <a className="item subtle" href="/versions">{t("product.version")}</a>
                 <a className="item" href="/languages">
                   <img src={svgLang}></img>
                 </a>
