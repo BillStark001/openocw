@@ -187,7 +187,7 @@ def fetch_lecture_info_2(id_seed, year, en=False):
   # request
   url0 = 'http://www.ocw.titech.ac.jp/index.php?module=General&action=T0300&JWC={year}{id}&lang={lang}'
   lang = 'JA' if not en else 'EN'
-  url1 = url0.format(year=year, id=id_seed[4:], lang=lang)
+  url1 = url0.format(year=year, id=str(id_seed)[4:], lang=lang)
   url2 = url1 + '&vid=05'
 
   html = get_html_after_loaded(url1)
@@ -296,10 +296,54 @@ def step1(start_year = 2016, start_year_old = 2009, omit_old_courses=False):
 
 def step2_new(start_year=2016):
   clist, _, _, _ = pload(path.savepath_course_list_raw)
-  print(1)
-  print(clist)
+  targets = [x[1][1][0] for x in clist]
   
-
+  # initialize storage
+  try:
+    details, gshxd_code = pload(path.savepath_details_raw)
+  except:
+    details = {} # these codes are successful in scraping
+    gshxd_code = [] # these codes are yabai
+    pdump((details, gshxd_code), path.savepath_details_raw)
+  
+  # error correction
+  while gshxd_code:
+    dcode = gshxd_code.pop()
+    print(dcode)
+    detail = {}
+    for year in range(start_year, this_year + 1):
+      try:
+        detail_jp = extractor.parse_lecture_info(fetch_lecture_info_2(dcode, year))
+        detail_en = extractor.parse_lecture_info(fetch_lecture_info_2(dcode, year, en=True))
+        detail[year] = (detail_jp, detail_en)
+      except Exception as e:
+        raise e
+      
+    details[dcode] = detail
+    
+    backup_file(path.savepath_details_raw)
+    pdump((details, gshxd_code), path.savepath_details_raw)
+    
+  # normal process
+  for dcode in tqdm(targets):
+    if dcode in details: 
+      continue
+    detail = {}
+    for year in range(start_year, this_year + 1):
+      try:
+        detail_jp = extractor.parse_lecture_info(fetch_lecture_info_2(dcode, year))
+        detail_en = extractor.parse_lecture_info(fetch_lecture_info_2(dcode, year, en=True))
+        detail[year] = (detail_jp, detail_en)
+      except:
+        gshxd_code.append(dcode)
+        print(f'ERROR {dcode}')
+        break
+    
+    details[dcode] = detail
+    
+    backup_file(path.savepath_details_raw)
+    pdump((details, gshxd_code), path.savepath_details_raw)
+  
 # 全ての科目（のID）におきシラバスを得る
 def step2():
     clist, ars = pload(path.savepath_course_list)
@@ -323,8 +367,8 @@ def step2():
       details[code] = (detail_jp, detail_en)
       
     for code, _ in tqdm(ars):
-      print(code)
-      if code in details: continue
+      if code in details: 
+        continue
       detail_jp = {}
       detail_en = {}
       cc = clist[code]['classes']
@@ -344,8 +388,7 @@ if driver is None: init_driver(driver_path)
   
 if __name__ == '__main__':
   # a = fetch_lecture_info_2('202002964', 2017, en=True)
-  step2_new(2018)
-  print(2)
+  step2_new(2016)
   
 
   #step1(start_year=2021, start_year_old=2021, omit_old_courses=True)

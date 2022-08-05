@@ -90,7 +90,8 @@ def get_course_list(html):
 
 
 def parse_lecture_info(info_caches):
-  
+  if info_caches == None:
+    return None
   cnt_lname, cnt_summ, cnt_inner, cnt_note = info_caches
   
   # lname
