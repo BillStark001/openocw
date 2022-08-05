@@ -1,0 +1,55 @@
+//google custom search engine
+  (function() {
+    var cx = '006778541197265607969:2i_qvjbfhxe';
+    var gcse = document.createElement('script'); gcse.type = 'text/javascript'; gcse.async = true;
+    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+    '//www.google.co.jp/cse/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(gcse, s);
+  })();
+
+//common search form
+  function globalSearch(category)
+  {
+      query=searchform.query.value;
+      if(query==''){ return false;}
+      switch(category){
+        case 1:
+    		//        searchform.search_category.value = category;
+            searchform.action="/index.php?module=General&action=Search&search_category=1&lang=JA";
+            searchform.submit();
+        	break;
+        case 2:
+      		//      searchform.search_category.value = category;
+            searchform.action="/index.php?module=General&action=Search&search_category=2&lang=JA";
+            searchform.submit();
+        	break;
+        default:
+            query=query.replace(/[\?&<>"']/g, function(match) {
+                return{'?':'%3f','&':'%26','<':'%3c','>':'%3e','"':'%22',"'":"%27"}[match];
+            });
+            url=document.location.href;
+            var anchor='';
+            if (url.lastIndexOf("#")>=0) {
+                anchor=url.slice(url.lastIndexOf("#"));
+				url=url.slice(0, url.lastIndexOf("#"));
+            }
+            if (url.indexOf("?")<0) {
+                url=url+"?q="+query;
+            }else if(url.indexOf("?q=")>=0&&url.indexOf("&")>=0){
+                url=url.replace(/[\?][q][=].*?[&]/,"?q="+query+"&");
+            }else if(url.indexOf("?q=")>=0&&url.indexOf("&")<0){
+                url=url.replace(/[\?][q][=].*/,"?q="+query);
+            }else if(url.indexOf("&q=")>=0){
+                url=url.replace(/[&][q][=].*?[&]/,"&");
+                url=url.replace(/[&][q][=].*[^&]$/,"");
+                url=url.replace(/[&][q][=]$/,"");
+                url=url+"&q="+query;
+            }else{
+                url=url+"&q="+query;
+            }
+            
+            searchform.action=url+"&sort=date"+anchor;
+            searchform.submit();
+  		}
+  }
+

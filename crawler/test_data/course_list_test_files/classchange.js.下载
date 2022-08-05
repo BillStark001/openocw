@@ -1,0 +1,8 @@
+function setElementClassById(elem, value) {
+	if(document.getElementById) {
+		var obj = document.getElementById(elem);
+			if(obj) {
+			obj.className = value;
+		}
+	}
+}

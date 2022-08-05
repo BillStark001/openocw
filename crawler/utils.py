@@ -251,7 +251,8 @@ def apart_str(s, signs, mono_brackets=['"'], dual_brackets=['()', '[]']):
     # mono_brackets
     for mb in mono_brackets:
         s = list_concat([split_with_sign(x) for x in s])
-        
+     
+strip_useless_elem = lambda l: [x for x in l if str(x) != '\n' and str(x) != '\xa0']    
 
 def parse_contacts(dstr):
     bad_signs = ['：', '；', '，', '、', '[at]', '\u3000', '（', '）', '【', '】']

@@ -16,7 +16,8 @@ import build_tree
 
 print('\nSTEP 1\n')
 
-spider.step1(start_year=2020, start_year_old=2020)# it is somehow problematic
+# spider.step1(start_year=2018, start_year_old=2018)
+spider.step1_new()
 import clean_data
 
 print('\nSTEP 2\n')
