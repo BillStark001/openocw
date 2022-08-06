@@ -63,5 +63,11 @@ backup_suffix = '.bak'
 backup_file = lambda f: shutil.copyfile(f, f + backup_suffix)
 clear_backup = lambda f: os.remove(f + backup_suffix)
 
+# datetime related
+
+# equivalent to js: new Date().valueOf()
+def cur_timestamp() -> int:
+  return int(time.time() * 1000)
+
 if __name__ == '__main__':
   pass

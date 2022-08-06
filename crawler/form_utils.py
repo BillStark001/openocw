@@ -185,26 +185,42 @@ def form_record(recs_raw, code, year=2022, lang='ja'):
   ans = {'__meta__': {}}
   ans_meta = ans['__meta__']
   ans_meta['complete'] = False
+  ans_meta['acrk'] = 0. # access_ranking
+  ans_meta['upd'] = 0
+  
   ans['code'] = code
   ans['year'] = year
   ans['isLink'] = False
   ans['name'] = {lang: common_name}
   ans['credit'] = (0, 0, 0, 0)
+  ans['unit'] = -1
   ans['classes'] = []
   
   # build full record
   for rec in recs_raw:
+    
     cls = {'__meta__': {}}
     cls_meta = cls['__meta__']
     # determine class name
     cname = rec[0][0]
     cname = cname[len(find_common_prefix([cname, common_name])):].strip()    
-    cls['name'] = cname
     cls_meta['ocwId'] = rec[0][1][0]
     cls_meta['complete'] = False
-    cls['lects'] = [x[1] for x in rec[1]]
+    cls_meta['upd'] = 0
+    cls_meta['upd_lect'] = 0
+    cls_meta['upd_syl'] = 0
     
-    ans['classes'].append(cls)
+    cls['name'] = cname
+    cls['lects'] = [x[1] for x in rec[1]]
+    cls['form'] = 0
+    cls['quarter'] = 0
+    cls['addr'] = []
+    cls['lang'] = []
+    
+    cls['syllabus'] = ''
+    cls['notes'] = {}
+    
+  ans['classes'].append(cls)
   
   return ans
   
