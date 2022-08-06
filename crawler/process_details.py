@@ -25,9 +25,9 @@ if __name__ == '__main__':
   keys = pload(path.savepath_details_keys)
   keys_rev = ltod(list_concat([[(vv, k) for vv in keys[k]] for k in keys]))
 
-  basic_info_parse = {
+  info_parsers = {
       'unit': lmb_identity,
-      'lects': lmb_identity,
+      'lects': lambda x: [y[0] for y in x],
       'form': parse_form,
       'media_use': lmb_identity, #* wtf???
       'addr': parse_addr, 
