@@ -179,79 +179,12 @@ def fetch_lecture_info(lecture_info, **kwargs):
   ans = (cnt_lname, cnt_summ, cnt_inner, cnt_note)
   return ans
   
-def fetch_lecture_info_2(id_seed, year, en=False):
-  '''
-  Get the html return according to lecture id (and other information).
-  lecture_info: id or (id, year) or (id, year, term)
-  '''
-  # request
-  url0 = 'http://www.ocw.titech.ac.jp/index.php?module=General&action=T0300&JWC={year}{id}&lang={lang}'
-  lang = 'JA' if not en else 'EN'
-  url1 = url0.format(year=year, id=str(id_seed)[4:], lang=lang)
-  url2 = url1 + '&vid=05'
-
-  html = get_html_after_loaded(url1)
-  if html == '404':
-    return None
-  bf_base_page = BeautifulSoup(html, 'lxml')
-  cnt_lname = bf_base_page.find_all(class_='page-title-area clearfix')[0]
-  cnt_summ = bf_base_page.find_all(class_='gaiyo-data')[0]
-  cnt_inner = bf_base_page.find_all(class_='right-inner')[0]
-  
-  html = get_html_after_loaded(url2)
-  bf_base_page = BeautifulSoup(html, 'lxml')
-  try:
-    cnt_note = bf_base_page.find_all(class_='right-inner')[0]
-  except IndexError as e:
-    cnt_note = bf_base_page.find_all(id='right-inner')[0]
-  
-  ans = (cnt_lname, cnt_summ, cnt_inner, cnt_note)
-  return ans
-
 # 開講元のリスト（つまり左側のあの赤いまたは青いもの）を取得する
 def step0():
     d = get_department_list()
     e = get_department_list(lang='EN')
     pdump((d, e), path.savepath_unit_tree_raw)
 
-def step1_new():
-  d = {
-    '理学院': {'GakubuCD': 1},
-    '工学院': {'GakubuCD': 2},
-    '物質理工学院': {'GakubuCD': 3},
-    '情報理工学院': {'GakubuCD': 4},
-    '生命理工学院': {'GakubuCD': 5},
-    '環境・社会理工学院': {'GakubuCD': 6},
-    '教養科目群': {'GakubuCD': 7, 'GakkaCD': 370000},
-    '初年次専門科目': {'GakubuCD': 10},
-  }
-  args_default = {'module': 'General', 'action': 'T0100'}
-  args_la = {'module': 'General', 'action': 'T0200', 'tab': 2, 'focus': 100}
-  
-  # load cache
-  try:
-    cl1, cl2, nr1, nr2 = pload(path.savepath_course_list_raw)
-  except:
-    cl1, cl2, nr1, nr2 = [], [], 0, 0
-    pdump((cl1, cl2, nr1, nr2), path.savepath_course_list_raw)
-      
-  for (i, target) in enumerate(d):
-    if i < nr1:
-      continue
-    url = form_url(addr_default, 
-                   **(d[target]), 
-                   **(args_la if target == '教養科目群' else args_default), 
-                   **args_lang())
-    print(target, url)
-    html = get_html_after_loaded(url)
-    lists = extractor.get_course_list(html)
-    
-    nr1 = i
-    cl1 += lists
-    
-    backup_file(path.savepath_course_list_raw)
-    pdump((cl1, cl2, nr1, nr2), path.savepath_course_list_raw)
-  
 
 # リストのあらゆる開講元におき科目リストを得る
 def step1(start_year = 2016, start_year_old = 2009, omit_old_courses=False):
@@ -294,56 +227,6 @@ def step1(start_year = 2016, start_year_old = 2009, omit_old_courses=False):
       backup_file(path.savepath_course_list_raw)
       pdump((cl1, cl2, nr1, nr2), path.savepath_course_list_raw)
 
-def step2_new(start_year=2016):
-  clist, _, _, _ = pload(path.savepath_course_list_raw)
-  targets = [x[1][1][0] for x in clist]
-  
-  # initialize storage
-  try:
-    details, gshxd_code = pload(path.savepath_details_raw)
-  except:
-    details = {} # these codes are successful in scraping
-    gshxd_code = [] # these codes are yabai
-    pdump((details, gshxd_code), path.savepath_details_raw)
-  
-  # error correction
-  while gshxd_code:
-    dcode = gshxd_code.pop()
-    print(dcode)
-    detail = {}
-    for year in range(start_year, this_year + 1):
-      try:
-        detail_jp = extractor.parse_lecture_info(fetch_lecture_info_2(dcode, year))
-        detail_en = extractor.parse_lecture_info(fetch_lecture_info_2(dcode, year, en=True))
-        detail[year] = (detail_jp, detail_en)
-      except Exception as e:
-        raise e
-      
-    details[dcode] = detail
-    
-    backup_file(path.savepath_details_raw)
-    pdump((details, gshxd_code), path.savepath_details_raw)
-    
-  # normal process
-  for dcode in tqdm(targets):
-    if dcode in details: 
-      continue
-    detail = {}
-    for year in range(start_year, this_year + 1):
-      try:
-        detail_jp = extractor.parse_lecture_info(fetch_lecture_info_2(dcode, year))
-        detail_en = extractor.parse_lecture_info(fetch_lecture_info_2(dcode, year, en=True))
-        detail[year] = (detail_jp, detail_en)
-      except:
-        gshxd_code.append(dcode)
-        print(f'ERROR {dcode}')
-        break
-    
-    details[dcode] = detail
-    
-    backup_file(path.savepath_details_raw)
-    pdump((details, gshxd_code), path.savepath_details_raw)
-  
 # 全ての科目（のID）におきシラバスを得る
 def step2():
     clist, ars = pload(path.savepath_course_list)
@@ -387,9 +270,6 @@ def step2():
 if driver is None: init_driver(driver_path)
   
 if __name__ == '__main__':
-  # a = fetch_lecture_info_2('202002964', 2017, en=True)
-  step2_new(2016)
-  
-
+  pass
   #step1(start_year=2021, start_year_old=2021, omit_old_courses=True)
   #a = get_all_course_list(1)
