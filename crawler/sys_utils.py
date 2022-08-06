@@ -9,6 +9,7 @@ import json
 import pickle
 import os
 import time
+import datetime
 import shutil
 
 from utils import *
@@ -66,8 +67,15 @@ clear_backup = lambda f: os.remove(f + backup_suffix)
 # datetime related
 
 # equivalent to js: new Date().valueOf()
+# utc
 def cur_timestamp() -> int:
   return int(time.time() * 1000)
+
+# utc
+def to_timestamp(year: int, month: int, day: int):
+  d = datetime.datetime(year=year, month=month, day=day, tzinfo=datetime.timezone.utc)
+  secs = (d - datetime.datetime(1970, 1, 1, tzinfo=datetime.timezone.utc)).total_seconds()
+  return int(secs * 1000)
 
 if __name__ == '__main__':
   pass

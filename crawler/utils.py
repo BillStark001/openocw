@@ -198,52 +198,6 @@ def find_common_word(strs):
 
 scw = find_common_word(['abccc', 'abaadd', 'abaaaab', 'abzz'])
 
-def parse_date(dstr):
-    
-    '''
-    return: ((year, month, day), additional_data) or None
-    '''
-    patterns = [r'( *\d+ *)/( *\d+ *)/( *\d+ *)', r'( *\d+ *)-( *\d+ *)-( *\d+ *)', r'( *\d+ *)年( *\d+ *)月( *\d+ *)日']
-    ans = None
-    for p in patterns:
-        rs = re.search(p, dstr)
-        try:
-            anst = [int(rs.group(i).strip(' ')) for i in range(1, 4)]
-            ans = tuple(anst)
-        except Exception as e:
-            # print(e)
-            pass
-    return ans
-
-def parse_ay_and_q(dstr):
-    
-    pattern = r' *(H?R?\d{1,4}) *年?度? *(.+) *Q'
-    rs = re.search(pattern, dstr)
-    ans = None
-    try:
-        anst = [rs.group(i).strip(' ') for i in range(1, 3)]
-        anst[0] = int(anst[0])
-        anst1 = [False, False, False, False]
-        last_d = 0
-        bar = False
-        for d in anst[1]: 
-            try: 
-                cur_d = int(d)-1
-                anst1[cur_d] = True
-                if bar:
-                    for dd in range(last_d, cur_d):
-                        anst1[dd] = True
-                last_d = cur_d
-            except:
-                if d in ['-', '~']:
-                    bar = True
-                    
-        anst[1] = anst1
-        ans = tuple(anst)
-    except:
-        pass
-    return ans
-
 split_with_sign = lambda s, sgn: list_concat([[x, sgn] for x in s.split(sgn)])[:-1]
 
 def apart_str(s, signs, mono_brackets=['"'], dual_brackets=['()', '[]']):
@@ -253,36 +207,6 @@ def apart_str(s, signs, mono_brackets=['"'], dual_brackets=['()', '[]']):
         s = list_concat([split_with_sign(x) for x in s])
      
 strip_useless_elem = lambda l: [x for x in l if str(x) != '\n' and str(x) != '\xa0']    
-
-def parse_contacts(dstr):
-    bad_signs = ['：', '；', '，', '、', '[at]', '\u3000', '（', '）', '【', '】']
-    good_signs = [':', ';', ',', ',', '@', ' ', '(', ')', '[', ']']
-    for i in range(len(bad_signs)):
-        dstr = dstr.replace(bad_signs[i], good_signs[i])
-    dstr = [x for x in dstr.split('\n') if x]
-    dstr = [x.strip(' ') for x in list_concat([x.split(';') for x in dstr])]
-    return dstr
-
-def parse_book(bstr):
-    none_mark = len(bstr) <= 10 and (bstr.find('なし') >= 0 or bstr.find('無し') >= 0 \
-                                           or bstr.find('指定しない') >= 0 or bstr.find('定めない') >= 0 \
-                                               or bstr.find('ません') >= 0)
-    lect_word_list = ['講義', '演習', '資料', '配信', '配布', 'アップロード', 'OCW', 'PDF', 'テキスト']
-    lect_note_prob = len([x for x in [bstr.find(w) >= 0 for w in lect_word_list] if x])
-    lect_mark = lect_note_prob >= 2
-
-    if none_mark: return 'None'
-    if lect_mark: return 'Lecture Note'
-    return bstr
-
-def parse_ar(ar):
-    return int(re.search('acbar(\d+).gif', ar).group(1))
-
-lang_dict = {'日本語': 'JA', '英語': 'EN', 'Japanese': 'JA', 'English': 'EN'}
-parse_lang = lambda x: lang_dict[x] if x in lang_dict else x
-
-#print(parse_date('1222/12/221'))
-#print(parse_ay_and_q('2021 1-2Q'))
 
 if __name__ == '__main__':
     pass
