@@ -9,6 +9,7 @@ from sys_utils import *
 from utils import *
 import re
 from collections import defaultdict
+from db_definitions import *
 
 
 def build_tree(inpath: str, outpath: str, dep_path: str):
@@ -147,20 +148,21 @@ def build_keys(inpath: str, outpath: str):
   ke = list(ke)
   # 2022/8/6
   keys_general = [
-      'unit',
-      'lects',
-      'form',
-      'media_use',
-      'addr',
-      'class',
-      'code',
-      'credit',
-      'year',
-      'quarter',
-      'upd_syl',
-      'upd_lect',
-      'lang',
-      'acrk',
+      KEY_UNIT,
+      KEY_LECTURERS,
+      KEY_FORMAT,
+      KEY_MEDIA_USE,
+      KEY_ADDRESS,
+      KEY_CLASS_NAME,
+      KEY_CODE,
+      KEY_CREDIT,
+      KEY_YEAR,
+      KEY_QUARTER,
+      KEY_UPD_TIME_SYL,
+      KEY_UPD_TIME_NOTES,
+      KEY_LANGUAGE,
+      KEY_ACCESS_RANK,
+      
   ] + ['desc',
        'outcomes',
        'keywords',
@@ -193,45 +195,26 @@ def form_record(recs_raw, code, year=2022, lang='ja'):
   common_name = find_common_word(names)
 
   # build basic record
-  ans = {'__meta__': {}}
-  ans_meta = ans['__meta__']
-  ans_meta['complete'] = False
-  ans_meta['acrk'] = 0.  # access_ranking
-  ans_meta['upd'] = 0
-
-  ans['code'] = code
-  ans['year'] = year
-  ans['isLink'] = False
-  ans['name'] = {lang: common_name}
-  ans['credit'] = (0, 0, 0, 0)
-  ans['unit'] = -1
-  ans['classes'] = []
+  ans = form_basic_record_scheme()
+  ans[KEY_CODE] = code
+  ans[KEY_YEAR] = year
+  ans[KEY_ISLINK] = False
+  ans[KEY_NAME] = {lang: common_name}
 
   # build full record
   for rec in recs_raw:
 
-    cls = {'__meta__': {}}
-    cls_meta = cls['__meta__']
+    cls = form_class_record_scheme()
+    cls_meta = cls[KEY_META]
+    cls_meta[KEY_OCW_ID] = rec[0][1][0]
+    
     # determine class name
     cname = rec[0][0]
     cname = cname[len(find_common_prefix([cname, common_name])):].strip()
-    cls_meta['ocwId'] = rec[0][1][0]
-    cls_meta['complete'] = False
-    cls_meta['upd'] = 0
-    cls_meta['upd_lect'] = 0
-    cls_meta['upd_syl'] = 0
+    cls[KEY_NAME] = cname
+    cls[KEY_LECTURERS] = [x[1] for x in rec[1]]
 
-    cls['name'] = cname
-    cls['lects'] = [x[1] for x in rec[1]]
-    cls['form'] = 0
-    cls['quarter'] = 0
-    cls['addr'] = []
-    cls['lang'] = []
-
-    cls['syllabus'] = ''
-    cls['notes'] = {}
-
-  ans['classes'].append(cls)
+  ans[KEY_CLASSES].append(cls)
 
   return ans
 

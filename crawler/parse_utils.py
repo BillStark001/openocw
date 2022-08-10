@@ -10,8 +10,11 @@ from sys_utils import *
 def gather_data(inpath: str):
   details, _ = pload(inpath)
   ans = defaultdict(lambda: defaultdict(int))
+  anst = defaultdict(dict)
+  ansu = {}
   for code in details:
     for year in details[code]:
+      subu = [None, None]
       for item in details[code][year]:
         if not item:
           continue
@@ -21,7 +24,23 @@ def gather_data(inpath: str):
         for k in item[2]:
           if isinstance(item[2][k], collections.Hashable):
             ans[k][item[2][k]] += 1
-  return ans
+        
+        if '担当教員名' in item[1]  and type(item[1]['担当教員名']) == list:
+          for id, tn in item[1]['担当教員名']:
+            anst[id]['ja'] = tn  
+        if 'Instructor(s)' in item[1] and type(item[1]['Instructor(s)']) == list:
+          for id, tn in item[1]['Instructor(s)']:
+            anst[id]['en'] = tn  
+        
+        if '開講元' in item[1]:
+          subu[0] = item[1]['開講元']
+          
+        if 'Academic unit or major' in item[1]:
+          subu[1] = item[1]['Academic unit or major']
+      if subu[0] != None:
+        ansu[subu[0]] = subu[1]
+        
+  return ans, anst, ansu
 
 def normalize_brackets(dstr: str) -> str:
   return dstr \
@@ -278,8 +297,8 @@ def parse_book(bstr):
   if lect_mark: return 'Lecture Note'
   return bstr
 
-def parse_acrk(ar):
-  return int(re.search('acbar(\d+).gif', ar).group(1))
+def parse_acrk(ar) -> float:
+  return float(re.search('acbar(\d+).gif', ar).group(1))
 
 lang_dict = {
   '日本語': 'ja', 

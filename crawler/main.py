@@ -2,7 +2,7 @@
 """
 Created on Thu Aug  5 12:38:13 2021
 
-@author: zhaoj
+@author: billstark
 """
 
 # 他の.pyファイルの注釈に参照させたい
