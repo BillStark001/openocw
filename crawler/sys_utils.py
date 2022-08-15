@@ -77,5 +77,7 @@ def to_timestamp(year: int, month: int, day: int):
   secs = (d - datetime.datetime(1970, 1, 1, tzinfo=datetime.timezone.utc)).total_seconds()
   return int(secs * 1000)
 
+time_id = lambda: datetime.datetime.fromtimestamp(0, tz=datetime.timezone.utc)
+
 if __name__ == '__main__':
   pass

@@ -31,6 +31,25 @@ info_parsers = {
     KEY_LANGUAGE: parse_lang,
     KEY_ACCESS_RANK: parse_acrk,
 }
+
+syl_parsers = {
+  KEY_SYL_DESC: lmb_identity, 
+  KEY_SYL_OUTCOMES: lmb_identity,
+  KEY_SYL_KEYWORDS: lmb_identity,
+  KEY_SYL_COMPETENCIES: bool2bin,
+  KEY_SYL_FLOW: lmb_identity,
+  KEY_SYL_SCHEDULE: lmb_identity,
+  KEY_SYL_TEXTBOOKS: lmb_identity,
+  KEY_SYL_REF_MATS: lmb_identity,
+  KEY_SYL_GRADING: lmb_identity,
+  KEY_SYL_REL_COURSES: lmb_identity,
+  KEY_SYL_PREREQUESITES: lmb_identity,
+  KEY_SYL_OOC_TIME: lmb_identity,
+  KEY_SYL_OTHER: lmb_identity,
+  KEY_SYL_CONTACT: lmb_identity,
+  KEY_SYL_EXP_INST: lmb_identity,
+  KEY_SYL_OFF_HRS: lmb_identity, 
+}
 # TODO parse lecturing unit!
 
 def multilingual_key(k: str) -> bool:
@@ -38,9 +57,15 @@ def multilingual_key(k: str) -> bool:
     return True
   return False
 
+def ml_key_syl(k: str) -> bool:
+  if k in [KEY_SYL_COMPETENCIES]:
+    return False
+  return True
+
 def build_db_scheme(
   raw_record: dict[str, tuple[list, dict, dict, dict]], 
-  keys: dict[str, dict[str, str]]
+  keys: dict[str, dict[str, str]], 
+  ocw_id: int = 197000000
   ):
   '''
   raw_record: dict[lang: str, rec: raw_scheme]
@@ -48,6 +73,19 @@ def build_db_scheme(
   '''
   info = form_basic_record_scheme()
   cls = form_class_record_scheme()
+  syl = {
+    KEY_SYL_OTHER: {
+      
+    }
+  }
+  notes = {}
+  cls[KEY_SYLLABUS][KEY_VERSION] = VAL_VER_RAW
+  cls[KEY_SYLLABUS][VAL_VER_RAW] = syl
+  cls[KEY_NOTES][KEY_VERSION] = VAL_VER_RAW
+  cls[KEY_NOTES][VAL_VER_RAW] = notes
+  cls[KEY_META][KEY_OCW_ID] = ocw_id
+  
+  syl_parsed = False
   
   for lang in raw_record:
     if raw_record == None:
@@ -88,15 +126,63 @@ def build_db_scheme(
       if ik in pinfo:
         cls[KEY_META][ik] = pinfo[ik]
           
-    # TODO add syllabus etc.
+    # add notes
+    notes[lang] = rnts['supp']
+    
+    # add syllabus
+    if not rsyl:
+      continue
+    syl_parsed = True
+    for k in syl_parsers:
+      kl = keys[k][lang] if k in keys and lang in keys[k] else None
+      if kl == None or k == KEY_SYL_OTHER:
+        syl[KEY_SYL_OTHER][f'{kl}_{lang}'] = k
+        continue
+      if not k in syl:
+        if ml_key_syl(k):
+          syl[k] = {}
+      v = syl_parsers[k](rsyl[kl]) if kl in rsyl else None
+      if ml_key_syl(k):
+        syl[k][lang] = v
+      else:
+        syl[k] = v
+        
+    if not syl_parsed:
+      cls[KEY_SYLLABUS][KEY_VERSION] = VAL_VER_NONE
+      del cls[KEY_SYLLABUS][VAL_VER_RAW]
+    
   
   return info, cls
   
+def build_db_schemes(id_seed: int, data: dict, keys: dict):
+  info = {KEY_CLASSES: []}
+  cls = []
+  nyear = 1970
+  
+  for year in data:
+    oid = id_seed % 100000 + year * 100000
+    ydata = {}
+    if data[year][0] is not None:
+      ydata['ja'] = data[year][0]
+    if data[year][1] is not None:
+      ydata['en'] = data[year][1]
+    if not ydata:
+      continue
+    yinfo, ycls = build_db_scheme(ydata, keys, ocw_id=oid)
+    if year > nyear:
+      nyear = year
+      for k in yinfo:
+        if k != KEY_CLASSES:
+          info[k] = yinfo[k]
+    cls.append(ycls)
+    info[KEY_CLASSES].append(oid)
+    
+  return info, cls
 
 
 if __name__ == '__main__':
 
-  if True:
+  if False:
     build_keys(path.savepath_details_raw, path.savepath_details_keys)
 
   dd, dt, du = gather_data(path.savepath_details_raw)
@@ -105,33 +191,4 @@ if __name__ == '__main__':
   keys = pload(path.savepath_details_keys)
   keys_rev = ltod(list_concat([[(vv, k) for vv in keys[k]] for k in keys]))
 
-  def parse_details(dict_details, lang='JP'):
-    ans = {}
-    for k in dict_details:
-      dk = dict_details[k]
-      if not k in keys_rev:
-        rk = 'other'
-      else:
-        rk = keys_rev[k]
-      if rk == 'competencies':
-        ansk = btoi(dk)
-      elif rk == 'relcrs':
-        ansk = [x[0] for x in dk]
-      elif rk in ['textbooks', 'refmats']:
-        ansk = [parse_book(x) for x in dk.split('\n')]
-      elif rk == 'grading':
-        # TODO
-        ansk = dk
-      elif rk == 'contact':
-        # TODO
-        ansk = parse_contacts(dk)
-      elif rk == 'other':
-        ansk = [dk]
-      else:
-        ansk = dk
-
-      if rk == 'other' and rk in ans:
-        ans[rk] += ansk
-      else:
-        ans[rk] = ansk
-    return ans
+  

@@ -194,7 +194,7 @@ def parse_addr(dstr: str):
     start = int(res.group(2))
     end = int(res.group(3)) if res.group(3) else start
     loc_pos = res.span()[1]
-    loc = parse_loc(loc_pos) if dstrp[loc_pos] == '(' else ''
+    loc = parse_loc(loc_pos) if loc_pos < len(dstrp) and dstrp[loc_pos] == '(' else ''
     ans.append(dict(
       type=1,
       info=(day, start, end), 
@@ -236,7 +236,8 @@ def parse_date(dstr):
     except Exception as e:
       # print(e)
       pass
-  return ans
+  # return ans
+  return datetime.datetime.fromtimestamp(ans / 1000, tz=datetime.timezone.utc)
 
 def parse_ay_and_q(dstr):
   pattern = r' *(H?R?\d{1,4}) *年?度? *(.+) *Q'

@@ -15,21 +15,6 @@ rev_range = lambda x: range(x-1, -1, -1)
 lmb_identity = lambda x: x
 lmb_yield_none = lambda x: None
 
-def btoi(bs):
-  lbs = len(bs)
-  ans = 0
-  for b in bs:
-    ans *= 2
-    ans += int(b)
-  return ans, lbs
-
-def itob(i, lbs):
-  ans = []
-  for _ in range(lbs):
-    ans = [i % 2 == 1] + ans
-    i = i // 2
-  return ans
-
 def find_common_prefix(strs):
   if not strs: return ''
   

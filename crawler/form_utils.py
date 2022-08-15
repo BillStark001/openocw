@@ -163,22 +163,22 @@ def build_keys(inpath: str, outpath: str):
       KEY_LANGUAGE,
       KEY_ACCESS_RANK,
       
-  ] + ['desc',
-       'outcomes',
-       'keywords',
-       'competencies',
-       'flow',
-       'schedule',
-       'textbooks',
-       'refmats',
-       'grading',
-       'rels',
-       'prereqs',
-       'ooctime',
-       'other',
-       'contact',
-       'exp_inst_courses',
-       'offhrs']
+  ] + [KEY_SYL_DESC,
+       KEY_SYL_OUTCOMES,
+       KEY_SYL_KEYWORDS,
+       KEY_SYL_COMPETENCIES,
+       KEY_SYL_FLOW,
+       KEY_SYL_SCHEDULE,
+       KEY_SYL_TEXTBOOKS,
+       KEY_SYL_REF_MATS,
+       KEY_SYL_GRADING,
+       KEY_SYL_REL_COURSES,
+       KEY_SYL_PREREQUESITES,
+       KEY_SYL_OOC_TIME,
+       KEY_SYL_OTHER,
+       KEY_SYL_CONTACT,
+       KEY_SYL_EXP_INST,
+       KEY_SYL_OFF_HRS]
 
   kkk = {}
 
