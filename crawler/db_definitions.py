@@ -89,6 +89,7 @@ def form_class_record_scheme() -> dict[str, Any]:
   
   cls_meta[KEY_OCW_ID] = 197000000
   cls_meta[KEY_COMPLETE] = False
+  cls_meta[KEY_DIRTY] = True
   cls_meta[KEY_UPD_TIME] = time_id()
   cls_meta[KEY_UPD_TIME_NOTES] = time_id()
   cls_meta[KEY_UPD_TIME_SYL] = time_id()

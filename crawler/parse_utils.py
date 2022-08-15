@@ -205,7 +205,7 @@ def parse_addr(dstr: str):
     loc_pos = res.span()[1]
     start = int(res.group(2)) if res.group(2) else 0
     end = int(res.group(3)) if res.group(3) else start
-    loc = parse_loc(loc_pos) if dstrp[loc_pos] == '(' else ''
+    loc = parse_loc(loc_pos) if loc_pos < len(dstrp) and dstrp[loc_pos] == '(' else ''
     ans.append(dict(
       type=2,
       info=(dstr[ins: ine], start, end), 

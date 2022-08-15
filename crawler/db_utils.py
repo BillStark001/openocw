@@ -23,7 +23,7 @@ info_parsers = {
     KEY_ADDRESS: parse_addr,
     KEY_CLASS_NAME: lambda x: '' if x.strip() == '-' else x.strip(),
     KEY_CODE: lmb_identity,
-    KEY_CREDIT: lambda x: (0, 0, 0, int(x)),
+    KEY_CREDIT: lambda x: (0, 0, 0, int(x) if isinstance(x, str) else 0),
     KEY_YEAR: lambda x: int(x.replace('年', '').replace('度', '').replace('AY', '').replace(' ', '')),
     KEY_QUARTER: parse_quarter,
     KEY_UPD_TIME_SYL: parse_date,
@@ -184,11 +184,5 @@ if __name__ == '__main__':
 
   if False:
     build_keys(path.savepath_details_raw, path.savepath_details_keys)
-
-  dd, dt, du = gather_data(path.savepath_details_raw)
-
-  details, _ = pload(path.savepath_details_raw)
-  keys = pload(path.savepath_details_keys)
-  keys_rev = ltod(list_concat([[(vv, k) for vv in keys[k]] for k in keys]))
 
   
