@@ -54,10 +54,10 @@ def update_text_index(
   ) -> bool:
   res = col.find_one_and_update({'_id': doc['_id'],}, {'$set': 
       {
-        TEXT_INDEX_TARGET: f'"{" ".join(index)}"', 
+        TEXT_INDEX_TARGET: index, #f'"{" ".join(index)}"', 
         TEXT_DIRTY_TARGET: False
       }
-    })
+    }, session=sess)
   return res is not None
   
 def iter_dirty_doc(
@@ -75,7 +75,7 @@ if __name__ == '__main__':
   
   ccrs, ccls, cfct = get_cols(db)
   
-  for doc in tqdm(iter_dirty_doc(ccls)):
+  for doc in tqdm(iter_dirty_doc(ccrs)):
     s = {}
     for word in tagger(str(doc)):
       wpos = str(word.pos).split(',')[0]
@@ -89,5 +89,5 @@ if __name__ == '__main__':
       s[wfeat] = True
       
     s = list(s.keys())
-    dres = update_text_index(ccls, doc, s)
+    dres = update_text_index(ccrs, doc, s)
   
