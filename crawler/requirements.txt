@@ -1,0 +1,4 @@
+tqdm
+fugashi
+pymongo
+selenium

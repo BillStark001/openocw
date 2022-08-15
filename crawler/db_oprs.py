@@ -13,14 +13,15 @@ def init_db() -> MongoClient:
   cl = MongoClient(host=uri)
   return cl
 
-def get_cols(cl: MongoClient) -> Tuple[Collection, Collection]:
+def get_cols(cl: MongoClient) -> Tuple[Collection, Collection, Collection]:
   db = cl['openocw']
   col_crs = db['courses']
   col_cls = db['classes']
-  return col_crs, col_cls
+  col_fct = db['faculties']
+  return col_crs, col_cls, col_fct
 
 def put_course(db: MongoClient, sess: Optional[ClientSession], crs: Dict[str, Any]):
-  ccrs, ccls = get_cols(db)
+  ccrs, _, _ = get_cols(db)
   cid = crs[KEY_CODE]
   crs_old = ccrs.find_one({KEY_CODE: cid}, session=sess)
   
@@ -46,7 +47,7 @@ def put_course(db: MongoClient, sess: Optional[ClientSession], crs: Dict[str, An
     ccrs.insert_one(crs_new, session=sess)
     
 def put_class(db: MongoClient, sess: Optional[ClientSession], cls: Dict[str, Any]):
-  ccrs, ccls = get_cols(db)
+  ccrs, ccls, _ = get_cols(db)
   cond_scheme = {
     KEY_CODE: cls[KEY_CODE], 
     KEY_YEAR: cls[KEY_YEAR], 
@@ -86,5 +87,12 @@ def put_class(db: MongoClient, sess: Optional[ClientSession], cls: Dict[str, Any
     ccls.insert_one(cls_new, session=sess)
   
     
-    
-  
+def put_faculty(db: MongoClient, sess: ClientSession, scheme: Dict[str, Any]):
+  _, _, cfct = get_cols(db)
+  fid = scheme[KEY_ID]
+  cond_scheme = {KEY_ID: fid}
+  fct_old = cfct.find_one(cond_scheme, session=sess)
+  if fct_old is None:
+    cfct.insert_one(scheme, session=sess)
+  else:
+    cfct.update_one(cond_scheme, {'$set': scheme})

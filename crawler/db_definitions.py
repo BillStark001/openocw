@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Dict
 from sys_utils import time_id
 
 # technical
@@ -63,7 +63,20 @@ KEY_SYL_CONTACT = 'contact'
 KEY_SYL_EXP_INST = 'exp_inst_courses'
 KEY_SYL_OFF_HRS = 'offhrs'
 
-def form_basic_record_scheme() -> dict[str, Any]:
+# faculties
+
+KEY_ID = 'id'
+KEY_CONTACT = 'contact'
+
+
+def form_faculty_scheme() -> Dict[str, Any]:
+  ans = {KEY_META: {}}
+  ans[KEY_ID] = -1
+  ans[KEY_NAME] = {}
+  ans[KEY_CONTACT] = {}
+  return ans
+
+def form_basic_record_scheme() -> Dict[str, Any]:
   
   ans = {KEY_META: {}}
   ans_meta = ans[KEY_META]
@@ -82,7 +95,7 @@ def form_basic_record_scheme() -> dict[str, Any]:
   
   return ans
 
-def form_class_record_scheme() -> dict[str, Any]:
+def form_class_record_scheme() -> Dict[str, Any]:
   
   cls = {KEY_META: {}}
   cls_meta = cls[KEY_META]
