@@ -43,7 +43,7 @@ namespace Oocw.Backend.Controllers
         }
 
         [HttpGet("/api/course/search")]
-        public IEnumerable<CourseBrief> Search(string queryStr, string? restrictions, int? dispCount, int? page)
+        public IEnumerable<CourseBrief> Search(string queryStr, string? restrictions, int? dispCount, int? page, bool byClass = false)
         {
             var tokens = QueryUtils.FormSearchKeyWords(queryStr);
             
