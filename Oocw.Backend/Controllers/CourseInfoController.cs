@@ -18,8 +18,8 @@ namespace Oocw.Backend.Controllers
             _logger = logger;
         }
 
-        [HttpGet(Name = "/course/info/{id}?year={year}&class={className}")]
-        public IEnumerable<WeatherForecast> Get(string id, int? year, string? className)
+        [HttpGet("/course/info/{id}")]
+        public IEnumerable<WeatherForecast> Info(string id, int? year, string? className)
         {
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
