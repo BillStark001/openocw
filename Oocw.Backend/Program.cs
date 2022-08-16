@@ -1,4 +1,11 @@
+using Oocw.Backend.Database;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// connect to database.
+
+Database.Instance.Initialize();
+
 
 // Add services to the container.
 
