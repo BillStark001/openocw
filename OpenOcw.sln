@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32804.467
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oocw.Backend", "Oocw.Backend\Oocw.Backend.csproj", "{04F81866-82FD-49EB-B7ED-53EE7490973F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{04F81866-82FD-49EB-B7ED-53EE7490973F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04F81866-82FD-49EB-B7ED-53EE7490973F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04F81866-82FD-49EB-B7ED-53EE7490973F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04F81866-82FD-49EB-B7ED-53EE7490973F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {29F3AD11-95FE-4001-B9E3-305EF6E11B0D}
+	EndGlobalSection
+EndGlobal
