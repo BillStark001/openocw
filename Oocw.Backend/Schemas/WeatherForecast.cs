@@ -1,4 +1,4 @@
-namespace Oocw.Backend
+namespace Oocw.Backend.Schemas
 {
     public class WeatherForecast
     {

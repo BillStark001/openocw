@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Oocw.Backend.Schemas;
 
 namespace Oocw.Backend.Controllers
 {
@@ -18,16 +19,29 @@ namespace Oocw.Backend.Controllers
             _logger = logger;
         }
 
-        [HttpGet("/course/info/{id}")]
-        public IEnumerable<WeatherForecast> Info(string id, int? year, string? className)
+        [HttpGet("/api/course/info/{id}")]
+        public string Info(string id, int? year, string? className)
         {
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
+            return $"## Test Markdown\n### {id} / {year} / {className}";
         }
+
+        [HttpGet("/api/course/brief/{id}")]
+        public CourseBrief Brief(string id, int? year, string? className)
+        {
+            return new()
+            {
+                Id = id,
+                Name = "",
+                ClassName = className
+            };
+        }
+
+        [HttpGet("/api/course/search")]
+        public IEnumerable<CourseBrief> Search(string query, string? restrictions, int? dispCount, int? page)
+        {
+            throw new NotImplementedException();
+        }
+
+
     }
 }
