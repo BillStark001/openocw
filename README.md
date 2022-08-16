@@ -3,3 +3,5 @@ A little project, born out of frustration with the school's garbage system, that
 
 
 https://github.com/stopwords-iso/stopwords-ja
+https://github.com/stopwords-iso/stopwords-zh
+https://countwordsfree.com/stopwords
