@@ -1,6 +1,8 @@
 ﻿key,en,ja-JP,zh-CN
 lang.name,English,日本語,中文（大陆简体）
-,,,
+lang.en,English,英語,英文
+lang.ja-JP,Japanese,日本語,日文
+lang.zh-CN,Chinese(Simplified),中国語（簡体字）,中文（大陆简体）
 ,,,
 ,,,
 id.bachelor,Bachelor,学士,学士
@@ -9,3 +11,25 @@ id.doctor,Doctor,博士,博士
 id.master.prof,Professional master,,专业硕士
 id.student,Student,学生,学生
 id.faculty,Faculty,教員,教职员工
+,,,
+,,,
+,,,
+meta.uncat,Uncategorized,未分類,未分类
+,,,
+day.1,Monday,月曜日,周一
+day.2,Tuesday,火曜日,周二
+day.3,Wednesday,水曜日,周三
+day.4,Thursday,木曜日,周四
+day.5,Friday,金曜日,周五
+day.6,Saturday,土曜日,周六
+day.7,Sunday,日曜日,周日
+day.1b,Mon.,月,一
+day.2b,Tue.,火,二
+day.3b,Wed.,水,三
+day.4b,Thur.,木,四
+day.5b,Fri.,金,五
+day.6b,Sat.,土,六
+day.7b,Sun.,日,日
+,,,
+time.period.unary,Period {0},{0}限,时段{0}
+time.period.binary,Period {0}-{1},{0}-{1}限,时段{0}-{1}

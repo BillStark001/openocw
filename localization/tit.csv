@@ -100,3 +100,10 @@ org.ac.enr_info,Tokyo Tech Academy of Energy and Informatics program,エネル�
 ,,,
 org.ext.trsdis,Transdisciplinary Graduate majors,領域横断的な大学院コース,跨学科研究生课程
 org.ext.ac,Specially offered degree programs for graduate students,学位プログラムとして特別に設けた教育課程,学位特设教育课程
+,,,
+form.lect,Lecturers,講義,讲义
+form.exrc,Exercises,演習,演习
+form.expr,Experiments,実験,实验
+form.semi,Seminars,講究,讲座
+form.ints,Intensive,集中講義,集中讲义
+form.ondm,On-demand,オンデマンド,视频点播

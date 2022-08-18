@@ -78,11 +78,12 @@ namespace Oocw.Backend.Controllers
         }
 
         [HttpGet("/api/course/search")]
-        public IEnumerable<CourseBrief> Search(string queryStr, string? restrictions, int? dispCount, int? page, bool byClass = false, string? lang = null)
+        public IEnumerable<CourseBrief> Search(string queryStr, string? restrictions, int? dispCount, int? page, string? cat = null, string? lang = null)
         {
 
             var tokens = QueryUtils.FormSearchKeyWords(queryStr);
             lang = lang ?? this.TryGetLanguage();
+            cat = (cat ?? "").ToLower();
 
             int dCount = (dispCount ?? 0);
             dCount = dCount > 10 ? dCount : 10;
@@ -92,6 +93,8 @@ namespace Oocw.Backend.Controllers
             dPage = dPage > 1 ? dPage : 1;
             
             var query = Builders<BsonDocument>.Filter.Text(tokens);
+            var targetDb = cat.Contains("class") ? _db.Classes : cat.Contains("course") ? _db.Courses : _db.Faculties;
+            // TODO target db!
             var crs = _db.Classes.Find(query).Skip(dPage * dCount - dPage).Limit(dCount);
 
             IEnumerable<CourseBrief> ans = crs.ToList().Select(x =>
