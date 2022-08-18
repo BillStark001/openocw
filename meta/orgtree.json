@@ -1,3 +1,165 @@
 {
-  
+  "key": "root",
+  "action": null,
+  "children": [
+    {
+      "key": "org.sos",
+      "action": null,
+      "children": [
+        {
+          "key": "crs.u",
+          "action": null,
+          "children": [
+            { "key": "org.m.u.mth", "action": null, "children": [] },
+            { "key": "org.m.u.phy", "action": null, "children": [] },
+            { "key": "org.m.u.chm", "action": null, "children": [] },
+            { "key": "org.m.u.eps", "action": null, "children": [] }
+          ]
+        },
+        {
+          "key": "crs.g",
+          "action": null,
+          "children": [
+            { "key": "org.m.g.mth", "action": null, "children": [] },
+            { "key": "org.m.g.phy", "action": null, "children": [] },
+            { "key": "org.m.g.chm", "action": null, "children": [] },
+            { "key": "org.m.g.eps", "action": null, "children": [] }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "org.soe",
+      "action": null,
+      "children": [
+        {
+          "key": "crs.u",
+          "action": null,
+          "children": [
+            { "key": "org.m.u.mec", "action": null, "children": [] },
+            { "key": "org.m.u.sce", "action": null, "children": [] },
+            { "key": "org.m.u.eee", "action": null, "children": [] },
+            { "key": "org.m.u.ict", "action": null, "children": [] },
+            { "key": "org.m.u.iee", "action": null, "children": [] }
+          ]
+        },
+        {
+          "key": "crs.g",
+          "action": null,
+          "children": [
+            { "key": "org.m.g.mec", "action": null, "children": [] },
+            { "key": "org.m.g.sce", "action": null, "children": [] },
+            { "key": "org.m.g.eee", "action": null, "children": [] },
+            { "key": "org.m.g.ict", "action": null, "children": [] },
+            { "key": "org.m.g.iee", "action": null, "children": [] }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "org.somct",
+      "action": null,
+      "children": [
+        {
+          "key": "crs.u",
+          "action": null,
+          "children": [
+            { "key": "org.m.u.mat", "action": null, "children": [] },
+            { "key": "org.m.u.cap", "action": null, "children": [] }
+          ]
+        },
+        {
+          "key": "crs.g",
+          "action": null,
+          "children": [
+            { "key": "org.m.g.mat", "action": null, "children": [] },
+            { "key": "org.m.g.cap", "action": null, "children": [] }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "org.soc",
+      "action": null,
+      "children": [
+        {
+          "key": "crs.u",
+          "action": null,
+          "children": [
+            { "key": "org.m.u.mcs", "action": null, "children": [] },
+            { "key": "org.m.u.cse", "action": null, "children": [] }
+          ]
+        },
+        {
+          "key": "crs.g",
+          "action": null,
+          "children": [
+            { "key": "org.m.g.mcs", "action": null, "children": [] },
+            { "key": "org.m.g.cse", "action": null, "children": [] }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "org.solst",
+      "action": null,
+      "children": [
+        { "key": "org.m.u.lst", "action": null, "children": [] },
+        { "key": "org.m.g.lst", "action": null, "children": [] }
+      ]
+    },
+    {
+      "key": "org.soes",
+      "action": null,
+      "children": [
+        {
+          "key": "crs.u",
+          "action": null,
+          "children": [
+            { "key": "org.m.u.arc", "action": null, "children": [] },
+            { "key": "org.m.u.cve", "action": null, "children": [] },
+            { "key": "org.m.u.tse", "action": null, "children": [] },
+            { "key": "org.m.u.shs", "action": null, "children": [] }
+          ]
+        },
+        {
+          "key": "crs.g",
+          "action": null,
+          "children": [
+            { "key": "org.m.g.arc", "action": null, "children": [] },
+            { "key": "org.m.g.cve", "action": null, "children": [] },
+            { "key": "org.m.g.tse", "action": null, "children": [] },
+            { "key": "org.m.g.shs", "action": null, "children": [] },
+            { "key": "org.m.g.isc", "action": null, "children": [] },
+            { "key": "org.m.g.tim", "action": null, "children": [] }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "org.ext.trsdis",
+      "action": null,
+      "children": [
+        { "key": "org.m.g.enr", "action": null, "children": [] },
+        { "key": "org.m.g.ncl", "action": null, "children": [] },
+        { "key": "org.m.g.hcb", "action": null, "children": [] },
+        { "key": "org.m.g.esd", "action": null, "children": [] },
+        { "key": "org.m.g.art", "action": null, "children": [] },
+        { "key": "org.m.g.ude", "action": null, "children": [] },
+        { "key": "org.m.g.els", "action": null, "children": [] }
+      ]
+    },
+    {
+      "key": "org.ext.ac",
+      "action": null,
+      "children": [
+        { "key": "org.ac.ldsp", "action": null, "children": [] },
+        { "key": "org.ac.glb_ldsp", "action": null, "children": [] },
+        { "key": "org.ac.env_enr_coc", "action": null, "children": [] },
+        { "key": "org.ac.cmp_ls", "action": null, "children": [] },
+        { "key": "org.ac.conv_mat_info", "action": null, "children": [] },
+        { "key": "org.ac.smart_soc", "action": null, "children": [] }
+      ]
+    }
+  ]
 }
