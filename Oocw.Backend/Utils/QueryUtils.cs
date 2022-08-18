@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
-
+using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
@@ -26,7 +26,22 @@ namespace Oocw.Backend.Utils
             if (dict is BsonDocument)
                 dict = ((BsonDocument)dict).ToDictionary();
             var d = (Dictionary<string, object>)dict;
-            return (string?) d.GetValueOrDefault(lang);
+            if (d.ContainsKey(lang))
+                return (string?)d.GetValueOrDefault(lang);
+            return (string?)d.Values.FirstOrDefault();
+        }
+
+        public static string TryGetLanguage(this ControllerBase ctrl, string def = "ja")
+        {
+            var cookies = ctrl.Request.Cookies;
+            cookies.TryGetValue("lang", out var ret);
+            ret = ret ?? def;
+            return ret;
+        }
+
+        public static void RecordLanguageSettings(this ControllerBase ctrl, string lang = "ja")
+        {
+            ctrl.Response.Cookies.Append("lang", lang);
         }
     }
 }

@@ -12,17 +12,16 @@ namespace Oocw.Backend.Controllers
 {
 
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class CourseInfoController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
+        // var defs
 
         private readonly ILogger<CourseInfoController> _logger;
         private readonly Database.Database _db;
         private readonly FilterDefinitionBuilder<BsonDocument> _f;
+
+        // init
 
         public CourseInfoController(ILogger<CourseInfoController> logger)
         {
@@ -31,14 +30,18 @@ namespace Oocw.Backend.Controllers
             _f = Builders<BsonDocument>.Filter;
         }
 
+        // api
+
         [HttpGet("/api/course/info/{id}")]
-        public ActionResult<string> Info(string id, int? year, string? className)
+        public ActionResult<string> Info(string id, int? year, string? className, string? lang)
         {
             var query = _f.Eq(Definitions.KEY_CODE, id);
             if (className != null)
                 query &= _f.Eq(Definitions.KEY_CLASS_NAME, className);
             if (year != null)
                 query &= _f.Eq(Definitions.KEY_YEAR, year);
+
+            lang = lang ?? this.TryGetLanguage();
 
             var cls = _db.Classes.Find(query).FirstOrDefault();
             var crs = cls != null ? _db.GetCourseInfo(id) : null;
@@ -53,13 +56,15 @@ namespace Oocw.Backend.Controllers
         }
 
         [HttpGet("/api/course/brief/{id}")]
-        public ActionResult<CourseBrief> Brief(string id, int? year, string? className)
+        public ActionResult<CourseBrief> Brief(string id, int? year, string? className, string? lang)
         {
             var query = _f.Eq(Definitions.KEY_CODE, id);
             if (className != null)
                 query &= _f.Eq(Definitions.KEY_CLASS_NAME, className);
             if (year != null)
                 query &= _f.Eq(Definitions.KEY_YEAR, year);
+
+            lang = lang ?? this.TryGetLanguage();
 
             var cls = _db.Classes.Find(query).FirstOrDefault();
             var crs = cls != null ? _db.GetCourseInfo(id) : null;
@@ -69,14 +74,15 @@ namespace Oocw.Backend.Controllers
                 return NotFound();
             }
 
-            return CourseBrief.FromBson(cls, crs).SetLecturers(cls);
+            return CourseBrief.FromBson(cls, crs, lang: lang).SetLecturers(cls, lang: lang, db: _db);
         }
 
         [HttpGet("/api/course/search")]
-        public IEnumerable<CourseBrief> Search(string queryStr, string? restrictions, int? dispCount, int? page, bool byClass = false)
+        public IEnumerable<CourseBrief> Search(string queryStr, string? restrictions, int? dispCount, int? page, bool byClass = false, string? lang = null)
         {
+
             var tokens = QueryUtils.FormSearchKeyWords(queryStr);
-            
+            lang = lang ?? this.TryGetLanguage();
 
             int dCount = (dispCount ?? 0);
             dCount = dCount > 10 ? dCount : 10;
@@ -90,9 +96,31 @@ namespace Oocw.Backend.Controllers
 
             IEnumerable<CourseBrief> ans = crs.ToList().Select(x =>
             {
-                x.TryGetElement(Definitions.KEY_ID, out var id);
-                return CourseBrief.FromBson(x, _db.GetCourseInfo(id.Value.ToString() ?? "")).SetLecturers(x);
+                x.TryGetElement(Definitions.KEY_CODE, out var id);
+                return CourseBrief.FromBson(x, _db.GetCourseInfo(id.Value.ToString() ?? ""), lang: lang).SetLecturers(x, lang: lang, db: _db);
             });
+            return ans;
+        }
+
+        [HttpGet("/api/faculty/{id}")]
+        public ActionResult<FacultyBrief> Faculty(int id, int? dispCount, int? page, string? lang = null)
+        {
+            lang = lang ?? this.TryGetLanguage();
+
+            var dinfo = _db.Faculties.Find(_f.Eq(Definitions.KEY_ID, id)).FirstOrDefault();
+            if (dinfo == null)
+                return NotFound();
+
+            var nameDict = dinfo[Definitions.KEY_NAME].AsBsonDocument.ToDictionary()!;
+
+            var ans = new FacultyBrief()
+            {
+                Name = nameDict.TryGetTranslation(lang) ?? "",
+                Names = new Dictionary<string, string>(nameDict!.Select(x => KeyValuePair.Create(x.Key, x.Value.ToString() ?? "")))
+            };
+
+            // TODO courses by id
+
             return ans;
         }
 
