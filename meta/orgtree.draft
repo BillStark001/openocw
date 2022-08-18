@@ -1,0 +1,87 @@
+org.sos
+	crs.u
+		org.m.u.mth
+		org.m.u.phy
+		org.m.u.chm
+		org.m.u.eps
+		
+	crs.g
+		org.m.g.mth
+		org.m.g.phy
+		org.m.g.chm
+		org.m.g.eps
+		
+org.soe
+	crs.u
+		org.m.u.mec
+		org.m.u.sce
+		org.m.u.eee
+		org.m.u.ict
+		org.m.u.iee
+		
+	crs.g
+		org.m.g.mec
+		org.m.g.sce
+		org.m.g.eee
+		org.m.g.ict
+		org.m.g.iee
+		
+
+org.somct
+	crs.u
+		org.m.u.mat
+		org.m.u.cap
+		
+	crs.g
+		org.m.g.mat
+		org.m.g.cap
+		
+
+org.soc
+	crs.u
+		org.m.u.mcs
+		org.m.u.cse
+		
+	crs.g
+		org.m.g.mcs
+		org.m.g.cse
+		
+
+org.solst
+	org.m.u.lst
+	org.m.g.lst
+
+org.soes
+	crs.u
+		org.m.u.arc
+		org.m.u.cve
+		org.m.u.tse
+		org.m.u.shs
+		
+	crs.g
+		org.m.g.arc
+		org.m.g.cve
+		org.m.g.tse
+		org.m.g.shs
+		org.m.g.isc
+		org.m.g.tim
+		
+
+org.ext.trsdis
+	org.m.g.enr
+	org.m.g.ncl
+	org.m.g.hcb
+	org.m.g.esd
+	org.m.g.art
+	org.m.g.ude
+	org.m.g.els
+	
+
+org.ext.ac
+	org.ac.ldsp
+	org.ac.glb_ldsp
+	org.ac.env_enr_coc
+	org.ac.cmp_ls
+	org.ac.conv_mat_info
+	org.ac.smart_soc
+	org.ac.enr_info
