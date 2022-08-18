@@ -20,5 +20,13 @@ namespace Oocw.Backend.Utils
             string tokens = string.Join(" ", TokenUtils.TokenizeJapanese(inStr));
             return tokens;
         }
+
+        public static string? TryGetTranslation(this object dict, string lang = "ja")
+        {
+            if (dict is BsonDocument)
+                dict = ((BsonDocument)dict).ToDictionary();
+            var d = (Dictionary<string, object>)dict;
+            return (string?) d.GetValueOrDefault(lang);
+        }
     }
 }
