@@ -18,24 +18,36 @@ namespace Oocw.Backend.Schemas
         public string? ClassName { get; set; }
         public IEnumerable<string> Tags { get; set; } = Enumerable.Empty<string>();
         public IEnumerable<Lecturer> Lecturers { get; set; } = Enumerable.Empty<Lecturer>();
-        public string Description { get; set; } = "";
+        public string Description { get; set; } = "No Description.";
         public string? ImageLink { get; set; }
 
 
 
-        public static CourseBrief FromBson(BsonDocument dClass, BsonDocument? dCourse)
+        public static CourseBrief FromBson(BsonDocument dClass, BsonDocument? dCourse = null, string lang = "ja")
         {
-            var dcrs = dCourse != null ? dCourse.ToDictionary() : null;
-            var dcls = dClass.ToDictionary();
             CourseBrief ans = new()
             {
-                Id = (string)dcls[Definitions.KEY_CODE],
-                ClassName = (string)dcls[Definitions.KEY_CLASS_NAME],
+                Id = dClass[Definitions.KEY_CODE].AsString,
+                ClassName = dClass[Definitions.KEY_CLASS_NAME].AsString,
             };
-            if (dcrs != null)
+            if (dCourse != null)
             {
-                ans.Name = dcrs[Definitions.KEY_NAME].TryGetTranslation() ?? "";
+                ans.Name = dCourse[Definitions.KEY_NAME].TryGetTranslation(lang) ?? "";
             }
+
+            // description
+            var sylVer = dClass[Definitions.KEY_SYLLABUS][Definitions.KEY_VERSION].AsString;
+            if (sylVer == Definitions.VAL_VER_RAW)
+            {
+                var rawSyl = dClass[Definitions.KEY_SYLLABUS][sylVer];
+                if (rawSyl.AsBsonDocument.TryGetElement(Definitions.KEY_SYL_DESC, out var rawDesc))
+                {
+                    var desc = rawDesc.Value.TryGetTranslation(lang);
+                    if (!string.IsNullOrWhiteSpace(desc))
+                        ans.Description = desc;
+                }
+            }
+
             return ans;
         }
 
