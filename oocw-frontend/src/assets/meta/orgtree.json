@@ -1,0 +1,190 @@
+{
+  "key": "root",
+  "action": "none",
+  "children": [
+    {
+      "key": "org.sos",
+      "action": "children",
+      "children": [
+        {
+          "key": "crs.u",
+          "action": "children",
+          "children": [
+            { "key": "org.m.u.mth", "action": "self", "children": [] },
+            { "key": "org.m.u.phy", "action": "self", "children": [] },
+            { "key": "org.m.u.chm", "action": "self", "children": [] },
+            { "key": "org.m.u.eps", "action": "self", "children": [] }
+          ]
+        },
+        {
+          "key": "crs.g",
+          "action": "children",
+          "children": [
+            { "key": "org.m.g.mth", "action": "self", "children": [] },
+            { "key": "org.m.g.phy", "action": "self", "children": [] },
+            { "key": "org.m.g.chm", "action": "self", "children": [] },
+            { "key": "org.m.g.eps", "action": "self", "children": [] }
+          ]
+        },
+        { "key": "crs.prof.common", "action": "parent", "children": [] }
+      ]
+    },
+    {
+      "key": "org.soe",
+      "action": "children",
+      "children": [
+        {
+          "key": "crs.u",
+          "action": "children",
+          "children": [
+            { "key": "org.m.u.mec", "action": "self", "children": [] },
+            { "key": "org.m.u.sce", "action": "self", "children": [] },
+            { "key": "org.m.u.eee", "action": "self", "children": [] },
+            { "key": "org.m.u.ict", "action": "self", "children": [] },
+            { "key": "org.m.u.iee", "action": "self", "children": [] }
+          ]
+        },
+        {
+          "key": "crs.g",
+          "action": "children",
+          "children": [
+            { "key": "org.m.g.mec", "action": "self", "children": [] },
+            { "key": "org.m.g.sce", "action": "self", "children": [] },
+            { "key": "org.m.g.eee", "action": "self", "children": [] },
+            { "key": "org.m.g.ict", "action": "self", "children": [] },
+            { "key": "org.m.g.iee", "action": "self", "children": [] }
+          ]
+        },
+        { "key": "crs.prof.common", "action": "parent", "children": [] }
+      ]
+    },
+    {
+      "key": "org.somct",
+      "action": "children",
+      "children": [
+        {
+          "key": "crs.u",
+          "action": "children",
+          "children": [
+            { "key": "org.m.u.mat", "action": "self", "children": [] },
+            { "key": "org.m.u.cap", "action": "self", "children": [] }
+          ]
+        },
+        {
+          "key": "crs.g",
+          "action": "children",
+          "children": [
+            { "key": "org.m.g.mat", "action": "self", "children": [] },
+            { "key": "org.m.g.cap", "action": "self", "children": [] }
+          ]
+        },
+        { "key": "crs.prof.common", "action": "parent", "children": [] }
+      ]
+    },
+    {
+      "key": "org.soc",
+      "action": "children",
+      "children": [
+        {
+          "key": "crs.u",
+          "action": "children",
+          "children": [
+            { "key": "org.m.u.mcs", "action": "self", "children": [] },
+            { "key": "org.m.u.cse", "action": "self", "children": [] }
+          ]
+        },
+        {
+          "key": "crs.g",
+          "action": "children",
+          "children": [
+            { "key": "org.m.g.mcs", "action": "self", "children": [] },
+            { "key": "org.m.g.cse", "action": "self", "children": [] }
+          ]
+        },
+        { "key": "crs.prof.common", "action": "parent", "children": [] }
+      ]
+    },
+    {
+      "key": "org.solst",
+      "action": "children",
+      "children": [
+        { "key": "org.m.u.lst", "action": "self", "children": [] },
+        { "key": "org.m.g.lst", "action": "self", "children": [] },
+        { "key": "crs.prof.common", "action": "parent", "children": [] }
+      ]
+    },
+    {
+      "key": "org.soes",
+      "action": "children",
+      "children": [
+        {
+          "key": "crs.u",
+          "action": "children",
+          "children": [
+            { "key": "org.m.u.arc", "action": "self", "children": [] },
+            { "key": "org.m.u.cve", "action": "self", "children": [] },
+            { "key": "org.m.u.tse", "action": "self", "children": [] },
+            { "key": "org.m.u.shs", "action": "self", "children": [] }
+          ]
+        },
+        {
+          "key": "crs.g",
+          "action": "children",
+          "children": [
+            { "key": "org.m.g.arc", "action": "self", "children": [] },
+            { "key": "org.m.g.cve", "action": "self", "children": [] },
+            { "key": "org.m.g.tse", "action": "self", "children": [] },
+            { "key": "org.m.g.shs", "action": "self", "children": [] },
+            { "key": "org.m.g.isc", "action": "self", "children": [] },
+            { "key": "org.m.g.tim", "action": "self", "children": [] }
+          ]
+        },
+        { "key": "crs.prof.common", "action": "parent", "children": [] }
+      ]
+    },
+    {
+      "key": "org.ext.trsdis",
+      "action": "children",
+      "children": [
+        { "key": "org.m.g.enr", "action": "self", "children": [] },
+        { "key": "org.m.g.ncl", "action": "self", "children": [] },
+        { "key": "org.m.g.hcb", "action": "self", "children": [] },
+        { "key": "org.m.g.esd", "action": "self", "children": [] },
+        { "key": "org.m.g.art", "action": "self", "children": [] },
+        { "key": "org.m.g.ude", "action": "self", "children": [] },
+        { "key": "org.m.g.els", "action": "self", "children": [] }
+      ]
+    },
+    {
+      "key": "org.ext.ac",
+      "action": "children",
+      "children": [
+        { "key": "org.ac.ldsp", "action": "self", "children": [] },
+        { "key": "org.ac.glb_ldsp", "action": "self", "children": [] },
+        { "key": "org.ac.env_enr_coc", "action": "self", "children": [] },
+        { "key": "org.ac.cmp_ls", "action": "self", "children": [] },
+        { "key": "org.ac.conv_mat_info", "action": "self", "children": [] },
+        { "key": "org.ac.smart_soc", "action": "self", "children": [] }
+      ]
+    },
+    {
+      "key": "crs.la",
+      "action": "children",
+      "children": [
+        { "key": "crs.la.la", "action": "self", "children": [] },
+        { "key": "crs.la.en", "action": "self", "children": [] },
+        { "key": "crs.la.sfl", "action": "self", "children": [] },
+        { "key": "crs.la.jp", "action": "self", "children": [] },
+        { "key": "crs.la.edu", "action": "self", "children": [] },
+        { "key": "crs.la.car", "action": "self", "children": [] },
+        { "key": "crs.la.brd", "action": "self", "children": [] },
+        { "key": "crs.la.se", "action": "self", "children": [] }
+      ]
+    },
+    {
+      "key": "meta.uncat",
+      "action": "uncat",
+      "children": []
+    }
+  ]
+}

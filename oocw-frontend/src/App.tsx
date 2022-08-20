@@ -5,20 +5,38 @@ import './general.css';
 import NavBar from './controls/NavBar';
 import PageFrame from './pages/PageFrame';
 import Footer from './controls/Footer';
+import navList from './assets/meta/orgtree.json'
 
 import { useTranslation, withTranslation } from 'react-i18next';
+import { NavList, NavNode } from './controls/NavList';
 
 function App() {
   const {t} = useTranslation();
+  const nList = navList as NavNode;
+  const nListRendered = <NavList root={nList}>
+
+  </NavList>
+
   return (
     <>
     <NavBar page={0}>
       <div>test notice</div>
 
     </NavBar>
+    
     <PageFrame
-      left={<div>left</div>}
+      left={
+      <div>
+        left
+        {nListRendered}
+      </div>
+    }
       right={<div>right</div>}
+      top={
+        <div style={{height: "200px"}}>
+      some sort of banner? 114514
+    </div>
+      }
     >
       <div className="App">
       <header className="App-header">
@@ -43,75 +61,7 @@ function App() {
       <div>test</div>
       <div>test</div>
       <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
+      
       <div>test</div>
       <div>test</div>
       <div>test</div>

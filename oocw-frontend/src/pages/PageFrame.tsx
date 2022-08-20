@@ -66,10 +66,7 @@ class PageFrame extends React.Component<PageContent> {
 
             {row > 1 ?
               <div id="pf-left" style={Object.assign(generateFloatingStyle(this.state.floatState), { width: row === 2 ? sizeLR : sizeL })}>
-
-                {this.state.width}<br />
-                {this.state.height}<br />
-                {this.state.y}<br />
+                
                 {this.props.left}
                 {row === 2 ? <><br />{this.props.right}</> : null}
               </div>

@@ -22,11 +22,16 @@ if __name__ == '__main__':
       f.fillna('')
       cols = [c for c in f if c != 'key']
       for i, r in f.iterrows():
+        if isinstance(r['key'], float) and np.isnan(r['key']):
+          continue
         k = str(r['key']).replace(' ', '')
         if k == '':
           continue
         for col in cols:
-          d[col][k] = str(r[col]) if r[col] is not float or not np.isnan(r[col]) else ''
+          if not isinstance(r[col], float) or not np.isnan(r[col]):
+            d[col][k] = str(r[col])
+          
+          
     for lang in d:
       json.dump(d[lang], open(file + '/' + lang + '.json', 'w'))
     
