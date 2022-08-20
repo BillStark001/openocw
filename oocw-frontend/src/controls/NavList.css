@@ -1,0 +1,32 @@
+#navlist {
+    font-size: 16px;
+    position: relative;
+    list-style: none;
+}
+
+#navlist ul {
+    list-style: none;
+}
+
+#navlist a {
+    text-decoration: none;
+    padding: 4px;
+    margin: 4px;
+    border: 4px;
+}
+
+#navlist ul .list-item {
+    position: relative;
+    left: 10px;
+}
+
+#navlist .list-root {
+    position: relative;
+    height: max-content;
+}
+
+#navlist ul
+#navlist li {
+    padding: 4px;
+    margin: 4px;    
+}

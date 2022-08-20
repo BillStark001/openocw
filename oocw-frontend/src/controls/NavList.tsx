@@ -29,9 +29,9 @@ class NavList extends React.Component<NavListInfo> {
     const href = `api/list?key=${node.key}&action=${node.action}`;
     // TODO assign proper address
     return <>
-      <li>
+      <li className="list-item">
         <a href={href}>{t(node.key)}</a>
-        <ul>
+        <ul className="list-root">
           {children}
         </ul>
       </li>
