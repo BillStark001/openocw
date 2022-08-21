@@ -1,7 +1,7 @@
 .page-frame {
   height: 100%;
   width: 100%;
-  
+
   align-items: center;
   position: relative;
   display: flex;
@@ -17,26 +17,31 @@
 
 .page-frame #pf-bottom {
   width: 100%;
-  float:bottom;
+  float: bottom;
 }
 
 .page-frame #pf-inner {
   max-width: 1440px;
   width: 100%;
   position: relative;
-  height:auto;
+  height: auto;
   display: flex;
   flex-direction: row;
 }
 
 .page-frame #pf-left {
-  width: 300px;
+  position: sticky;
+  top: 100px;
+  align-self: start;
 }
 
 .page-frame #pf-middle {
   width: auto;
+  position: relative;
 }
 
 .page-frame #pf-right {
-  width: 300px;
+  position: sticky;
+  top: 100px;
+  align-self: start;
 }

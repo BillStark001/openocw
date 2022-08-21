@@ -27,7 +27,6 @@ function App() {
     <PageFrame
       left={
       <div>
-        left
         {nListRendered}
       </div>
     }

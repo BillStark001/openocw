@@ -1,7 +1,9 @@
 #navlist {
     font-size: 16px;
-    position: relative;
+    position: sticky;
+    top: 0;
     list-style: none;
+    background-color: gray;
 }
 
 #navlist ul {
@@ -21,7 +23,7 @@
 }
 
 #navlist .list-root {
-    position: relative;
+    position: absolute;
     height: max-content;
 }
 

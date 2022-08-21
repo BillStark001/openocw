@@ -12,15 +12,6 @@ enum PanelState {
   Top = 0, Middle = 1, Bottom = 2
 }
 
-function generateFloatingStyle(state: PanelState): React.CSSProperties {
-  if (state === PanelState.Top)
-    return { position: "static" };
-  else if (state === PanelState.Bottom)
-    return { position: "absolute", bottom: "0px" };
-  else
-    return { position: "fixed", top: "0px" };
-}
-
 interface PageContent {
   left?: JSX.Element,
   children?: JSX.Element | JSX.Element[],
@@ -65,7 +56,7 @@ class PageFrame extends React.Component<PageContent> {
           <div ref={(e) => { this.element = e; }} id="pf-inner">
 
             {row > 1 ?
-              <div id="pf-left" style={Object.assign(generateFloatingStyle(this.state.floatState), { width: row === 2 ? sizeLR : sizeL })}>
+              <div id="pf-left" style={{ width: row === 2 ? sizeLR : sizeL }}>
                 
                 {this.props.left}
                 {row === 2 ? <><br />{this.props.right}</> : null}
@@ -81,7 +72,7 @@ class PageFrame extends React.Component<PageContent> {
             </div>
             {
               row === 3 ?
-                <div id="pf-right" style={generateFloatingStyle(this.state.floatState)}>
+                <div id="pf-right" style={{}}>
                   {this.props.right}
                 </div>
                 : null
