@@ -23,9 +23,23 @@
 }
 
 #navlist .list-root {
-    position: absolute;
+    position: relative;
     height: max-content;
 }
+
+#navlist details > summary::marker{
+    content: '＋';
+}
+
+#navlist details[open] > summary::marker{
+    content: '－';
+}
+
+#navlist details.unmarked > summary::marker{
+    content: '　';
+}
+
+
 
 #navlist ul
 #navlist li {

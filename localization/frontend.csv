@@ -47,3 +47,6 @@ flt.sel.lvl,Level,番台,课程等级（番台）
 flt.sel.lang,Language,言語,语言
 flt.sel.kw.name,Keywords(Course Name),キーワード（科目名）,关键词（科目）
 flt.sel.kw.lect,Keywords(Lecturer Name),キーワード（講師名）,关键词（讲师）
+,,,
+pos.current,Currently at: ,現在位置：,当前位于：
+pos.root,Home,ホーム,主页

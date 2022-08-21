@@ -38,6 +38,7 @@
 .page-frame #pf-middle {
   width: auto;
   position: relative;
+  min-height: 100vh;
 }
 
 .page-frame #pf-right {

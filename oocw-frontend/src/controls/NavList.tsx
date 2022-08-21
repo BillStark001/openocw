@@ -13,34 +13,46 @@ export interface NavNode {
 export interface NavListInfo extends WithTranslation {
   root: NavNode,
   children?: JSX.Element | JSX.Element[],
+  selected?: string[]
 }
 
 class NavList extends React.Component<NavListInfo> {
 
 
   state = {
-    selected: "none"
+    selected: this.props.selected || []
   }
 
-  renderSub(node: NavNode): JSX.Element {
+  renderSub(node: NavNode, depth: number = 0, selected: boolean = false): JSX.Element {
     const {t} = this.props;
     const children: JSX.Element[] = [];
-    node.children.forEach(x => children.push(this.renderSub(x)))
+    node.children.forEach(x => children.push(
+      this.renderSub(
+        x, 
+        depth + 1, 
+        x.key === this.state.selected[depth]
+        )
+      ));
     const href = `api/list?key=${node.key}&action=${node.action}`;
     // TODO assign proper address
     return <>
       <li className="list-item">
-        <a href={href}>{t(node.key)}</a>
-        <ul className="list-root">
-          {children}
-        </ul>
+        <details className={children.length === 0 ? "unmarked" : ""} open={selected}>
+          <summary>
+          <a href={href}>{t(node.key)}</a>
+          </summary>
+          <ul className="list-root">
+            {children}
+          </ul>
+        </details>
+        
       </li>
     </>
   }
 
   render() {
     const rChs: JSX.Element[] = [];
-    this.props.root.children.forEach(x => rChs.push(this.renderSub(x)));
+    this.props.root.children.forEach(x => rChs.push(this.renderSub(x, 1, x.key === this.state.selected[0])));
     return <>
       <ul id="navlist">
         {rChs}
