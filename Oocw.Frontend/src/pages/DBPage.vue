@@ -1,6 +1,6 @@
 <template>
   <PageFrame>
-    <img src="@/assets/img/banner.jpg" class="banner">
+    <PageBanner/>
     <RouteDisplay></RouteDisplay>
     <p>Stats Page</p>
     <NavList source="@/assets/orgtree.json"></NavList>
@@ -13,6 +13,7 @@ import { useI18n } from 'vue-i18n'
 import PageFrame from '../components/PageFrame.vue'
 import RouteDisplay from '@/components/RouteDisplay.vue';
 import NavList from '@/components/NavList.vue';
+import PageBanner from '@/components/lesser/PageBanner.vue';
 
 export default defineComponent({
   name: "DBPage",
@@ -24,11 +25,12 @@ export default defineComponent({
     // Something todo ..
     return { t };
   },
-  components: { 
-    PageFrame, 
-    RouteDisplay, 
-    NavList, 
-  },
+  components: {
+    PageFrame,
+    RouteDisplay,
+    NavList,
+    PageBanner
+},
   methods: {
 
   }

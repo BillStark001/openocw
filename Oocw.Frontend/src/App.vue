@@ -5,14 +5,12 @@
     </NavBar>
     <div id="bg"></div>
     <router-view></router-view>
-    <PageFooter></PageFooter>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 import NavBar from './components/NavBar.vue';
-import PageFooter from './components/PageFooter.vue';
 import { useI18n } from './i18n';
 import { Settings } from './utils/settings';
 
@@ -33,7 +31,6 @@ export default defineComponent({
   },
   components: {
     NavBar,
-    PageFooter,
   }, 
   methods: {
     updateDarkMode(): string {

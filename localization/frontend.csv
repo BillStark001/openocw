@@ -11,12 +11,12 @@ navbar.user,User,ユーザー,用户
 searchbar.search,Search,検索,搜索
 searchbar.search.hint,Type to search,科目名・講師名・シラバス内容検索,根据科目、讲师、关键词等搜索
 ,,,
-hp.search.hint,Search by: ,,按：
+hp.search.hint,Search by: , ,按：
 hp.search.kw,Keywords,キーワード,关键词
 hp.search.faculty,Faculty,教員,讲师
 hp.search.code,Course Code,科目コード,科目编号
 hp.search.name,Course Name,科目名,科目名称
-hp.search.hint.rear,,で探す,搜索
+hp.search.hint.rear, ,で探す,搜索
 ,,,
 flt.name,Filterer,条件で探す,筛选工具
 ,,,

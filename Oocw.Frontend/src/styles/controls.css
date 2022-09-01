@@ -1,7 +1,7 @@
 /* shading styles*/
 
 .s-main {
-  background-color: var(--color-s-main-light);
+  background-color: var(--color-s-main-light-2);
   border: 1px solid var(--color-s-main-dark-2);
 }
 
@@ -12,7 +12,7 @@
 }
 
 .s-main.h:hover {
-  background-color: var(--color-s-main-light-2);
+  background-color: var(--color-s-main-light-3);
 }
 .dark-mode.s-main:hover,
 .dark-mode .s-main:hover {
@@ -74,6 +74,7 @@
   border-radius: 5px;
 }
 
+/* panels */
 
 .blurred-panel {
   color: var(--color-txt1);
@@ -89,8 +90,4 @@
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-}
-
-.banner {
-  width: 100%; display: block;
 }

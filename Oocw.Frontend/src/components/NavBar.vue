@@ -162,7 +162,7 @@ export default defineComponent({
     }
 
   },
-  props: ['notice']
+  props: []
 });
 
 

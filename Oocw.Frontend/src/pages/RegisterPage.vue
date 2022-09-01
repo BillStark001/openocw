@@ -2,14 +2,13 @@
   <div id="locator">
     <RegisterPanel />
   </div>
-  <div id="placeholder">
-
-  </div>
+  <PageFooter static="true"></PageFooter>
 </template>
 
 <script lang="ts">
 import RegisterPanel from '@/components/RegisterPanel.vue';
 import { defineComponent } from 'vue';
+import PageFooter from '@/components/lesser/PageFooter.vue';
 
 export default defineComponent({
   data() {
@@ -20,19 +19,16 @@ export default defineComponent({
   },
   components: {
     RegisterPanel,
-  }
+    PageFooter
+}
 })
 </script>
 
-<style>
+<style scoped>
 #locator {
   position: fixed;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-}
-#placeholder {
-  height: calc(100vh - var(--navbar-height) - var(--footer-height));
-  display: block;
 }
 </style>

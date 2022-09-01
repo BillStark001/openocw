@@ -1,6 +1,6 @@
 <template>
   <PageFrame>
-    <img src="@/assets/img/banner.jpg" class="banner">
+    <PageBanner/>
     <div>
 
       <p>{{ t('product.name') }}</p>
@@ -12,6 +12,7 @@
       
     </div>
   </PageFrame>
+  <PageFooter/>
 </template>
 
 <script lang="ts">
@@ -19,6 +20,8 @@ import { defineComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Settings } from '@/utils/settings';
 import PageFrame from '../components/PageFrame.vue'
+import PageBanner from '@/components/lesser/PageBanner.vue';
+import PageFooter from '@/components/lesser/PageFooter.vue';
 
 export default defineComponent({
     name: "InfoPage",
@@ -30,7 +33,11 @@ export default defineComponent({
         // Something todo ..
         return { t };
     },
-    components: { PageFrame }, 
+    components: { 
+      PageFrame, 
+      PageBanner, 
+      PageFooter 
+    }, 
     methods: {
       changeDarkMode() {
         (this.$root as any).setDarkMode(!Settings.darkMode);
