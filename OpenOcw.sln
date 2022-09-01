@@ -9,6 +9,10 @@ Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "oocw.frontend", "Oocw.Front
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Oocw.Database", "Oocw.Database\Oocw.Database.csproj", "{4E8F5DDC-5DE9-4A62-9B77-3CDBFEDD89F1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oocw.Query", "Oocw.Query\Oocw.Query.csproj", "{36612EA3-695D-4472-8766-2A92F73C1762}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oocw.Tests", "Oocw.Tests\Oocw.Tests.csproj", "{C85A308E-180C-4696-A27A-6AEAB3ED5505}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +33,14 @@ Global
 		{4E8F5DDC-5DE9-4A62-9B77-3CDBFEDD89F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E8F5DDC-5DE9-4A62-9B77-3CDBFEDD89F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4E8F5DDC-5DE9-4A62-9B77-3CDBFEDD89F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36612EA3-695D-4472-8766-2A92F73C1762}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36612EA3-695D-4472-8766-2A92F73C1762}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36612EA3-695D-4472-8766-2A92F73C1762}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36612EA3-695D-4472-8766-2A92F73C1762}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C85A308E-180C-4696-A27A-6AEAB3ED5505}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C85A308E-180C-4696-A27A-6AEAB3ED5505}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C85A308E-180C-4696-A27A-6AEAB3ED5505}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C85A308E-180C-4696-A27A-6AEAB3ED5505}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
