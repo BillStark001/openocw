@@ -5,6 +5,10 @@ VisualStudioVersion = 17.3.32804.467
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Oocw.Backend", "Oocw.Backend\Oocw.Backend.csproj", "{04F81866-82FD-49EB-B7ED-53EE7490973F}"
 EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "oocw.frontend", "Oocw.Frontend\oocw.frontend.esproj", "{B0189B58-3C67-4678-87C0-0A4556C5C678}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Oocw.Database", "Oocw.Database\Oocw.Database.csproj", "{4E8F5DDC-5DE9-4A62-9B77-3CDBFEDD89F1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,16 @@ Global
 		{04F81866-82FD-49EB-B7ED-53EE7490973F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04F81866-82FD-49EB-B7ED-53EE7490973F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04F81866-82FD-49EB-B7ED-53EE7490973F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0189B58-3C67-4678-87C0-0A4556C5C678}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0189B58-3C67-4678-87C0-0A4556C5C678}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0189B58-3C67-4678-87C0-0A4556C5C678}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{B0189B58-3C67-4678-87C0-0A4556C5C678}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0189B58-3C67-4678-87C0-0A4556C5C678}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0189B58-3C67-4678-87C0-0A4556C5C678}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{4E8F5DDC-5DE9-4A62-9B77-3CDBFEDD89F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E8F5DDC-5DE9-4A62-9B77-3CDBFEDD89F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E8F5DDC-5DE9-4A62-9B77-3CDBFEDD89F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E8F5DDC-5DE9-4A62-9B77-3CDBFEDD89F1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

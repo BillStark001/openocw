@@ -1,0 +1,16 @@
+﻿key,en,ja-JP,zh-CN
+reg.title,Register or Login,アカウントログイン,注册或登录账号
+login.title,Login,ログイン,登录
+f.uname,UserName: ,ユーザー名,用户名
+f.pwd,Password: ,パスワード,密码
+f.vcode,Verification Code:,認証コート,验证码
+f.uname.hint,username,ユーザー名,输入用户名
+f.pwd.hint,password,パスワード,输入密码
+f.vcode.hint,code,認証コート,输入验证码
+hint.restr,"The account name and password must contain at least six letters, digits, or symbols.",ユーザー名とパスワードは6桁以上のアルファベット、数字、または記号で構成されていなければなりません。,用户名和密码必须由6位及以上英文字母、数字或符号组成。
+hint.code,Code: ,コード：,代码：
+hint.info,Info: ,提示：,信息：
+hint.requesting,Requesting......,請求中……,正在请求后端……
+btn.reg,Register,登録,注册
+btn.login,Login,ログイン,登录
+btn.reset,Reset,リセット,重置

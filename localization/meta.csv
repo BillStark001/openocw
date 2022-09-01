@@ -3,7 +3,8 @@ lang.name,English,日本語,中文（大陆简体）
 lang.en,English,英語,英文
 lang.ja-JP,Japanese,日本語,日文
 lang.zh-CN,Chinese(Simplified),中国語（簡体字）,中文（大陆简体）
-,,,
+lang.detect,Follow System,システムの設定と一致,与系统一致
+lang.current,Current: ,現在：,正在使用：
 ,,,
 id.bachelor,Bachelor,学士,学士
 id.master,Master,修士,硕士
@@ -12,7 +13,7 @@ id.master.prof,Professional master,,专业硕士
 id.student,Student,学生,学生
 id.faculty,Faculty,教員,教职员工
 ,,,
-,,,
+notice.intest.shorter,"Note: At present, this service is still in the development stage, do not guarantee the security of information, the stability of the service!",注意:本サービスはまだ開発段階にあり、情報の安全性、サービスの安定性を保証するものではありません。,注意：目前本服务仍处于开发阶段，不保证信息的安全性、服务的稳定性！
 ,,,
 meta.uncat,Uncategorized,未分類,未分类
 ,,,

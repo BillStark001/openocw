@@ -7,7 +7,7 @@ navbar.homepage,Home,ホール,主页
 navbar.database,Database,データベース,数据库
 navbar.discussion,Discussion,ディスカッション,讨论
 navbar.info,Info.,お問い合わせ,信息
-,,,
+navbar.user,User,ユーザー,用户
 searchbar.search,Search,検索,搜索
 searchbar.search.hint,Type to search,科目名・講師名・シラバス内容検索,根据科目、讲师、关键词等搜索
 ,,,
@@ -50,3 +50,4 @@ flt.sel.kw.lect,Keywords(Lecturer Name),キーワード（講師名）,关键词
 ,,,
 pos.current,Currently at: ,現在位置：,当前位于：
 pos.root,Home,ホーム,主页
+pos.db,Database,データベース,数据库
