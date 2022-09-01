@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oocw.Query", "Oocw.Query\Oo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oocw.Tests", "Oocw.Tests\Oocw.Tests.csproj", "{C85A308E-180C-4696-A27A-6AEAB3ED5505}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oocw.Test", "Oocw.Test\Oocw.Test.csproj", "{6D79232F-EAD4-49B9-8BD5-C383E4494AF9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,10 @@ Global
 		{C85A308E-180C-4696-A27A-6AEAB3ED5505}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C85A308E-180C-4696-A27A-6AEAB3ED5505}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C85A308E-180C-4696-A27A-6AEAB3ED5505}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D79232F-EAD4-49B9-8BD5-C383E4494AF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D79232F-EAD4-49B9-8BD5-C383E4494AF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D79232F-EAD4-49B9-8BD5-C383E4494AF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D79232F-EAD4-49B9-8BD5-C383E4494AF9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
