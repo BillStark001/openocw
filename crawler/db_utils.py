@@ -80,9 +80,9 @@ def build_db_scheme(
   }
   notes = {}
   cls[KEY_SYLLABUS][KEY_VERSION] = VAL_VER_RAW
-  cls[KEY_SYLLABUS][VAL_VER_RAW] = syl
+  cls[KEY_SYLLABUS][KEY_ITEMS][VAL_VER_RAW] = syl
   cls[KEY_NOTES][KEY_VERSION] = VAL_VER_RAW
-  cls[KEY_NOTES][VAL_VER_RAW] = notes
+  cls[KEY_NOTES][KEY_ITEMS][VAL_VER_RAW] = notes
   cls[KEY_META][KEY_OCW_ID] = ocw_id
   
   syl_parsed = False
@@ -149,7 +149,7 @@ def build_db_scheme(
         
     if not syl_parsed:
       cls[KEY_SYLLABUS][KEY_VERSION] = VAL_VER_NONE
-      del cls[KEY_SYLLABUS][VAL_VER_RAW]
+      del cls[KEY_SYLLABUS][KEY_ITEMS][VAL_VER_RAW]
     
   
   return info, cls

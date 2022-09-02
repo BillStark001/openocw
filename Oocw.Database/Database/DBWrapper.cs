@@ -24,11 +24,11 @@ public class DBWrapper
     public IMongoCollection<User> Users => _users;
     public IMongoCollection<Relationship> Relations => _relations;
 
-    protected IMongoCollection<BsonDocument> _classes;
+    protected IMongoCollection<Class> _classes;
     protected IMongoCollection<Course> _courses;
     protected IMongoCollection<Faculty> _faculties;
 
-    public IMongoCollection<BsonDocument> Classes => _classes;
+    public IMongoCollection<Class> Classes => _classes;
     public IMongoCollection<Course> Courses => _courses;
     public IMongoCollection<Faculty> Faculties => _faculties;
 
@@ -64,7 +64,7 @@ public class DBWrapper
         _users = _database.GetCollection<User>(Definitions.COL_USER_NAME);
         _relations = _database.GetCollection<Relationship>(Definitions.COL_REL_NAME);
 
-        _classes = _database.GetCollection<BsonDocument>(Definitions.COL_CLASS_NAME);
+        _classes = _database.GetCollection<Class>(Definitions.COL_CLASS_NAME);
         _courses = _database.GetCollection<Course>(Definitions.COL_COURSE_NAME);
         _faculties = _database.GetCollection<Faculty>(Definitions.COL_FACULTY_NAME);
 

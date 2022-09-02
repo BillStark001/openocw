@@ -27,7 +27,11 @@ public class Definitions
     public const string KEY_UPD_TIME_NOTES = "updNts";
 
     public const string KEY_SEARCH_REC = "srec";
+    public const string KEY_SEARCH_SCORE = "sscore";
     public const string KEY_ACCESS_RANK = "acrk";
+
+    public const string MetaTextScoreTarget = $"{KEY_META}.{KEY_SEARCH_SCORE}";
+    public const string MetaTextRecordTarget = $"{KEY_META}.{KEY_SEARCH_REC}";
 
 
     public const string KEY_ID_RAW = "_id";
@@ -68,10 +72,25 @@ public class Definitions
 
     public const string KEY_SYLLABUS = "syl";
     public const string KEY_VERSION = "ver";
+    public const string KEY_ITEMS = "items";
     public const string VAL_VER_NONE = "none";
     public const string VAL_VER_RAW = "raw";
     public const string VAL_VER_PARSED = "parsed";
     public const string KEY_NOTES = "notes";
+
+    // address
+
+    public const string KEY_ADDR_TYPE = "type";
+    public const int VAL_TYPE_NONE = 0;
+    public const int VAL_TYPE_NORMAL = 1;
+    public const int VAL_TYPE_SPECIAL = 2;
+    public const int VAL_TYPE_UNKNOWN = 3;
+    public const string KEY_ADDR_TIME = "time";
+    public const string KEY_ADDR_LOCATION = "loc";
+    public const string KEY_ADDR_DESC = "desc";
+    public const string KEY_ADDR_DAY = "day";
+    public const string KEY_ADDR_START = "start";
+    public const string KEY_ADDR_END = "end";
 
     // syllabus related
 

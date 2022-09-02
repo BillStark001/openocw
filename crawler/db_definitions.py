@@ -13,6 +13,7 @@ KEY_UPD_TIME_SYL = 'updSyl'
 KEY_UPD_TIME_NOTES = 'updNts'
 
 KEY_SEARCH_REC = 'srec'
+KEY_SEARCH_SCORE = "sscore"
 KEY_ACCESS_RANK = 'acrk'
 
 # universal
@@ -39,10 +40,25 @@ KEY_LANGUAGE = 'lang'
 
 KEY_SYLLABUS = 'syl'
 KEY_VERSION = 'ver'
+KEY_ITEMS = "items"
 VAL_VER_NONE = 'none'
 VAL_VER_RAW = 'raw'
 VAL_VER_PARSED = 'parsed'
 KEY_NOTES = 'notes'
+
+# addr
+
+KEY_ADDR_TYPE = "type"
+VAL_TYPE_NONE = 0
+VAL_TYPE_NORMAL = 1
+VAL_TYPE_SPECIAL = 2
+VAL_TYPE_UNKNOWN = 3
+KEY_ADDR_TIME = "time"
+KEY_ADDR_LOCATION = "loc"
+KEY_ADDR_DESC = "desc"
+KEY_ADDR_DAY = "day"
+KEY_ADDR_START = "start"
+KEY_ADDR_END = "end"
 
 # syllabus related
 
@@ -76,6 +92,22 @@ def form_faculty_scheme() -> Dict[str, Any]:
   ans[KEY_CONTACT] = {}
   return ans
 
+def form_address_scheme() -> Dict[str, Any]:
+  ans = {}
+  ans[KEY_ADDR_TYPE] = 0
+  ans[KEY_ADDR_LOCATION] = ""
+  ans[KEY_ADDR_TIME] = {
+    # place nothing
+  }
+  return ans
+  
+def form_version_field() -> Dict[str, Any]:
+  ans = {
+    KEY_VERSION: VAL_VER_NONE, 
+    KEY_ITEMS: {}
+  }
+  return ans
+
 def form_basic_record_scheme() -> Dict[str, Any]:
   
   ans = {KEY_META: {}}
@@ -106,6 +138,7 @@ def form_class_record_scheme() -> Dict[str, Any]:
   cls_meta[KEY_UPD_TIME] = time_id()
   cls_meta[KEY_UPD_TIME_NOTES] = time_id()
   cls_meta[KEY_UPD_TIME_SYL] = time_id()
+  cls_meta[KEY_SEARCH_REC] = []
 
   cls[KEY_YEAR] = 1970
   cls[KEY_CODE] = ''
@@ -116,12 +149,8 @@ def form_class_record_scheme() -> Dict[str, Any]:
   cls[KEY_ADDRESS] = []
   cls[KEY_LANGUAGE] = []
 
-  cls[KEY_SYLLABUS] = {
-    KEY_VERSION: VAL_VER_NONE
-  }
-  cls[KEY_NOTES] = {
-    KEY_VERSION: VAL_VER_NONE
-  }
+  cls[KEY_SYLLABUS] = form_version_field()
+  cls[KEY_NOTES] = form_version_field()
   
   return cls
 

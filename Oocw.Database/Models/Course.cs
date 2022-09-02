@@ -16,8 +16,14 @@ public class Course
         [BsonElement(Definitions.KEY_ACCESS_RANK)]
         public double AccessRank { get; private set; }
 
+
         [BsonElement(Definitions.KEY_SEARCH_REC)]
         public IEnumerable<string> SearchRecord { get; private set; } = null!;
+
+        [BsonElement(Definitions.KEY_SEARCH_SCORE)]
+        [BsonIgnoreIfNull]
+        public double? SeacrhScore { get; private set; } = null!;
+
 
         [BsonElement(Definitions.KEY_UPD_TIME)]
         [BsonDateTimeOptions(Kind = DateTimeKind.Local)]

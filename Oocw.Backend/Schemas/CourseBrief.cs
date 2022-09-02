@@ -54,12 +54,12 @@ public class CourseBrief
         return ans;
     }
 
-    public static CourseBrief FromBson2(BsonDocument dClass, Course? dCourse = null, string lang = "ja")
+    public static CourseBrief FromBson2(Class dClass, Course? dCourse = null, string lang = "ja")
     {
         CourseBrief ans = new()
         {
-            Id = dClass[Definitions.KEY_CODE].AsString,
-            ClassName = dClass[Definitions.KEY_CLASS_NAME].AsString,
+            Id = dClass.Code, 
+            ClassName = dClass.ClassName
         };
         if (dCourse != null)
         {
@@ -67,11 +67,10 @@ public class CourseBrief
         }
 
         // description
-        var sylVer = dClass[Definitions.KEY_SYLLABUS][Definitions.KEY_VERSION].AsString;
-        if (sylVer == Definitions.VAL_VER_RAW)
+        if (dClass.Syllabus.Version == Definitions.VAL_VER_RAW)
         {
-            var rawSyl = dClass[Definitions.KEY_SYLLABUS][sylVer];
-            if (rawSyl.AsBsonDocument.TryGetElement(Definitions.KEY_SYL_DESC, out var rawDesc))
+            var rawSyl = dClass.Syllabus.TryGetCurrentVersion()!;
+            if (rawSyl.TryGetElement(Definitions.KEY_SYL_DESC, out var rawDesc))
             {
                 var desc = rawDesc.Value.TryGetTranslation(lang);
                 if (!string.IsNullOrWhiteSpace(desc))
@@ -92,5 +91,10 @@ public class CourseBrief
     {
         dClass.TryGetElement(Definitions.KEY_LECTURERS, out var lecturers);
         return SetLecturers(db.GetFacultyNames(lecturers.Value.AsBsonArray.Values.Select(x => x.BsonType == BsonType.Int32 || x.BsonType == BsonType.Int64 ? x.ToInt32() : -1), lang));
+    }
+
+    public CourseBrief SetLecturers(Class dClass, DBWrapper db, string lang = "ja")
+    {
+        return SetLecturers(db.GetFacultyNames(dClass.Lecturers, lang));
     }
 }

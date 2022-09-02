@@ -45,15 +45,17 @@ public class SearchController : ControllerBase
         lang = lang ?? this.TryGetLanguage();
         var (dCount, dPage) = QueryUtils.GetPageInfo(dispCount, page);
 
-        var query = Builders<BsonDocument>.Filter.Text(tokens);
+        var query = Builders<Class>.Filter.Text(tokens);
+        var projection = Builders<Class>.Projection.MetaTextScore(Definitions.MetaTextScoreTarget);
+        var sort = Builders<Class>.Sort.MetaTextScore(Definitions.MetaTextScoreTarget);
 
         // TODO target db!
-        var cls = _db.Wrapper.Classes.Find(query).Skip(dPage * dCount - dPage).Limit(dCount);
+        var cls = _db.Wrapper.Classes.Find(query).Project<Class>(projection).Sort(sort);
+        cls = cls.Skip(dPage * dCount - dPage).Limit(dCount);
 
         IEnumerable<CourseBrief> ans = cls.ToList().Select(x =>
         {
-            x.TryGetElement(Definitions.KEY_CODE, out var id);
-            return CourseBrief.FromBson2(x, _db.Wrapper.GetCourseInfo(id.Value.ToString() ?? ""), lang: lang).SetLecturers(x, lang: lang, db: _db.Wrapper);
+            return CourseBrief.FromBson2(x, _db.Wrapper.GetCourseInfo(x.Code), lang: lang).SetLecturers(x, lang: lang, db: _db.Wrapper);
         });
         return ans;
     }

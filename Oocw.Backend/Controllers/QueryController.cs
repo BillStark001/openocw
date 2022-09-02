@@ -11,6 +11,7 @@ using Oocw.Backend.Schemas;
 using Oocw.Backend.Utils;
 using Oocw.Backend.Services;
 using Oocw.Utils;
+using Oocw.Database.Models;
 
 namespace Oocw.Backend.Controllers;
 
@@ -22,7 +23,7 @@ public class QueryController : ControllerBase
 
     private readonly ILogger<QueryController> _logger;
     private readonly DatabaseService _db;
-    private readonly FilterDefinitionBuilder<BsonDocument> _f;
+    private readonly FilterDefinitionBuilder<Class> _f;
 
     // init
 
@@ -30,7 +31,7 @@ public class QueryController : ControllerBase
     {
         _logger = logger;
         _db = db;
-        _f = Builders<BsonDocument>.Filter;
+        _f = Builders<Class>.Filter;
     }
 
     // api
@@ -38,11 +39,11 @@ public class QueryController : ControllerBase
     [HttpGet("course/{id}")]
     public ActionResult<string> Info(string id, int? year, string? className, string? lang)
     {
-        var query = _f.Eq(Definitions.KEY_CODE, id);
+        var query = _f.Eq(x => x.Code, id);
         if (className != null)
-            query &= _f.Eq(Definitions.KEY_CLASS_NAME, className);
+            query &= _f.Eq(x => x.ClassName, className);
         if (year != null)
-            query &= _f.Eq(Definitions.KEY_YEAR, year);
+            query &= _f.Eq(x => x.Year, year);
 
         lang = lang ?? this.TryGetLanguage();
 

@@ -2,6 +2,7 @@ import re
 import datetime
 from collections import defaultdict
 import collections
+from db_definitions import *
 
 from sys_utils import *
 
@@ -193,29 +194,36 @@ def parse_addr(dstr: str):
     end = int(res.group(3)) if res.group(3) else start
     loc_pos = res.span()[1]
     loc = parse_loc(loc_pos) if loc_pos < len(dstrp) and dstrp[loc_pos] == '(' else ''
-    ans.append(dict(
-      type=1,
-      info=(day, start, end), 
-      loc=loc
-    ))
+    ansd = form_address_scheme()
+    ansd[KEY_ADDR_TYPE] = VAL_TYPE_NORMAL
+    ansd[KEY_ADDR_TIME] = {
+      KEY_ADDR_DAY: day, 
+      KEY_ADDR_START: start, 
+      KEY_ADDR_END: end, 
+    }
+    ansd[KEY_ADDR_LOCATION] = loc
+    ans.append(ansd)
   for res in res_spec:
     ins, ine = res.span(1)
     loc_pos = res.span()[1]
     start = int(res.group(2)) if res.group(2) else 0
     end = int(res.group(3)) if res.group(3) else start
     loc = parse_loc(loc_pos) if loc_pos < len(dstrp) and dstrp[loc_pos] == '(' else ''
-    ans.append(dict(
-      type=2,
-      info=(dstr[ins: ine], start, end), 
-      loc=loc
-    ))
+    ansd = form_address_scheme()
+    ansd[KEY_ADDR_TYPE] = VAL_TYPE_SPECIAL
+    ansd[KEY_ADDR_TIME] = {
+      KEY_ADDR_DESC: dstr[ins: ine], 
+      KEY_ADDR_START: start, 
+      KEY_ADDR_END: end, 
+    }
+    ansd[KEY_ADDR_LOCATION] = loc
+    ans.append(ansd)
   
   if not ans:
-    ans.append(dict(
-      type=3, 
-      info=dstr, 
-      loc=''
-    ))
+    ansd = form_address_scheme()
+    ansd[KEY_ADDR_TYPE] = VAL_TYPE_UNKNOWN
+    ansd[KEY_ADDR_TIME][KEY_ADDR_DESC] = dstr
+    ans.append(ansd)
   
   return ans
   
