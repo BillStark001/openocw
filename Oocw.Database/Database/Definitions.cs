@@ -37,7 +37,11 @@ public class Definitions
 
     public const string KEY_DB_NAME = "dbname";
     public const string KEY_SEQ = "seq";
-    
+
+    // lang related
+
+    public const string KEY_LANG_KEY = "key";
+
 
     // universal
 

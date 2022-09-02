@@ -4,6 +4,7 @@ using MongoDB.Bson;
 using Oocw.Database;
 using Oocw.Backend.Utils;
 using Oocw.Utils;
+using Oocw.Database.Models;
 
 namespace Oocw.Backend.Schemas;
 
@@ -35,6 +36,34 @@ public class CourseBrief
         if (dCourse != null)
         {
             ans.Name = dCourse[Definitions.KEY_NAME].TryGetTranslation(lang) ?? "";
+        }
+
+        // description
+        var sylVer = dClass[Definitions.KEY_SYLLABUS][Definitions.KEY_VERSION].AsString;
+        if (sylVer == Definitions.VAL_VER_RAW)
+        {
+            var rawSyl = dClass[Definitions.KEY_SYLLABUS][sylVer];
+            if (rawSyl.AsBsonDocument.TryGetElement(Definitions.KEY_SYL_DESC, out var rawDesc))
+            {
+                var desc = rawDesc.Value.TryGetTranslation(lang);
+                if (!string.IsNullOrWhiteSpace(desc))
+                    ans.Description = desc;
+            }
+        }
+
+        return ans;
+    }
+
+    public static CourseBrief FromBson2(BsonDocument dClass, Course? dCourse = null, string lang = "ja")
+    {
+        CourseBrief ans = new()
+        {
+            Id = dClass[Definitions.KEY_CODE].AsString,
+            ClassName = dClass[Definitions.KEY_CLASS_NAME].AsString,
+        };
+        if (dCourse != null)
+        {
+            ans.Name = dCourse.Name.Translate(lang) ?? dCourse.Name.ForceTranslate();
         }
 
         // description

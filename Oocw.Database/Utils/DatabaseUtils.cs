@@ -1,6 +1,7 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Driver;
 using Oocw.Database;
+using Oocw.Database.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,21 +12,18 @@ namespace Oocw.Utils;
 
 public static class DatabaseUtils
 {
-    public static BsonDocument? GetCourseInfo(this DBWrapper db, string classId)
+    public static Course? GetCourseInfo(this DBWrapper db, string code)
     {
-        return db.Courses.Find(Builders<BsonDocument>.Filter.Eq(Definitions.KEY_CODE, classId)).FirstOrDefault();
+        return db.Courses.Find(x => x.Code == code).FirstOrDefault();
     }
 
     public static IEnumerable<(int, string)> GetFacultyNames(this DBWrapper db, IEnumerable<int> fs, string lang = "ja")
     {
         List<(int, string)> ans = new();
-        var qs = Builders<BsonDocument>.Filter.In(Definitions.KEY_ID, fs);
         Dictionary<int, string?> dt = new();
-        foreach (var f in db.Faculties.Find(qs).ToList())
+        foreach (var f in db.Faculties.Find(x => fs.Contains(x.Id)).ToList())
         {
-            f.TryGetElement(Definitions.KEY_NAME, out var nameRaw);
-            f.TryGetElement(Definitions.KEY_ID, out var idRaw);
-            dt[(int)idRaw.Value] = nameRaw.Value.TryGetTranslation(lang);
+            dt[f.Id] = f.Name.Translate(lang) ?? f.Name.ForceTranslate();
         }
         foreach (var id in fs)
         {

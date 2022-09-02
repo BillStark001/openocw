@@ -23,8 +23,6 @@ public static class QueryUtils
         return tokens;
     }
 
-    
-
     public static string TryGetLanguage(this ControllerBase ctrl, string def = "ja")
     {
         var cookies = ctrl.Request.Cookies;
@@ -37,4 +35,18 @@ public static class QueryUtils
     {
         ctrl.Response.Cookies.Append("lang", lang);
     }
+
+
+    public static (int, int) GetPageInfo(int? dispCount, int? page)
+    {
+        int dCount = (dispCount ?? 0);
+        dCount = dCount > 10 ? dCount : 10;
+        dCount = dCount < 100 ? dCount : 100;
+
+        int dPage = (page ?? 0);
+        dPage = dPage > 1 ? dPage : 1;
+
+        return (dCount, dPage);
+    }
+
 }

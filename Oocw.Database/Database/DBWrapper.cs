@@ -3,12 +3,10 @@ using System.Collections.Generic;
 
 using MongoDB.Driver;
 using MongoDB.Bson;
-using System.Diagnostics.Metrics;
-using System.Xml.Linq;
 using Oocw.Database.Models;
-using static System.Collections.Specialized.BitVector32;
 using System.Threading.Tasks;
 using System.Threading;
+using MongoDB.Serializer.ValueTuple;
 
 namespace Oocw.Database;
 
@@ -27,12 +25,12 @@ public class DBWrapper
     public IMongoCollection<Relationship> Relations => _relations;
 
     protected IMongoCollection<BsonDocument> _classes;
-    protected IMongoCollection<BsonDocument> _courses;
-    protected IMongoCollection<BsonDocument> _faculties;
+    protected IMongoCollection<Course> _courses;
+    protected IMongoCollection<Faculty> _faculties;
 
     public IMongoCollection<BsonDocument> Classes => _classes;
-    public IMongoCollection<BsonDocument> Courses => _courses;
-    public IMongoCollection<BsonDocument> Faculties => _faculties;
+    public IMongoCollection<Course> Courses => _courses;
+    public IMongoCollection<Faculty> Faculties => _faculties;
 
     private static readonly IEnumerable<string> DBNames;
     private static readonly FilterDefinitionBuilder<BsonDocument> F;
@@ -48,8 +46,16 @@ public class DBWrapper
         F = Builders<BsonDocument>.Filter;
     }
 
+    private static bool Reg = false;
+
     protected DBWrapper(IMongoClient client)
     {
+        if (!Reg)
+        {
+            ValueTupleSerializerRegistry.Register();
+            Reg = true;
+        }
+
         _client = client;
 
         _database = _client.GetDatabase(Definitions.DB_SET_NAME);
@@ -59,8 +65,8 @@ public class DBWrapper
         _relations = _database.GetCollection<Relationship>(Definitions.COL_REL_NAME);
 
         _classes = _database.GetCollection<BsonDocument>(Definitions.COL_CLASS_NAME);
-        _courses = _database.GetCollection<BsonDocument>(Definitions.COL_COURSE_NAME);
-        _faculties = _database.GetCollection<BsonDocument>(Definitions.COL_FACULTY_NAME);
+        _courses = _database.GetCollection<Course>(Definitions.COL_COURSE_NAME);
+        _faculties = _database.GetCollection<Faculty>(Definitions.COL_FACULTY_NAME);
 
     }
 
