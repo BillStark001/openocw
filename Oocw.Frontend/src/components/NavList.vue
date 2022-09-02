@@ -131,6 +131,7 @@ ul .list-item {
 .list-root {
   position: relative;
   height: max-content;
+  overflow-x:hidden;
 }
 
 .nav-list {
@@ -142,6 +143,11 @@ summary {
   display: block;
   padding-left: 22px;
   cursor: pointer;
+}
+
+summary>* {
+  display: inline-block;
+  max-width: 90%;
 }
 
 summary::marker {

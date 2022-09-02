@@ -2,10 +2,19 @@
   <PageFrame>
     <PageBanner />
     <RouteDisplay v-if="treeData"></RouteDisplay>
-    <div v-if="!($route.params.target)">
-      test top hierarchy
-      <div v-for="child in treeData!.node.children" :key="child.key">
-        <router-link :to="'/db/' + (child.action == 'uncat' ? child.action : child.key)">{{ t(child.key) }}</router-link>
+    <div v-if="!($route.params.target)" class="org-area">
+      <div v-for="org in orgs" :key="org.key" class="org-panel">
+        <router-link :to="'/db/' + (org.key)">
+          <img v-if="org.key=='org.sos'" src="@/assets/svg/tit/chem.svg">
+          <img v-if="org.key=='org.soe'" src="@/assets/svg/tit/robotic-arm.svg">
+          <img v-if="org.key=='org.somct'" src="@/assets/svg/tit/mat.svg">
+          <img v-if="org.key=='org.soc'" src="@/assets/svg/tit/chip.svg">
+          <img v-if="org.key=='org.solst'" src="@/assets/svg/tit/bio.svg">
+          <img v-if="org.key=='org.soes'" src="@/assets/svg/tit/city.svg">
+          <img v-if="org.key=='crs.la'" src="@/assets/svg/tit/art.svg">
+          <img v-if="org.key=='org.ext.trsdis'" src="@/assets/svg/tit/idea.svg">
+          <p>{{ t(org.key) }}</p>
+        </router-link>
       </div>
     </div>
     <div id="subframe" v-if="($route.params.target)">
@@ -14,6 +23,9 @@
       </div>
       <div id="sf-right">
         test right subframe
+        <CourseBrief></CourseBrief>
+        <CourseBrief></CourseBrief>
+        <CourseBrief></CourseBrief>
       </div>
     </div>
 
@@ -30,8 +42,10 @@ import NavList from '@/components/NavList.vue';
 import { NavNode, NavListData } from '@/components/NavList.vue';
 import PageBanner from '@/components/lesser/PageBanner.vue';
 import PageFooter from '@/components/lesser/PageFooter.vue';
+import CourseBrief from '@/components/courses/CourseBrief.vue';
 
 import OrgTree from '@/assets/meta/orgtree.json';
+import Orgs from '@/assets/meta/orgs.json';
 import * as utils from '@/utils/query';
 import { RouteParams } from 'vue-router';
 
@@ -76,6 +90,10 @@ export interface DBPageData {
   curOpr?: string;
 }
 
+interface Org {
+  key: string, 
+}
+
 export default defineComponent({
   name: "DBPage",
   data(): DBPageData {
@@ -97,8 +115,9 @@ export default defineComponent({
       inheritLocale: true,
       useScope: "local"
     });
+    const orgs = Orgs as Org[];
     // Something todo ..
-    return { t };
+    return { t, orgs };
   },
   components: {
     PageFrame,
@@ -106,6 +125,7 @@ export default defineComponent({
     NavList,
     PageBanner, 
     PageFooter, 
+    CourseBrief, 
   },
   methods: {
     getTargetPath(params?: RouteParams): string[] {
@@ -142,10 +162,72 @@ export default defineComponent({
 
 #sf-left {
   width: var(--leftbar-width);
+  box-sizing: border-box;
+  padding: 10px 10px 10px 0;
   float: left;
 }
 
 #sf-right {
+  width: calc(100% - var(--leftbar-width));
   float: left;
+}
+
+.org-area {
+  text-align: center;
+}
+
+.org-panel {
+  display: inline-block;
+  width: calc(24% - 60px);
+  max-width: 320px;
+  min-width: 120px;
+  box-sizing:border-box;
+  margin: 30px;
+
+  background-color: var(--db-panel-color);
+  box-shadow: 0 0 17px #00000055;
+}
+
+.org-panel a {
+  display: block;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  text-align: center;
+  padding: 45px 0;
+  
+}
+
+.org-panel * {
+  transition: 300ms;
+}
+
+.org-panel a:hover {
+  background-color: #ffffff22;
+  
+}
+
+.org-panel a:hover * {
+  opacity: 0.5;
+}
+
+.dark-mode .org-panel a:hover * {
+  opacity: 1;
+}
+
+
+.org-panel img {
+  height: 100px;
+}
+
+.dark-mode .org-panel img {
+  filter: invert(1);
+}
+
+.org-panel p {
+  margin: auto;
+  margin-top: 10px;
+  font-size: large;
+  max-width: calc(100% - 30px);
 }
 </style>

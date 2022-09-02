@@ -2,7 +2,7 @@
   <div class="banner">
     <img class="bg-img" src="@/assets/banner/banner4.jpg">
     <div class="fg-txt">
-      <p>Gan Si Huan Xu Dong</p>
+      <p>Gan Si Huang Xu Dong</p>
       <p>Beat Xudong Huang To Death.</p>
     </div>
     

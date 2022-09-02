@@ -23,7 +23,7 @@
   --main-page-search-bar-txt-size: 30px;
   --main-page-search-bar-font-size: 18px;
 
-  --leftbar-width: 300px;
+  --leftbar-width: 320px;
 
   /* colors */
 
@@ -61,7 +61,10 @@
   --navbar-hint-color: var(--color-s-main-light);
 
   --footer-background-color: var(--color-bg1);
+  --db-panel-color: var(--color-bg-trs);
+  --db-panel-hover-color: var(--color-txt3);
 
+  
 }
 
 .dark-mode, .dark-mode * {
@@ -84,6 +87,8 @@
   --navbar-notice-background-color: var(--color-s-main-dark-2);
 
   --footer-background-color: var(--color-bg3);
+
+  --db-panel-hover-color: var(--color-txt1);
 }
 
 
