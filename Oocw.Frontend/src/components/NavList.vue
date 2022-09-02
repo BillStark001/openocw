@@ -2,9 +2,10 @@
 <template>
   <ul class="list-root" v-for="child in node.children" v-bind:key="child.key">
     <li class="list-item">
-      <details :class="'nav-list' + (child.children.length ? ' general' : ' unmarked')" v-bind:open="shouldOpen">
+      <details :class="'nav-list' + (child.children.length ? ' general' : ' unmarked')" v-bind:open="shouldOpen(child)">
         <summary>
-          <a href="#">{{ t(child.key) }}</a>
+          <router-link v-if="hasAction(child)" :to="getActionHref(child)">{{ t(child.key) }}</router-link>
+          <span v-if="!hasAction(child)">{{ t(child.key) }}</span>
         </summary>
         <!--here places the nav list-->
         <NavList :data="generateData(child)"></NavList>
@@ -16,58 +17,66 @@
 <script lang="tsx">
 import { defineComponent } from 'vue';
 import { useI18n } from 'vue-i18n';
+import * as utils from '@/utils/query';
 
 export interface NavNode {
   key: string,
-  action: string,
+  action: "none" | "self" | "parent" | "children" | "uncat",
   children: NavNode[],
 }
 
 function defaultNode(): NavNode {
   return {
     key: "",
-    action: "",
+    action: "none",
     children: []
   }
 }
 
+/*
 function testNode(): NavNode {
   return {
     key: "0",
-    action: "",
+    action: "none",
     children: [{
       key: "1",
-      action: "",
+      action: "none",
       children: [{
         key: "3",
-        action: "",
+        action: "none",
         children: []
       }, {
         key: "4",
-        action: "",
+        action: "none",
         children: []
       }]
     }, {
       key: "2",
-      action: "",
+      action: "none",
       children: []
     }]
   }
 }
+*/
 
 export interface NavListData {
   node: NavNode,
   selected: string[],
+  path: string[], 
 }
 
 export default defineComponent({
   name: "NavList",
   data(): NavListData {
-    if (this.$props.data)
-      return this.$props.data as NavListData;
+    if (this.$props.data) {
+      var data = this.$props.data as NavListData;
+      return data;
+    }
+
     return {
-      node: testNode() || defaultNode(),
-      selected: []
+      node: defaultNode(),
+      selected: [], 
+      path: []
     };
   },
   setup() {
@@ -75,17 +84,30 @@ export default defineComponent({
     return { t };
   },
   methods: {
-    shouldOpen(): boolean {
-      return this.selected && this.selected[0] == this.node.key;
+    shouldOpen(n: NavNode): boolean {
+      return this.selected && this.selected[0] == n.key;
+    },
+
+    hasAction(n: NavNode): boolean {
+      const a = n.action;
+      return a == 'self' || a == 'parent' || a == 'children' || a == 'uncat'; 
+    }, 
+
+    getActionHref(n: NavNode): string {
+      if (n.action == 'uncat')
+        return '/db/' + n.action;
+      return '/db/' + utils.encodePath(this.path.concat([n.key]));
     },
     generateData(n: NavNode): NavListData {
-      return {
+      var ret: NavListData = {
         node: n,
         selected:
-          this.selected && this.node.key == this.selected[0] ?
+          this.shouldOpen(n) ?
             this.selected.slice(1) :
             [],
+        path: this.path.concat([n.key])
       };
+      return ret;
     },
 
   },
@@ -132,14 +154,13 @@ summary::marker {
   margin: auto;
   position: absolute;
   top: 0;
-  bottom: 0;
   left: 0;
   transition: .3s;
 }
 
 .general>summary:before {
   width: 20px;
-  height: var(width);
+  height: 20px;
   border-radius: 114514px;
 }
 
@@ -155,6 +176,6 @@ summary::marker {
 }
 
 .general[open]>summary:after {
-  transform: translate(6px, -4px) rotate(45deg);
+  transform: translate(3.5px, -5.5px) rotate(45deg);
 }
 </style>

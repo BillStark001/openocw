@@ -1,6 +1,6 @@
 <template>
   <span class="route-div"></span>
-  <div id="route-disp">
+  <div id="route-disp" v-if="updateFlag">
     <span class="rkey">{{ t('pos.current') }}</span>
     <router-link class="rkey h" to="/">{{ t('pos.root') }}</router-link>
     <template v-for="path in separatedPaths" :key="path">
@@ -15,6 +15,7 @@
 
 <script lang="ts">
 
+import { decodePath } from '@/utils/query';
 import { defineComponent } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -24,7 +25,8 @@ interface RouteData {
 }
 
 interface RouteDisplayData {
-  fullPath: string;
+  fullPath?: string;
+  updateFlag: boolean;
   separatedPaths: RouteData[];
 }
 
@@ -32,7 +34,8 @@ export default defineComponent({
   name: "RouteDisplay",
   data(): RouteDisplayData {
     return {
-      fullPath: '',
+      fullPath: undefined,
+      updateFlag: true, 
       separatedPaths: [],
     };
   },
@@ -41,25 +44,49 @@ export default defineComponent({
     return { t };
   },
   methods: {
-    updateRoute() {
-      this.fullPath = this.$route.fullPath;
-      this.separatedPaths = [];
+    updateRoute(fullPath?: string) {
+      this.fullPath = fullPath || this.$route.fullPath;
+      var separatedPaths = [];
       const paths = this.fullPath.split('/');
       for (let i = 0; i < paths.length; ++i) {
         if (i == 0 || (paths[i] == '' && i == paths.length - 1))
           continue;
         let path = paths[i];
         let key = `pos.${path}`;
-        this.separatedPaths.push({
+        // special judges
+        if (paths[1] == 'db' && i == 2) {
+          if (path == 'uncat')
+            key = 'meta.uncat';
+          else {
+            let _key = decodePath(path);
+            key = _key[_key.length - 1];
+          }
+        }
+
+        separatedPaths.push({
           displayKey: key,
           routeTarget: paths.slice(0, i + 1).join('/')
         });
       }
+      this.separatedPaths = separatedPaths;
     }
   },
   mounted() {
     this.updateRoute();
-  }
+  },
+  async beforeRouteUpdate(from, to) {
+    this.updateFlag = false;
+    this.updateRoute(to.fullPath);
+    await this.$nextTick();
+    console.log(this.separatedPaths);
+    this.updateFlag = true;
+  }, 
+  /*
+  async updated() {
+    this.updateFlag = false;
+    await this.$nextTick();
+    this.updateFlag = true;
+  }*/
 });
 
 export {
@@ -70,12 +97,11 @@ export {
 </script>
 
 <style scoped>
-
 .route-div {
-  display:block;
-  background-color:var(--color-txt-trs3);
-  height:1px;
-  width:100%;
+  display: block;
+  background-color: var(--color-txt-trs3);
+  height: 1px;
+  width: 100%;
 }
 
 #route-disp {

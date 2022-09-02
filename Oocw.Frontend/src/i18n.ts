@@ -24,7 +24,7 @@ function loadLocaleMessages(): LocaleMessages<VueMessageType> {
 }
 
 const msgs = loadLocaleMessages();
-const LANG_FALLBACK = 'zh-CN';
+const LANG_FALLBACK = 'en';
 
 export const i18n = createI18n({
   sync: true, 

@@ -14,6 +14,7 @@ const routes = [
   { path: '/auth', component: RegisterPage, }, 
   { path: '/info', component: InfoPage, }, 
   { path: '/db', component: DBPage, }, 
+  { path: '/db/:target', component: DBPage, }, 
   { path: '/user', component: UserPage, }, 
 ];
 
