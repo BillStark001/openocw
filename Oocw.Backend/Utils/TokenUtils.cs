@@ -25,6 +25,7 @@ public static class TokenUtils
     public static IEnumerable<string> TokenizeJapanese(string inStr)
     {
         Dictionary<string, bool> tokens = new();
+       
         foreach (var node in Tagger.ParseToNodes(inStr))
         {
             if (node.Feature == null)

@@ -8,26 +8,26 @@ namespace Oocw.Query;
 public static class Lexer
 {
 
-    public struct Lex
+    public struct Token
     {
-        public readonly int TokenType;
-        public readonly string[] Tokens;
+        public readonly int Type;
+        public readonly string[] Content;
 
-        public Lex(int type, IEnumerable<string>? tokens)
+        public Token(int type, IEnumerable<string>? tokens)
         {
-            TokenType = type;
-            Tokens = tokens != null && tokens.Count() > 0 ? tokens.ToArray() : Array.Empty<string>();
+            Type = type;
+            Content = tokens != null && tokens.Count() > 0 ? tokens.ToArray() : Array.Empty<string>();
         }
 
         public override string ToString()
         {
-            return $"Lex({TokenType})[{string.Join('|', Tokens)}]";
+            return $"Token({Type})[{string.Join('|', Content)}]";
         }
 
         public override int GetHashCode()
         {
-            var ret = TokenType;
-            foreach (var token in Tokens)
+            var ret = Type;
+            foreach (var token in Content)
             {
                 ret = HashCode.Combine(ret, token.GetHashCode());
             }
@@ -36,15 +36,15 @@ public static class Lexer
 
         public override bool Equals([NotNullWhen(true)] object? obj)
         {
-            if (obj == null || obj is not Lex)
+            if (obj == null || obj is not Token)
                 return false;
 
-            var lex = (Lex)obj;
-            if (lex.TokenType != TokenType || lex.Tokens.Length != Tokens.Length)
+            var lex = (Token)obj;
+            if (lex.Type != Type || lex.Content.Length != Content.Length)
                 return false;
 
-            for (int i = 0; i < Tokens.Length; ++i)
-                if (Tokens[i] != lex.Tokens[i])
+            for (int i = 0; i < Content.Length; ++i)
+                if (Content[i] != lex.Content[i])
                     return false;
             return true;
         }
@@ -62,6 +62,8 @@ public static class Lexer
 
     // basic
 
+    public const int TSPACE_VAL = 0;
+
     public const int TOKEN_VAL_BOOL = 0;
     public const int TOKEN_VAL_INT = 1;
     public const int TOKEN_VAL_FLOAT = 2;
@@ -71,10 +73,14 @@ public static class Lexer
 
     // variables and var operators
 
+    public const int TSPACE_VAR = 16;
+
     public const int TOKEN_VAR = 16;
     public const int TOKEN_VAROPR = 17;
 
     // structure operators
+
+    public const int TSPACE_STRUCT = 32;
 
     public const int TOKEN_COMMA = 32;
     public const int TOKEN_DOT = 33;
@@ -88,6 +94,8 @@ public static class Lexer
     public const int TOKEN_BRACKET_LE = 41;
 
     // logical operators
+
+    public const int TSPACE_OPR = 48;
 
     public const int TOKEN_OPR_L_AND = 48;
     public const int TOKEN_OPR_L_OR = 49;
@@ -123,7 +131,6 @@ public static class Lexer
     public static IEnumerable<(int, Regex)> Tokens = new List<(int, Regex)>()
     {
         (TOKEN_COMMA, new Regex(@"\G\,")),
-        (TOKEN_COMMA, new Regex(@"\G\,")),
         (TOKEN_DOT, new Regex(@"\G\.")),
         (TOKEN_SPACE, new Regex(@"\G +")),
 
@@ -134,7 +141,7 @@ public static class Lexer
         (TOKEN_VAL_STR2, new Regex(@"\G(""(?:\\.|[^""\\])*"")")), 
 
         (TOKEN_VAR, new Regex(@"\G([a-zA-Z_$][0-9a-zA-Z_$]*)")), 
-        (TOKEN_VAROPR, new Regex(@"\G(\\[a-zA-Z_$][0-9a-zA-Z_$]*)")), 
+        (TOKEN_VAROPR, new Regex(@"\G\\([a-zA-Z_$][0-9a-zA-Z_$]*)")), 
 
         (TOKEN_BRACKET_SS, new Regex(@"\G\(")),
         (TOKEN_BRACKET_SE, new Regex(@"\G\)")),
@@ -163,17 +170,17 @@ public static class Lexer
 
         (TOKEN_OPR_S_INCL, new Regex(@"\G#>")), 
         (TOKEN_OPR_S_INCL_BY, new Regex(@"\G#<")), 
-        (TOKEN_OPR_S_SUBSET, new Regex(@"\G\$>")), 
-        (TOKEN_OPR_S_SUBSET_INV, new Regex(@"\G\$<")),
-        (TOKEN_OPR_S_SUBSETEQ, new Regex(@"\G\$=>")),
-        (TOKEN_OPR_S_SUBSETEQ_INV, new Regex(@"\G\$<=")),
+        (TOKEN_OPR_S_SUBSET, new Regex(@"\G\$<")), 
+        (TOKEN_OPR_S_SUBSET_INV, new Regex(@"\G\$>")),
+        (TOKEN_OPR_S_SUBSETEQ, new Regex(@"\G\$<=")),
+        (TOKEN_OPR_S_SUBSETEQ_INV, new Regex(@"\G\$=>")),
     }.AsReadOnly();
 
     public static readonly Regex REG_TOKEN_UNKNOWN = new Regex(@"\G([^ ]+)");
 
-    public static IEnumerable<Lex> NaiveMatch(string strIn)
+    public static IEnumerable<Token> NaiveMatch(string strIn)
     {
-        List<Lex> result = new();
+        List<Token> result = new();
         int index = 0;
         Match m;
         while (index < strIn.Length)
