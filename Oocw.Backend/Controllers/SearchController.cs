@@ -12,6 +12,7 @@ using Oocw.Backend.Utils;
 using Oocw.Backend.Services;
 using Oocw.Utils;
 using Oocw.Database.Models;
+using System;
 
 namespace Oocw.Backend.Controllers;
 
@@ -38,7 +39,7 @@ public class SearchController : ControllerBase
 
 
     [HttpGet("class")]
-    public IEnumerable<CourseBrief> Search(string queryStr, string? restrictions, int? dispCount, int? page, string? lang = null)
+    public IEnumerable<CourseBrief> SearchClass(string queryStr, string? restrictions, int? dispCount, int? page, string? lang, string? sort, string? filter)
     {
 
         var tokens = QueryUtils.FormSearchKeyWords(queryStr);
@@ -47,10 +48,10 @@ public class SearchController : ControllerBase
 
         var query = Builders<Class>.Filter.Text(tokens);
         var projection = Builders<Class>.Projection.MetaTextScore(Definitions.MetaTextScoreTarget);
-        var sort = Builders<Class>.Sort.MetaTextScore(Definitions.MetaTextScoreTarget);
+        var sorter = Builders<Class>.Sort.MetaTextScore(Definitions.MetaTextScoreTarget);
 
         // TODO target db!
-        var cls = _db.Wrapper.Classes.Find(query).Project<Class>(projection).Sort(sort);
+        var cls = _db.Wrapper.Classes.Find(query).Project<Class>(projection).Sort(sorter);
         cls = cls.Skip(dPage * dCount - dPage).Limit(dCount);
 
         IEnumerable<CourseBrief> ans = cls.ToList().Select(x =>
@@ -60,9 +61,27 @@ public class SearchController : ControllerBase
         return ans;
     }
 
+    [HttpGet("course")]
+    public IEnumerable<CourseBrief> SearchCourse(string queryStr, string? restrictions, int? dispCount, int? page, string? lang, string? sort, string? filter)
+    {
+
+        var tokens = QueryUtils.FormSearchKeyWords(queryStr);
+        lang = lang ?? this.TryGetLanguage();
+        var (dCount, dPage) = QueryUtils.GetPageInfo(dispCount, page);
+
+        var query = Builders<Course>.Filter.Text(tokens);
+        var projection = Builders<Course>.Projection.MetaTextScore(Definitions.MetaTextScoreTarget);
+        var sorter = Builders<Course>.Sort.MetaTextScore(Definitions.MetaTextScoreTarget);
+
+        // TODO target db!
+        var cls = _db.Wrapper.Courses.Find(query).Project<Course>(projection).Sort(sorter);
+        cls = cls.Skip(dPage * dCount - dPage).Limit(dCount);
+
+        throw new NotImplementedException();
+    }
 
     [HttpGet("faculty")]
-    public IEnumerable<FacultyBrief> SearchFaculty(string queryStr, string? restrictions, int? dispCount, int? page, string? lang = null)
+    public IEnumerable<FacultyBrief> SearchFaculty(string queryStr, string? restrictions, int? dispCount, int? page, string? lang, string? sort, string? filter)
     {
         var tokens = QueryUtils.FormSearchKeyWords(queryStr);
         lang = lang ?? this.TryGetLanguage();

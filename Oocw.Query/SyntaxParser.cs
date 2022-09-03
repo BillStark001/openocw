@@ -41,12 +41,6 @@ public static class SyntaxParser
     public static int SMBL_EXPR_MERGED = I + 11;
 
 
-    // end symbols
-
-    public static int SMBL_VAR = SMBL_EXPR + 32;
-    public static int SMBL_OPR = SMBL_EXPR + 33;
-
-
     // syntax definition
     public static IEnumerable<(int, int[])> SyntaxDefinitions;
 
@@ -118,8 +112,9 @@ public static class SyntaxParser
             def.Add(D(SMBL_EXPR_LOGIC2, SMBL_EXPR_LOGIC2, T, SMBL_EXPR_LOGIC1));
         def.Add(D(SMBL_EXPR_LOGIC2, SMBL_EXPR_LOGIC1));
 
-        // E -> (L2) | v | v'
-        def.Add(D(SMBL_EXPR, L.TOKEN_BRACKET_SS, SMBL_EXPR_LOGIC2, L.TOKEN_BRACKET_SE));
+        // E -> (E) | v | v' | L2
+        def.Add(D(SMBL_EXPR, L.TOKEN_BRACKET_SS, SMBL_EXPR, L.TOKEN_BRACKET_SE));
+        def.Add(D(SMBL_EXPR, SMBL_EXPR_LOGIC2));
         foreach (var T in new int[]
         {
             L.TOKEN_VAR, L.TOKEN_VAL_BOOL, L.TOKEN_VAL_INT, L.TOKEN_VAL_FLOAT, L.TOKEN_VAL_STR, L.TOKEN_VAL_STR2,

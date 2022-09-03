@@ -93,5 +93,4 @@ public class QueryController : ControllerBase
         return new FacultyBrief(dinfo, lang);
     }
 
-
 }

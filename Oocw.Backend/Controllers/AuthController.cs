@@ -103,7 +103,7 @@ public class AuthController : ServedController
         return this.RequireAuth<StandardResult>(user => new StandardResult(Definitions.CODE_SUCC));
     }
 
-    [HttpGet("logout")]
+    [HttpPost("logout")]
     public ActionResult<StandardResult> LogOut()
     {
         return this.RequireAuth<StandardResult>(user =>
