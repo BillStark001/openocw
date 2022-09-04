@@ -5,14 +5,14 @@
     <div v-if="!($route.params.target)" class="org-area">
       <div v-for="org in orgs" :key="org.key" class="org-panel">
         <router-link :to="'/db/' + (org.key)">
-          <img v-if="org.key=='org.sos'" src="@/assets/svg/tit/chem.svg">
-          <img v-if="org.key=='org.soe'" src="@/assets/svg/tit/robotic-arm.svg">
-          <img v-if="org.key=='org.somct'" src="@/assets/svg/tit/mat.svg">
-          <img v-if="org.key=='org.soc'" src="@/assets/svg/tit/chip.svg">
-          <img v-if="org.key=='org.solst'" src="@/assets/svg/tit/bio.svg">
-          <img v-if="org.key=='org.soes'" src="@/assets/svg/tit/city.svg">
-          <img v-if="org.key=='crs.la'" src="@/assets/svg/tit/art.svg">
-          <img v-if="org.key=='org.ext.trsdis'" src="@/assets/svg/tit/idea.svg">
+          <img v-if="org.key == 'org.sos'" src="@/assets/svg/tit/chem.svg">
+          <img v-if="org.key == 'org.soe'" src="@/assets/svg/tit/robotic-arm.svg">
+          <img v-if="org.key == 'org.somct'" src="@/assets/svg/tit/mat.svg">
+          <img v-if="org.key == 'org.soc'" src="@/assets/svg/tit/chip.svg">
+          <img v-if="org.key == 'org.solst'" src="@/assets/svg/tit/bio.svg">
+          <img v-if="org.key == 'org.soes'" src="@/assets/svg/tit/city.svg">
+          <img v-if="org.key == 'crs.la'" src="@/assets/svg/tit/art.svg">
+          <img v-if="org.key == 'org.ext.trsdis'" src="@/assets/svg/tit/idea.svg">
           <p>{{ t(org.key) }}</p>
         </router-link>
       </div>
@@ -22,10 +22,7 @@
         <NavList v-if="treeData" v-bind:data="treeData"></NavList>
       </div>
       <div id="sf-right">
-        test right subframe
-        <CourseBrief></CourseBrief>
-        <CourseBrief></CourseBrief>
-        <CourseBrief></CourseBrief>
+        <CourseList v-if="courses" :query="courses" place="db"/>
       </div>
     </div>
 
@@ -42,12 +39,13 @@ import NavList from '@/components/NavList.vue';
 import { NavNode, NavListData } from '@/components/NavList.vue';
 import PageBanner from '@/components/lesser/PageBanner.vue';
 import PageFooter from '@/components/lesser/PageFooter.vue';
-import CourseBrief from '@/components/courses/CourseBrief.vue';
+import CourseList from '@/components/courses/CourseList.vue';
 
 import OrgTree from '@/assets/meta/orgtree.json';
 import Orgs from '@/assets/meta/orgs.json';
 import * as utils from '@/utils/query';
 import { RouteParams } from 'vue-router';
+import { CourseBrief, getCourseListByDepartment } from '@/api/query';
 
 function identifyCurrentOpr(root: NavNode, path: string[]): string | undefined {
   var parent: string = "";
@@ -86,12 +84,13 @@ function identifyCurrentOpr(root: NavNode, path: string[]): string | undefined {
 }
 
 export interface DBPageData {
-  treeData?: NavListData;
-  curOpr?: string;
+  treeData?: NavListData,
+  curOpr?: string,
+  courses?: utils.QueryResult<CourseBrief[]>,
 }
 
 interface Org {
-  key: string, 
+  key: string,
 }
 
 export default defineComponent({
@@ -108,6 +107,7 @@ export default defineComponent({
     return {
       treeData: data,
       curOpr: identifyCurrentOpr(OrgTree as NavNode, target),
+      courses: undefined, 
     };
   },
   setup() {
@@ -123,9 +123,9 @@ export default defineComponent({
     PageFrame,
     RouteDisplay,
     NavList,
-    PageBanner, 
-    PageFooter, 
-    CourseBrief, 
+    PageBanner,
+    PageFooter,
+    CourseList,
   },
   methods: {
     getTargetPath(params?: RouteParams): string[] {
@@ -137,19 +137,33 @@ export default defineComponent({
       return utils.decodePath(target);
     }
   },
+  async mounted() {
+    const _res = await getCourseListByDepartment(this.curOpr ?? "uncat");
+    this.courses = undefined;
+    await this.$nextTick();
+    this.courses = _res;
+  }, 
   async updated() {
 
     var target = this.getTargetPath();
-    this.treeData = undefined;
+
+    this.courses = undefined;
+    const _res = await getCourseListByDepartment(this.curOpr ?? "uncat");
+
     var data: NavListData = {
       node: OrgTree as NavNode,
       selected: target,
       path: [],
     }
+
+    this.treeData = undefined;
+    this.curOpr = undefined;
+
     await this.$nextTick();
 
     this.treeData = data;
     this.curOpr = identifyCurrentOpr(OrgTree as NavNode, target);
+    this.courses = _res;
   },
 });
 </script>
@@ -181,7 +195,7 @@ export default defineComponent({
   width: calc(24% - 60px);
   max-width: 320px;
   min-width: 120px;
-  box-sizing:border-box;
+  box-sizing: border-box;
   margin: 30px;
 
   background-color: var(--db-panel-color);
@@ -195,7 +209,7 @@ export default defineComponent({
   align-items: center;
   text-align: center;
   padding: 45px 0;
-  
+
 }
 
 .org-panel * {
@@ -204,7 +218,7 @@ export default defineComponent({
 
 .org-panel a:hover {
   background-color: #ffffff22;
-  
+
 }
 
 .org-panel a:hover * {

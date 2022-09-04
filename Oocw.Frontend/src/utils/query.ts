@@ -19,16 +19,25 @@ export function buildParams(params: Record<string, string | number | boolean | n
 
 
 export interface QueryResult<T> {
-  status: number, 
-  result?: T, 
+  status: number,
+  result?: T,
+  info: string, 
 }
 
 
 export async function getInfo<T>(scheme: string): Promise<QueryResult<T>> {
   const resRaw = await fetch(new Request(scheme));
+  let json: T | undefined = undefined;
+  const contentType = resRaw.headers.get('content-type');
+  if (!contentType || !contentType.includes('application/json')) {
+    json = undefined;
+  } else {
+    json = await resRaw.json() as T;
+  }
   const ret = {
     status: resRaw.status,
-    result: (await resRaw.json()) as T, 
+    result: json,
+    info: resRaw.statusText, 
   };
   // TODO what about other return format?
   return ret;

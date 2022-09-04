@@ -117,7 +117,7 @@ export default defineComponent({
   outline: none;
   background-color: transparent;
   display: inline-block;
-  width: calc((var(--main-page-search-bar-width) - var(--main-page-search-bar-txt-size) * 2));
+  width: calc(var(--main-page-search-bar-width) - var(--main-page-search-bar-txt-size) * 2);
   color: var(--color-txt-1);
 }
 
