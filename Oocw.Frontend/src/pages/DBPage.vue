@@ -47,8 +47,22 @@ import * as utils from '@/utils/query';
 import { RouteParams } from 'vue-router';
 import { CourseBrief, getCourseListByDepartment } from '@/api/query';
 
+function getCurrentOpr(cur: NavNode, parents: NavNode[]): string[] {
+  var ret: string[] = [];
+  if (cur.action == 'self')
+    ret.push(cur.key);
+  else if (cur.action == 'uncat')
+    ret.push(cur.action);
+  else if (cur.action == 'parent')
+    ret = parents.length > 1 ? [parents[0].key] : [];
+  else if (cur.action == 'children') {
+    cur.children.map(c => ret = ret.concat(getCurrentOpr(c, [cur].concat(parents))));
+  }
+  return ret;
+}
+
 function identifyCurrentOpr(root: NavNode, path: string[]): string | undefined {
-  var parent: string = "";
+  var parent: NavNode[] = [];
   var i: number = 0;
 
   // find the current node
@@ -57,7 +71,7 @@ function identifyCurrentOpr(root: NavNode, path: string[]): string | undefined {
     var matched = false;
     for (var child of cur.children) {
       if (child.key == path[i]) {
-        parent = cur.key;
+        parent = [cur].concat(parent);
         cur = child;
         ++i;
         matched = true;
@@ -66,20 +80,17 @@ function identifyCurrentOpr(root: NavNode, path: string[]): string | undefined {
     }
     if (!matched) {
       cur = root;
-      parent = "";
+      parent = [];
       break;
     }
   }
 
   var ret: string | undefined = undefined;
-  if (cur.action == 'self')
-    ret = cur.key;
-  else if (cur.action == 'parent')
-    ret = parent;
-  else if (cur.action == 'children')
-    ret = cur.children.map(child => child.key || "").join();
-
-  // TODO fix this after the restriction scheme is determined
+  const rets = getCurrentOpr(cur, parent);
+  if (rets.length > 0)
+    ret = rets.join(",");
+  
+  // TODO expand this after the restriction scheme is determined
   return ret;
 }
 
@@ -146,9 +157,11 @@ export default defineComponent({
   async updated() {
 
     var target = this.getTargetPath();
-
-    this.courses = undefined;
+    this.curOpr = undefined;
+    this.curOpr = identifyCurrentOpr(OrgTree as NavNode, target);
+    
     const _res = await getCourseListByDepartment(this.curOpr ?? "uncat");
+    this.courses = undefined;
 
     var data: NavListData = {
       node: OrgTree as NavNode,
@@ -157,12 +170,10 @@ export default defineComponent({
     }
 
     this.treeData = undefined;
-    this.curOpr = undefined;
 
     await this.$nextTick();
 
     this.treeData = data;
-    this.curOpr = identifyCurrentOpr(OrgTree as NavNode, target);
     this.courses = _res;
   },
 });

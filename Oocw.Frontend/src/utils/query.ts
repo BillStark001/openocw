@@ -9,7 +9,7 @@ export function decodePath(path: string): string[] {
 export function buildParams(params: Record<string, string | number | boolean | null | undefined>): string {
   const paramsFiltered: Record<string, string> = {};
   for (const k in params) {
-    if (k === undefined || k === null)
+    if (params[k] === undefined || params[k] === null)
       continue;
     else
       paramsFiltered[k] = String(params[k]);
@@ -29,15 +29,20 @@ export async function getInfo<T>(scheme: string): Promise<QueryResult<T>> {
   const resRaw = await fetch(new Request(scheme));
   let json: T | undefined = undefined;
   const contentType = resRaw.headers.get('content-type');
+  let info = resRaw.statusText;
   if (!contentType || !contentType.includes('application/json')) {
     json = undefined;
+  } else if (contentType.includes('application/problems+json')) {
+    const _probs = await resRaw.json();
+    if (_probs.title != undefined)
+      info = _probs.title;
   } else {
     json = await resRaw.json() as T;
   }
   const ret = {
     status: resRaw.status,
     result: json,
-    info: resRaw.statusText, 
+    info: info, 
   };
   // TODO what about other return format?
   return ret;

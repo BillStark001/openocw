@@ -11,7 +11,7 @@
       </span>
     </p>
     <p class="desc">
-      {{description}}
+      {{trimDescription()}}
     </p>
     <p>
       <span class="lect round-button s-hollow" v-for="lect in lecturers" :key="lect.id">
@@ -26,6 +26,7 @@
 import { defineComponent } from 'vue';
 import { CourseBrief as CourseBriefInfo, defaultCourseBrief } from '@/api/query';
 
+const DESC_MAX_LENGTH = 200;
 
 export default defineComponent({
   name: "CourseBrief", 
@@ -37,7 +38,11 @@ export default defineComponent({
   },
 
   methods: {
-
+    trimDescription(): string {
+      if (this.description.length < DESC_MAX_LENGTH)
+        return this.description;
+      return this.description.slice(0, DESC_MAX_LENGTH - 6) + '……';
+    }
   }, 
   props: ['info']
 
@@ -69,6 +74,8 @@ export default defineComponent({
   
   border-radius: 10px;
   border: 1px solid var(--color-txt-trs3);
+
+  margin-left: 10px;
 }
 
 .name {

@@ -3,11 +3,13 @@ product.name,OpenOCW,OpenOCW,OpenOCW
 product.version,v0.1.0,v0.1.0,v0.1.0
 product.developer,Bill Stark,Bill Stark,Bill Stark
 ,,,
-navbar.homepage,Home,ホール,主页
+navbar.homepage,Home,ホーム,主页
 navbar.database,Database,データベース,数据库
 navbar.discussion,Discussion,ディスカッション,讨论
 navbar.info,Info.,お問い合わせ,信息
 navbar.user,User,ユーザー,用户
+navbar.search,Search,検索,搜索
+,,,
 searchbar.search,Search,検索,搜索
 searchbar.search.hint,Type to search,科目名・講師名・シラバス内容検索,根据科目、讲师、关键词等搜索
 ,,,

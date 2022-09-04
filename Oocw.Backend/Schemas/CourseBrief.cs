@@ -24,6 +24,13 @@ public class CourseBrief
     public string Description { get; set; } = "No Description.";
     public string? ImageLink { get; set; }
 
+    public CourseBrief() { }
+
+    public CourseBrief(Course course, string lang = "ja")
+    {
+        Id = course.Code;
+        Name = course.Name.Translate(lang) ?? course.Name.ForceTranslate();
+    }
 
 
     public static CourseBrief FromBson(BsonDocument dClass, BsonDocument? dCourse = null, string lang = "ja")
@@ -54,7 +61,7 @@ public class CourseBrief
         return ans;
     }
 
-    public static CourseBrief FromBson2(Class dClass, Course? dCourse = null, string lang = "ja")
+    public static CourseBrief FromScheme(Class dClass, Course? dCourse = null, string lang = "ja")
     {
         CourseBrief ans = new()
         {

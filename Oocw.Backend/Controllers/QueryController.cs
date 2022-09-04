@@ -45,7 +45,6 @@ public class QueryController : ControllerBase
         if (year != null)
             query &= _f.Eq(x => x.Year, year);
 
-        lang = lang ?? this.TryGetLanguage();
 
         var cls = _db.Wrapper.Classes.Find(query).FirstOrDefault();
         var crs = cls != null ? _db.Wrapper.GetCourseInfo(id) : null;
@@ -78,7 +77,7 @@ public class QueryController : ControllerBase
             return NotFound();
         }
 
-        return CourseBrief.FromBson2(cls, crs, lang: lang).SetLecturers(cls, lang: lang, db: _db.Wrapper);
+        return CourseBrief.FromScheme(cls, crs, lang: lang).SetLecturers(cls, lang: lang, db: _db.Wrapper);
     }
 
     [HttpGet("faculty/{id}")]

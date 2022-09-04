@@ -56,7 +56,7 @@ public class SearchController : ControllerBase
 
         IEnumerable<CourseBrief> ans = cls.ToList().Select(x =>
         {
-            return CourseBrief.FromBson2(x, _db.Wrapper.GetCourseInfo(x.Code), lang: lang).SetLecturers(x, lang: lang, db: _db.Wrapper);
+            return CourseBrief.FromScheme(x, _db.Wrapper.GetCourseInfo(x.Code), lang: lang).SetLecturers(x, lang: lang, db: _db.Wrapper);
         });
         return ans;
     }
