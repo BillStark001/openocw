@@ -69,8 +69,8 @@
 
 .dark-mode, .dark-mode * {
 
-  --color-bg1: black;
-  --color-bg2: #222222;
+  --color-bg1: #222222;
+  --color-bg2: black;
   --color-bg3: #333333;
   --color-bg-trs: #222222cc;
   --color-bg-trs2: #22222255;

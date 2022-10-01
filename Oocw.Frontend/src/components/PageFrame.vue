@@ -60,5 +60,6 @@ export default defineComponent({
   background-color: var(--color-bg-trs);
   margin: auto;
   color: var(--color-txt1);
+  backdrop-filter: blur(10px);
 }
 </style>
