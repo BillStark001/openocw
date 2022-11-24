@@ -10,4 +10,8 @@
     <PackageReference Include="MongoDB.Serializer.ValueTuple" Version="1.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Oocw.Base\Oocw.Base.csproj" />
+  </ItemGroup>
+
 </Project>

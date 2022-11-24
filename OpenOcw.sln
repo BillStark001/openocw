@@ -15,7 +15,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Oocw.Tests", "Oocw.Tests\Oo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Oocw.Test", "Oocw.Test\Oocw.Test.csproj", "{6D79232F-EAD4-49B9-8BD5-C383E4494AF9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oocw.Database.Cli", "Oocw.Database.Cli\Oocw.Database.Cli.csproj", "{8EBAD341-1100-4EEC-81A3-F4ECA5218DAA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oocw.Crawler", "Oocw.Crawler\Oocw.Crawler.csproj", "{C016BED5-859B-459E-9A43-AF70E5926AF6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oocw.Cli", "Oocw.Cli\Oocw.Cli.csproj", "{7AB9F308-D52F-4467-BF34-80439BE107C4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oocw.Base", "Oocw.Base\Oocw.Base.csproj", "{3976BECA-3FB4-45F6-B3BC-9AED76BFA47C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,10 +53,18 @@ Global
 		{6D79232F-EAD4-49B9-8BD5-C383E4494AF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D79232F-EAD4-49B9-8BD5-C383E4494AF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D79232F-EAD4-49B9-8BD5-C383E4494AF9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8EBAD341-1100-4EEC-81A3-F4ECA5218DAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8EBAD341-1100-4EEC-81A3-F4ECA5218DAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8EBAD341-1100-4EEC-81A3-F4ECA5218DAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8EBAD341-1100-4EEC-81A3-F4ECA5218DAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C016BED5-859B-459E-9A43-AF70E5926AF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C016BED5-859B-459E-9A43-AF70E5926AF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C016BED5-859B-459E-9A43-AF70E5926AF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C016BED5-859B-459E-9A43-AF70E5926AF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7AB9F308-D52F-4467-BF34-80439BE107C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7AB9F308-D52F-4467-BF34-80439BE107C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7AB9F308-D52F-4467-BF34-80439BE107C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7AB9F308-D52F-4467-BF34-80439BE107C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3976BECA-3FB4-45F6-B3BC-9AED76BFA47C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3976BECA-3FB4-45F6-B3BC-9AED76BFA47C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3976BECA-3FB4-45F6-B3BC-9AED76BFA47C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3976BECA-3FB4-45F6-B3BC-9AED76BFA47C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
