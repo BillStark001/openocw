@@ -1,4 +1,5 @@
-﻿using Oocw.Base;
+﻿using AngleSharp.Common;
+using Oocw.Base;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -17,12 +18,13 @@ public static class Util
 
     // dict
 
-    public static string? Get(this NameValueCollection col, string key)
+    public static string? Get(this NameValueCollection col, params string[] key)
     {
         int ind = -1;
+        HashSet<string> set = new HashSet<string>(key);
         for (int i = 0; i < col.AllKeys.Length; ++i)
         {
-            if (col.AllKeys[i] == key)
+            if (col.AllKeys[i] != null && set.Contains(col.AllKeys[i]!))
             {
                 ind = i;
                 break;

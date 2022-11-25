@@ -11,6 +11,7 @@ using AngleSharp.Dom;
 using Oocw.Crawler.Models;
 using OpenQA.Selenium.DevTools;
 using Oocw.Base;
+using System.Web;
 
 namespace Oocw.Crawler.Core;
 
@@ -19,6 +20,7 @@ using DSS = Dictionary<string, string>;
 using IMDSS = ImmutableDictionary<string, string>;
 
 using DictStrArgs = NestedDictionary<string, string?>;
+using DictIntSyl = Dictionary<int, (SyllabusInfo?, SyllabusInfo?)>;
 
 public class Crawler
 {
@@ -35,7 +37,7 @@ public class Crawler
 
     public Crawler(DriverWrapper driver)
     {
-        this.Driver = driver;
+        Driver = driver;
     }
 
 
@@ -86,7 +88,7 @@ public class Crawler
     public (List<DictStrArgs>, DictStrArgs) GetDepartmentList(int year = 2020, string lang = "JA")
     {
         var url = $"http://www.ocw.titech.ac.jp/index.php?module=Archive&action=ArchiveIndex&GakubuCD=1&GakkaCD=311100&KeiCD=11&tab=2&focus=200&lang={lang}&Nendo={year}&SubAction=T0200";
-        var html = Driver.get_html_after_loaded(url);
+        var html = Driver.GetHtmlAfterLoaded(url);
         var (cats, cats_flat, excluded) = DataExtractor.GetDepartmentList(html.Dom());
         Console.WriteLine(excluded);
         return (cats, cats_flat);
@@ -113,7 +115,7 @@ public class Crawler
         var tbls_ans = new List<object>();
         foreach (var _ in Enumerable.Range(0, retry_limit))
         {
-            var dom = Driver.get_html_after_loaded(url).Dom();
+            var dom = Driver.GetHtmlAfterLoaded(url).Dom();
             var isCurrentYear = dom.QuerySelectorAll<IHtmlTableElement>("table.ranking-list").Where(
                 x => x.Rows.Where(x => x.Cells[4].TextContent.FixWebString().StartsWith(year.ToString())).Count() > 0)
                 .Count() > 0;
@@ -136,17 +138,17 @@ public class Crawler
         var lang = !en ? "JA" : "EN";
         var url1 = $"http://www.ocw.titech.ac.jp/index.php?module=General&action=T0300&JWC={year}{id_seed.ToString()!.Substring(4)}&lang={lang}";
         var url2 = url1 + "&vid=05";
-        var html = Driver.get_html_after_loaded(url1);
+        var html = Driver.GetHtmlAfterLoaded(url1);
         if (html == "404")
         {
             return (null, null, null, null);
         }
         var bf_base_page = html.Dom();
-        var cnt_lname = bf_base_page.QuerySelector(".page-title-area clearfix");
+        var cnt_lname = bf_base_page.QuerySelector(".page-title-area.clearfix");
         var cnt_summ = bf_base_page.QuerySelector(".gaiyo-data");
         var cnt_inner = bf_base_page.QuerySelector(".right-inner");
 
-        html = Driver.get_html_after_loaded(url2);
+        html = Driver.GetHtmlAfterLoaded(url2);
         bf_base_page = html.Dom();
         var cnt_note = bf_base_page.QuerySelector(".right-inner");
         if (cnt_note == null)
@@ -157,8 +159,11 @@ public class Crawler
         return ans;
     }
 
-    // 開講元のリスト（つまり左側のあの赤いまたは青いもの）を取得する
-    public void task1(string outpath)
+    /// <summary>
+    /// 開講元のリスト（つまり左側のあの赤いまたは青いもの）を取得する
+    /// </summary>
+    /// <param name="outpath"></param>
+    public void Task1(string outpath)
     {
         var d = GetDepartmentList();
         var e = GetDepartmentList(lang: "EN");
@@ -193,7 +198,12 @@ public class Crawler
             {"focus", "100"}
         }.ToImmutableDictionary();
 
-    public void task2(string outpath)
+
+    /// <summary>
+    /// Get course list
+    /// </summary>
+    /// <param name="outpath"></param>
+    public void Task2(string outpath)
     {
         List<ListedCourseInfo> cl1, cl2;
         int nr1, nr2;
@@ -222,7 +232,7 @@ public class Crawler
             var url = ADDR_DEFAULT.AddUrlEncodedParameters(dt, target == "教養科目群" ? args_la : args_default, args_lang("JA"));
             Console.WriteLine($"{target} => {url}");
 
-            var html = Driver.get_html_after_loaded(url);
+            var html = Driver.GetHtmlAfterLoaded(url);
             var lists = DataExtractor.GetCourseList(html.Dom());
 
             nr1 = i;
@@ -233,86 +243,103 @@ public class Crawler
         }
     }
 
-    /*
+    void Task3Sub1(DictIntSyl detail, int dcode, int year)
+    {
+        if (detail.ContainsKey(year))
+        {
+            return;
+        }
+        var detail_jp = DataExtractor.ParseLectureInfo(GetLectureInfo(dcode, year));
+        var detail_en = DataExtractor.ParseLectureInfo(GetLectureInfo(dcode, year, en: true));
+        detail[year] = (detail_jp, detail_en);
+    }
 
-    public void task3(string inpath, string outpath, int start_year = 2016, int end_year = 2022)
+    
+
+    /// <summary>
+    /// get course data
+    /// </summary>
+    /// <param name="inpath"></param>
+    /// <param name="outpath"></param>
+    /// <param name="start_year"></param>
+    /// <param name="end_year"></param>
+    /// <exception cref="Exception"></exception>
+    public void Task3(string inpath, string outpath, int start_year = 2016, int end_year = 2022)
     {
         var (clist, _, _, _) = PathUtil.Load<(List<ListedCourseInfo>, List<ListedCourseInfo>, int, int)>(inpath);
-        var targets = clist.Select(x => x.Url);
+        var targets = clist.Select(x => HttpUtility.ParseQueryString(x.Url).Get("KougiCD", "JWC")).Select(x => int.Parse(x!));
         // initialize storage
+
+        Dictionary<int, DictIntSyl> details;
+        List<int> gshxd_code;
         try
         {
-            (details, gshxd_code) = pload(outpath);
+            (details, gshxd_code) = PathUtil.Load<(Dictionary<int, DictIntSyl>, List<int>)>(outpath);
         }
         catch
         {
-            details = new DSS
-            {
-            };
-            gshxd_code = new List<object>();
-            pdump((details, gshxd_code), outpath);
+            details = new();
+            gshxd_code = new();
+            PathUtil.Dump((details, gshxd_code), outpath);
         }
-        object task3_sub1(object detail, object dcode, int year)
-        {
-            if (detail.Contains(year))
-            {
-                return;
-            }
-            detail_jp = extractor.parse_lecture_info(GetLectureInfo(dcode, year));
-            detail_en = extractor.parse_lecture_info(GetLectureInfo(dcode, year, en: true));
-            detail[year] = (detail_jp, detail_en);
-        }
+
+
         // error correction
-        while (gshxd_code)
+        while (gshxd_code.Count > 0)
         {
-            dcode = gshxd_code.pop();
-            Console.WriteLine($"Retrying errored record {dcode} ({len(gshxd_code) + 1} remains)");
-            detail = details.Contains(dcode) ? details[dcode] : new DSS
+            var dcode = gshxd_code.First();
+            gshxd_code.RemoveAt(0);
+
+            Console.WriteLine($"Retrying errored record {dcode} {gshxd_code.Count + 1} remains)");
+
+            if (!details.ContainsKey(dcode))
+                details[dcode] = new();
+
+            var detail = details[dcode];
+
+            for (var year = start_year; year <= end_year; ++year)
             {
-            };
-            foreach (var year in Enumerable.Range(start_year, end_year + 1 - start_year))
-            {
+                Task3Sub1(detail, dcode, year);
                 try
                 {
-                    task3_sub1(detail, dcode, year);
+                    
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                     Console.WriteLine($"{dcode}, {year}");
-                    throw new Exception();
+                    throw e;
                 }
             }
-            details[dcode] = detail;
-            backup_file(outpath);
-            pdump((details, gshxd_code), outpath);
+
+            PathUtil.BackupFile(outpath);
+            PathUtil.Dump((details, gshxd_code), outpath);
         }
+
         // normal process
-        exit_tag = false;
-        foreach (var dcode in tqdm(targets))
+        var exit_tag = false;
+        foreach (var dcode in targets)
         {
-            detail = details.Contains(dcode) ? details[dcode] : new DSS
+            if (!details.ContainsKey(dcode))
+                details[dcode] = new();
+
+            var detail = details[dcode];
+            var err_rec = false;
+            for (var year = start_year; year <= end_year; ++year)
             {
-            };
-            err_rec = false;
-            foreach (var year in Enumerable.Range(start_year, end_year + 1 - start_year))
-            {
+
+                // if cancelled: exit_tag = true; break;
                 try
                 {
-                    task3_sub1(detail, dcode, year);
+                    Task3Sub1(detail, dcode, year);
                 }
-                catch (KeyboardInterrupt)
-                {
-                    exit_tag = true;
-                    break;
-                }
-                catch (Exception)
+                catch (Exception e)
                 {
                     if (!err_rec)
                     {
-                        gshxd_code.append(dcode);
+                        gshxd_code.Add(dcode);
                         err_rec = true;
                     }
-                    Console.WriteLine($"ERROR {dcode} in year {year}: {e.message}");
+                    Console.WriteLine($"ERROR {dcode} in year {year}: {e} {e.Message}");
                 }
             }
             // to avoid incomplete records
@@ -322,10 +349,10 @@ public class Crawler
                 break;
             }
             details[dcode] = detail;
-            backup_file(outpath);
-            pdump((details, gshxd_code), outpath);
+            PathUtil.BackupFile(outpath);
+            PathUtil.Dump((details, gshxd_code), outpath);
         }
     }
 
-    */
+
 }

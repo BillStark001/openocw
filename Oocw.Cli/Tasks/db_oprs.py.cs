@@ -23,19 +23,6 @@ using System.Collections.Generic;
 
 public static class db_oprs {
     
-    public static object init_db() {
-        var uri = "mongodb://localhost:27017/";
-        var cl = MongoClient(host: uri);
-        return cl;
-    }
-    
-    public static object get_cols(object cl) {
-        var db = cl["openocw"];
-        var col_crs = db["courses"];
-        var col_cls = db["classes"];
-        var col_fct = db["faculties"];
-        return (col_crs, col_cls, col_fct);
-    }
     
     public static void put_course(object db, object sess, Dictionary<string, object> crs) {
         (ccrs, _, _) = get_cols(db);

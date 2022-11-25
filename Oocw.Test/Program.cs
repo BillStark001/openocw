@@ -11,5 +11,6 @@ foreach (var lex in res)
 var driver = new DriverWrapper("G:/chromedriver.exe");
 var crawler = new Crawler(driver);
 
-driver.init_driver();
-crawler.task2(Meta.savepath_course_list_raw);
+driver.Initialize();
+crawler.Task2(Meta.savepath_course_list_raw);
+crawler.Task3(Meta.savepath_course_list_raw, Meta.savepath_details_raw, 2020, 2022);

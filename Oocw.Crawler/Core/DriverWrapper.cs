@@ -37,10 +37,7 @@ public class DriverWrapper
         driver = null;
     }
 
-    public virtual bool is_initialized()
-    {
-        return driver != null;
-    }
+    public virtual bool IsInitialized => driver != null;
 
     public bool TryCloseDriver()
     {
@@ -54,7 +51,7 @@ public class DriverWrapper
         return false;
     }
 
-    public virtual void init_driver()
+    public virtual void Initialize()
     {
         TryCloseDriver();
         var options = new ChromeOptions();
@@ -70,10 +67,10 @@ public class DriverWrapper
         return new Exception("Driver not initialized!");
     }
 
-    public virtual string get_html(string url)
+    public virtual string GetHtml (string url)
     {
         if (mem_reset_count >= mem_reset_limit)
-            init_driver();
+            Initialize();
         if (driver == null)
             throw DriverNotInitialized();
 
@@ -83,10 +80,10 @@ public class DriverWrapper
         return html;
     }
 
-    public virtual string get_html_after_loaded(string url)
+    public virtual string GetHtmlAfterLoaded(string url)
     {
         var timeout = html_timeout;
-        var html = this.get_html(url);
+        var html = this.GetHtml(url);
         var full_loaded = -1;
         var time_start = DateTime.Now;
         var dtime = TimeSpan.Zero;
