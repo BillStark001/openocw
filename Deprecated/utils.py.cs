@@ -77,60 +77,6 @@ public static class utils {
         return cur_name;
     }
     
-    public static object ltod(List<double> l, bool ignore_repeat = true) {
-        var d = new Dictionary<object, object> {
-        };
-        if (ignore_repeat) {
-            return new dict(l);
-            // for k, v in l:
-            //   d[k] = v
-        } else {
-            var c = new defaultdict(@int);
-            foreach (var (k, v) in l) {
-                var kk = !c[k] ? k : (k, c[k]);
-                d[kk] = v;
-                c[k] += 1;
-            }
-        }
-        return d;
-    }
-    
-    public static string form_url(object @__url__, Hashtable kwargs) {
-        var ans = @__url__.ToString();
-        var first_mark = true;
-        foreach (var key in kwargs) {
-            ans += first_mark ? "?" : "&" + key + "=" + kwargs[key].ToString();
-            if (first_mark) {
-                first_mark = false;
-            }
-        }
-        return ans;
-    }
-    
-    public static object[] deform_url(object addr_orig) {
-        try {
-            (addr, args) = addr_orig.split("?");
-        } catch {
-            return (addr_orig, new Dictionary<object, object> {
-            });
-        }
-        var args = (from x in args.split("&")
-            select x.split("=")).ToList();
-        foreach (var i in Enumerable.Range(0, args.Count)) {
-            try {
-                if (!args[i][1].startswith("0")) {
-                    args[i][1] = float(args[i][1]);
-                    if (float(args[i][1]) == Convert.ToInt32(args[i][1])) {
-                        args[i][1] = Convert.ToInt32(args[i][1]);
-                    }
-                }
-            } catch {
-            }
-        }
-        return (addr, ltod(args));
-    }
-    
-    
     public class node {
         
         public object children;

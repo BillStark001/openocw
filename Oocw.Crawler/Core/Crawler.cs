@@ -167,7 +167,7 @@ public class Crawler
     {
         var d = GetDepartmentList();
         var e = GetDepartmentList(lang: "EN");
-        PathUtil.Dump((d, e), outpath);
+        FileUtil.Dump((d, e), outpath);
     }
 
 
@@ -211,7 +211,7 @@ public class Crawler
         // load cache
         try
         {
-            (cl1, cl2, nr1, nr2) = PathUtil.Load<(List<ListedCourseInfo>, List<ListedCourseInfo>, int, int)>(outpath);
+            (cl1, cl2, nr1, nr2) = FileUtil.Load<(List<ListedCourseInfo>, List<ListedCourseInfo>, int, int)>(outpath);
         }
         catch
         {
@@ -219,7 +219,7 @@ public class Crawler
             cl2 = new();
             nr1 = 0;
             nr2 = 0;
-            PathUtil.Dump((cl1, cl2, nr1, nr2), outpath);
+            FileUtil.Dump((cl1, cl2, nr1, nr2), outpath);
         }
 
         for (int i = 0; i < DepartmentCodes.Count; ++i)
@@ -238,8 +238,8 @@ public class Crawler
             nr1 = i;
             cl1.AddRange(lists);
 
-            PathUtil.BackupFile(outpath);
-            PathUtil.Dump((cl1, cl2, nr1, nr2), outpath);
+            FileUtil.BackupFile(outpath);
+            FileUtil.Dump((cl1, cl2, nr1, nr2), outpath);
         }
     }
 
@@ -266,7 +266,7 @@ public class Crawler
     /// <exception cref="Exception"></exception>
     public void Task3(string inpath, string outpath, int start_year = 2016, int end_year = 2022)
     {
-        var (clist, _, _, _) = PathUtil.Load<(List<ListedCourseInfo>, List<ListedCourseInfo>, int, int)>(inpath);
+        var (clist, _, _, _) = FileUtil.Load<(List<ListedCourseInfo>, List<ListedCourseInfo>, int, int)>(inpath);
         var targets = clist.Select(x => HttpUtility.ParseQueryString(x.Url).Get("KougiCD", "JWC")).Select(x => int.Parse(x!));
         // initialize storage
 
@@ -274,13 +274,13 @@ public class Crawler
         List<int> gshxd_code;
         try
         {
-            (details, gshxd_code) = PathUtil.Load<(Dictionary<int, DictIntSyl>, List<int>)>(outpath);
+            (details, gshxd_code) = FileUtil.Load<(Dictionary<int, DictIntSyl>, List<int>)>(outpath);
         }
         catch
         {
             details = new();
             gshxd_code = new();
-            PathUtil.Dump((details, gshxd_code), outpath);
+            FileUtil.Dump((details, gshxd_code), outpath);
         }
 
 
@@ -311,8 +311,8 @@ public class Crawler
                 }
             }
 
-            PathUtil.BackupFile(outpath);
-            PathUtil.Dump((details, gshxd_code), outpath);
+            FileUtil.BackupFile(outpath);
+            FileUtil.Dump((details, gshxd_code), outpath);
         }
 
         // normal process
@@ -349,8 +349,8 @@ public class Crawler
                 break;
             }
             details[dcode] = detail;
-            PathUtil.BackupFile(outpath);
-            PathUtil.Dump((details, gshxd_code), outpath);
+            FileUtil.BackupFile(outpath);
+            FileUtil.Dump((details, gshxd_code), outpath);
         }
     }
 

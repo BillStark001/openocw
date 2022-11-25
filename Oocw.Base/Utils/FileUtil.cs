@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Oocw.Base;
 
-public static class PathUtil
+public static class FileUtil
 {
     public static readonly Encoding DefaultEncoding = Encoding.UTF8;
 

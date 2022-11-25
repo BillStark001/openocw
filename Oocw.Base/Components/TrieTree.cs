@@ -71,23 +71,23 @@ public class TrieTree<T> where T: notnull
         return this;
     }
 
-    public virtual IEnumerable<T> ScanCommonWord(bool ignoreConflict = false)
+    public virtual IList<T> ScanCommonWord(bool ignoreConflict = false)
     {
-        var ans = new List<T>();
+        var ret = new List<T>();
         var curNode = Root;
         while (true)
         {
-            var chld = curNode.Children.Values.OrderBy(x => (-x.CountPref, x.Character)).ToList();
-            if (chld.Count == 0 || chld.Count > 1 && chld[0].CountPref == chld[1].CountPref && !ignoreConflict)
+            var child = curNode.Children.Values.OrderBy(x => (-x.CountPref, x.Character)).ToList();
+            if (child.Count == 0 || child.Count > 1 && child[0].CountPref == child[1].CountPref && !ignoreConflict)
             {
                 break;
             }
             //print([x.chrc for x in chld])
-            if (chld[0].Character != null)
-                ans.Add(chld[0].Character!);
-            curNode = chld[0];
+            if (child[0].Character != null)
+                ret.Add(child[0].Character!);
+            curNode = child[0];
         }
-        return ans;
+        return ret.AsReadOnly();
     }
 }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -10,7 +11,7 @@ namespace Oocw.Base;
 
 public static class Utils
 {
-    
+
 
 
     // reference: https://www.cnblogs.com/xu-yi/p/10525090.html
@@ -106,6 +107,157 @@ public static class Utils
         return str;
     }
 
+
+    public static string NormalizeBrackets(this string dstr)
+    {
+        return dstr
+            .Replace("（", "(").Replace("）", ")")
+            .Replace("【", "[").Replace("】", "]");
+    }
+
+
+    public static (int, int) FindBrackets(
+        this string passage,
+        int start = 0,
+        string brl = "(",
+        string brr = ")",
+        bool strict = false,
+        (string, string)? excludeIn = null)
+    {
+
+        var hasExclude = excludeIn.HasValue;
+        var exclude = excludeIn ?? ("\"", "\\\"");
+
+        var pointer = start;
+        var endpoint = passage.Length;
+        var lbrl = brl.Length;
+        var lbrr = brr.Length;
+        var lex0 = hasExclude ? exclude.Item1.Length : -1;
+        var lex1 = hasExclude ? exclude.Item2.Length : -1;
+        var layer = 0;
+        var outer_brl = -1;
+        while (pointer < endpoint)
+        {
+            var next_brl = passage.IndexOf(brl, pointer);
+            var next_brr = passage.IndexOf(brr, pointer);
+            var next_exclude = hasExclude ? passage.IndexOf(exclude.Item1, pointer) : -1;
+            // print(pointer, next_brl, next_brr, next_exclude, layer)
+            if (next_exclude >= 0 && (next_brl < 0 || next_exclude < next_brl) && (next_brr < 0 || next_exclude < next_brr))
+            {
+                pointer = next_exclude + lex0;
+                while (true)
+                {
+                    var next_exclude_2 = passage.IndexOf(exclude.Item1, pointer);
+                    var next_ignore_exclude_2 = passage.IndexOf(exclude.Item2, pointer);
+                    if (next_ignore_exclude_2 >= 0 && next_exclude_2 > next_ignore_exclude_2 && next_exclude_2 <= next_ignore_exclude_2 + lex1)
+                    {
+                        // this exclude mark is ignored
+                        pointer = next_ignore_exclude_2 + lex1;
+                    }
+                    else if (next_exclude_2 >= 0)
+                    {
+                        // this mark is real
+                        pointer = next_exclude_2 + lex0;
+                        break;
+                    }
+                    else if (strict)
+                    {
+                        throw new InvalidDataException("Excluding section matching failed");
+                    }
+                    else
+                    {
+                        return (outer_brl, -1);
+                    }
+                }
+            }
+            else if (next_brl >= 0 && (next_brl < next_brr || next_brr < 0))
+            {
+                pointer = next_brl + lbrl;
+                if (layer == 0)
+                {
+                    outer_brl = next_brl;
+                }
+                layer += 1;
+            }
+            else if (next_brr >= 0 && (next_brr < next_brl || next_brl < 0))
+            {
+                if (layer == 0)
+                {
+                    if (strict)
+                    {
+                        throw new InvalidDataException("Brackets matching failed (no left bracket)");
+                    }
+                    else
+                    {
+                        pointer = next_brr + lbrr;
+                        continue;
+                    }
+                }
+                else
+                {
+                    pointer = next_brr + lbrr;
+                    layer -= 1;
+                    if (layer == 0)
+                    {
+                        return (outer_brl, next_brr);
+                    }
+                }
+            }
+            else if (next_brl < 0 && next_brr < 0)
+            {
+                return (-1, -1);
+            }
+            else
+            {
+                throw new InvalidDataException("what the hell?");
+            }
+        }
+        if (strict)
+        {
+            throw new InvalidDataException("Brackets matching failed (no right bracket)");
+        }
+        return (outer_brl, -1);
+    }
+
+    public static ImmutableHashSet<T> DefineSet<T>(params T[] p)
+    {
+        return p.ToImmutableHashSet();
+    }
+
+    public static bool HasKeyword(this string strIn, IEnumerable<string> strs)
+    {
+        foreach (var str in strs)
+            if (strIn.Contains(str))
+                return true;
+        return false;
+    }
+    public static bool HasKeyword(this string strIn, params string[] strs) => strIn.HasKeyword((IEnumerable<string>)strs);
+
+    public static IEnumerable<(int, T)> GetIndexedEnumerator<T>(this IEnumerable<T> arr)
+    {
+        return arr.Select((x, i) => (i, x));
+    }
+
+
+    public static int BoolToBinary(IEnumerable<bool> arr)
+    {
+        var ans = 0;
+        foreach (var (i, b) in arr.GetIndexedEnumerator())
+            if (b)
+                ans |= (1 << i);
+        return ans;
+    }
+    public static int BoolToBinary(params bool[] arr) => BoolToBinary((IEnumerable<bool>)arr);
+
+    public static List<bool> BinaryToBool(int bin, int digit)
+    {
+        var ans = new List<bool>();
+        foreach (var i in Enumerable.Range(0, digit))
+        {
+            ans.Add((bin & 1 << i) > 0);
+        }
+        return ans;
+    }
 
     public static string LCP(string a, string b)
     {
