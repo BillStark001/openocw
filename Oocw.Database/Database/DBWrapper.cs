@@ -7,6 +7,8 @@ using Oocw.Database.Models;
 using System.Threading.Tasks;
 using System.Threading;
 using MongoDB.Serializer.ValueTuple;
+using MongoDB.Bson.Serialization.Conventions;
+using Oocw.Database.Models.Technical;
 
 namespace Oocw.Database;
 
@@ -44,6 +46,9 @@ public class DBWrapper
             Definitions.COL_USER_NAME, 
         }.AsReadOnly();
         F = Builders<BsonDocument>.Filter;
+
+        var conventionPack = new ConventionPack { new CamelCaseElementNameConvention() };
+        ConventionRegistry.Register("camelCase", conventionPack, t => true);
     }
 
     private static bool Reg = false;

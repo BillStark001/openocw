@@ -9,7 +9,7 @@ using MongoDB.Driver;
 
 namespace Oocw.Database.Utils;
 
-public static class DataUtils
+public static class TitechUtil
 {
     public const string ORG_MAPPING = 
 @"{
@@ -90,7 +90,7 @@ public static class DataUtils
 
     private static IReadOnlyDictionary<string, string> Orgs;
 
-    static DataUtils()
+    static TitechUtil()
     {
         Orgs = JsonSerializer.Deserialize<Dictionary<string, string>>(ORG_MAPPING)!;
     }

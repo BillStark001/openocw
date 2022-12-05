@@ -2,67 +2,55 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Driver;
+using Oocw.Database.Models.Technical;
 
 namespace Oocw.Database.Models;
 
 public class Course
 {
-    public class MetaInfo
-    {
-        [BsonElement(Definitions.KEY_ACCESS_RANK)]
-        public double AccessRank { get; set; }
-
-
-        [BsonElement(Definitions.KEY_SEARCH_REC)]
-        public IEnumerable<string> SearchRecord { get; set; } = null!;
-
-        [BsonElement(Definitions.KEY_SEARCH_SCORE)]
-        [BsonIgnoreIfNull]
-        public double? SeacrhScore { get; set; } = null!;
-
-
-        [BsonElement(Definitions.KEY_UPD_TIME)]
-        [BsonDateTimeOptions(Kind = DateTimeKind.Local)]
-        public DateTime UpdateTime { get; set; }
-
-        [BsonElement(Definitions.KEY_DIRTY)]
-        public bool Dirty { get; set; }
-    }
 
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
     public string? IdRaw { get; set; }
 
-    [BsonElement(Definitions.KEY_META)]
-    public MetaInfo Meta { get; set; } = null!;
+    [BsonElement(Metadata.KEY_META)]
+    public Metadata Meta { get; set; } = null!;
 
 
-    [BsonElement(Definitions.KEY_CODE)]
-    public string Code { get; set; } = null!;
+    public double AccessRank { get; set; }
 
 
-    [BsonElement(Definitions.KEY_ISLINK)]
+    public string Code { get; set; } = "";
+
     public bool IsLink { get; set; }
 
 
-    [BsonElement(Definitions.KEY_NAME)]
-    public MultiLingualField Name { get; set; } = null!;
 
+    public MultiLingualField Name { get; set; } = new();
 
-    [BsonElement(Definitions.KEY_CREDIT)]
     public (double, double, double, int) Credit { get; set; }
 
+    public MultiLingualField Unit { get; set; } = new();
 
-    [BsonElement(Definitions.KEY_UNIT)]
-    public MultiLingualField Unit { get; set; } = null!;
-
-
-    [BsonElement(Definitions.KEY_CLASSES)]
-    public IEnumerable<int> Classes { get; set; } = null!;
+    public IEnumerable<int> Classes { get; set; } = new List<int>();
 
 
+}
+
+public static class CourseExtensions
+{
+    public static async Task<Course?> FindCourseAsync(this DBWrapper db, string courseCode, CancellationToken token = default)
+    {
+        var cursor =
+            db is DBSessionWrapper dbSess ?
+            await dbSess.Courses.FindAsync(dbSess.Session, x => x.Code == courseCode, cancellationToken: token) :
+            await db.Courses.FindAsync(x => x.Code == courseCode, cancellationToken: token);
+        return await cursor.FirstOrDefaultAsync(token);
+    }
 }

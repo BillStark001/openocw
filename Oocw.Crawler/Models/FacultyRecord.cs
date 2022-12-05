@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Oocw.Crawler.Models;
 
-public class FacultyInfo
+public class FacultyRecord
 {
     public int Code { get; set; } = -1;
     public string Name { get; set; } = "";

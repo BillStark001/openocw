@@ -20,7 +20,7 @@ using DSS = Dictionary<string, string>;
 using IMDSS = ImmutableDictionary<string, string>;
 
 using DictStrArgs = NestedDictionary<string, string?>;
-using DictIntSyl = Dictionary<int, (SyllabusInfo?, SyllabusInfo?)>;
+using DictIntSyl = Dictionary<int, (SyllabusRecord?, SyllabusRecord?)>;
 
 public class Crawler
 {
@@ -95,7 +95,7 @@ public class Crawler
     }
 
 
-    public IEnumerable<ListedCourseInfo> GetCourseList(IDSS info, int year = 114514, int retry_limit = 5)
+    public IEnumerable<CourseRecord> GetCourseList(IDSS info, int year = 114514, int retry_limit = 5)
     {
         var args_course = year >= THIS_YEAR ? args_general_list : args_archive_list;
 
@@ -125,7 +125,7 @@ public class Crawler
                 return DataExtractor.GetCourseList(dom);
             }
         }
-        return Enumerable.Empty<ListedCourseInfo>();
+        return Enumerable.Empty<CourseRecord>();
     }
 
     // 
@@ -205,13 +205,13 @@ public class Crawler
     /// <param name="outpath"></param>
     public void Task2(string outpath)
     {
-        List<ListedCourseInfo> cl1, cl2;
+        List<CourseRecord> cl1, cl2;
         int nr1, nr2;
 
         // load cache
         try
         {
-            (cl1, cl2, nr1, nr2) = FileUtil.Load<(List<ListedCourseInfo>, List<ListedCourseInfo>, int, int)>(outpath);
+            (cl1, cl2, nr1, nr2) = FileUtil.Load<(List<CourseRecord>, List<CourseRecord>, int, int)>(outpath);
         }
         catch
         {
@@ -266,7 +266,7 @@ public class Crawler
     /// <exception cref="Exception"></exception>
     public void Task3(string inpath, string outpath, int start_year = 2016, int end_year = 2022)
     {
-        var (clist, _, _, _) = FileUtil.Load<(List<ListedCourseInfo>, List<ListedCourseInfo>, int, int)>(inpath);
+        var (clist, _, _, _) = FileUtil.Load<(List<CourseRecord>, List<CourseRecord>, int, int)>(inpath);
         var targets = clist.Select(x => HttpUtility.ParseQueryString(x.Url).Get("KougiCD", "JWC")).Select(x => int.Parse(x!));
         // initialize storage
 

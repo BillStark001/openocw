@@ -105,17 +105,17 @@ public static class DataExtractor
 
     private static Regex AcbarRegex = new(@"/images/acbar(-?[0-9]+)\.gif");
 
-    public static IEnumerable<ListedCourseInfo> GetCourseList(IDocument bf_base)
+    public static IEnumerable<CourseRecord> GetCourseList(IDocument bf_base)
     {
         var tbls = bf_base.QuerySelectorAll<IHtmlTableElement>("table.ranking-list");
 
         if (tbls.Count() == 0)
         {
             // no available data
-            return Enumerable.Empty<ListedCourseInfo>();
+            return Enumerable.Empty<CourseRecord>();
         }
 
-        List<ListedCourseInfo> infos = new List<ListedCourseInfo>();
+        List<CourseRecord> infos = new List<CourseRecord>();
 
         foreach (var table in tbls)
         {
@@ -125,13 +125,13 @@ public static class DataExtractor
             {
                 var cells = elem.Cells;
                 var (name, url) = cells[1].GetAllAnchors().FirstOrDefault(("", ""));
-                var info = new ListedCourseInfo()
+                var info = new CourseRecord()
                 {
                     Code = cells[0].TextContent.FixWebString(),
                     Name = name.FixWebString(),
                     Url = url,
                     Faculties = cells[2].GetAllAnchors()
-                    .Select((x) => new FacultyInfo
+                    .Select((x) => new FacultyRecord
                     {
                         Name = x.Item1,
                         Code = int.Parse(HttpUtility.ParseQueryString(x.Item2).Get("id") ?? "-1")
@@ -187,14 +187,14 @@ public static class DataExtractor
 
 
 
-    public static SyllabusInfo? ParseLectureInfo((IElement?, IElement?, IElement?, IElement?) info_caches)
+    public static SyllabusRecord? ParseLectureInfo((IElement?, IElement?, IElement?, IElement?) info_caches)
     {
 
         var (cnt_lname, cnt_summ, cnt_inner, cnt_note) = info_caches;
         if (cnt_lname == null)
             return null;
 
-        SyllabusInfo ret = new();
+        SyllabusRecord ret = new();
 
         // title
         var lname_ = cnt_lname.GetElementsByTagName("h3").First()?.TextContent ?? "";
@@ -214,7 +214,7 @@ public static class DataExtractor
         // summary
         var dataCells = cnt_summ?.QuerySelectorAll<IHtmlElement>("dl");
         DSS summ = ret.Summary;
-        List<FacultyInfo> faculties = ret.Faculties;
+        List<FacultyRecord> faculties = ret.Faculties;
 
         foreach (var dl in dataCells ?? Enumerable.Empty<IHtmlElement>())
         {
@@ -226,7 +226,7 @@ public static class DataExtractor
             if (summ_key == "担当教員名" || summ_key == "Instructor(s)")
             {
                 faculties = dd.GetAllAnchors()
-                    .Select((x) => new FacultyInfo
+                    .Select((x) => new FacultyRecord
                     {
                         Name = x.Item1,
                         Code = int.Parse(HttpUtility.ParseQueryString(x.Item2).Get("id") ?? "-1")
@@ -338,7 +338,7 @@ public static class DataExtractor
                 foreach (var a in d.GetAllAnchors().Select(x => x.Item2))
                     if (!string.IsNullOrWhiteSpace(a))
                         links.Add(a);
-            var supp = new SyllabusInfo.Note()
+            var supp = new SyllabusRecord.Note()
             {
                 Title = "__supp__",
                 Links = links.ToArray(),
@@ -356,7 +356,7 @@ public static class DataExtractor
             if (nhead == null || nlower == null)
                 continue;// adobe pdf related 
 
-            var note = new SyllabusInfo.Note();
+            var note = new SyllabusRecord.Note();
 
             note.Title = nhead.GetElementsByTagName("h3").First().TextContent.FixWebString();
             note.LectureType = nhead.GetElementsByTagName("p").First().TextContent.FixWebString();

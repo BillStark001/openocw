@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Oocw.Crawler.Models;
 
-public class SyllabusInfo
+public class SyllabusRecord
 {
     public class Note
     {
@@ -21,7 +21,7 @@ public class SyllabusInfo
     public string NameEn { get; set; } = "";
     public Dictionary<string, string> Summary { get; set; } = new();
     public Dictionary<string, string> Detail { get; set; } = new();
-    public List<FacultyInfo> Faculties { get; set; } = new();
+    public List<FacultyRecord> Faculties { get; set; } = new();
     public bool[] Skills { get; set; } = new bool[5];
     public List<(int, string, string)> Syllabus { get; set; } = new();
     public List<(string, string)> Related { get; set; } = new();

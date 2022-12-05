@@ -2,7 +2,7 @@
 using MongoDB.Bson;
 using System;
 using System.Threading.Tasks;
-using Oocw.Database.Models;
+using Oocw.Database.Models.Technical;
 
 namespace Oocw.Database;
 

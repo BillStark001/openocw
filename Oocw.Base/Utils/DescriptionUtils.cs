@@ -17,7 +17,7 @@ public static class DescriptionUtils
     static DescriptionUtils()
     {
 
-        foreach (var method in typeof(Utils).GetMethods())
+        foreach (var method in typeof(DescriptionUtils).GetMethods())
         {
             if (method.Name == "Describe")
             {
