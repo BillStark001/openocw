@@ -6,7 +6,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="MeCab.DotNet" Version="0.0.40" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.8" />
 		<PackageReference Include="MongoDB.Driver" Version="2.17.1" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
@@ -14,6 +13,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Oocw.Base\Oocw.Base.csproj" />
 		<ProjectReference Include="..\Oocw.Database\Oocw.Database.csproj" />
 	</ItemGroup>
 

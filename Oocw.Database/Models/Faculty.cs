@@ -76,8 +76,8 @@ public static class FacultyExtensions
     {
         var merge = f.GetMergeDefinition();
         if (db is DBSessionWrapper dbSess)
-            return await dbSess.Faculties.UpdateOneAsync(dbSess.Session, x => x.IdRaw == f.IdRaw, merge, cancellationToken: token);
+            return await dbSess.Faculties.UpdateOneAsync(dbSess.Session, x => x.Id == f.Id, merge, cancellationToken: token);
         else
-            return await db.Faculties.UpdateOneAsync(x => x.IdRaw == f.IdRaw, merge, cancellationToken: token);
+            return await db.Faculties.UpdateOneAsync(x => x.Id == f.Id, merge, cancellationToken: token);
     }
 }

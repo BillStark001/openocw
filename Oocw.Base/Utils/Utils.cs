@@ -259,8 +259,10 @@ public static class Utils
         return ans;
     }
 
-    public static string LCP(string a, string b)
+    public static string LCP(string? a, string? b)
     {
+        a = a ?? string.Empty;
+        b = b ?? string.Empty;
         for (int i = 0; i < a.Length; ++i)
         {
             if (b.Length <= i)
@@ -271,26 +273,26 @@ public static class Utils
         return a;
     }
 
-    private static string _lcp(in string[] strs, int l, int r)
+    private static string _lcp(in string?[] strs, int l, int r)
     {
         if (r - l < 2)
-            return strs[l];
+            return strs[l] ?? string.Empty;
         else if (r - l == 2)
             return LCP(strs[l], strs[l + 1]);
         int m = (r + l) / 2;
         return LCP(_lcp(strs, l, m), _lcp(strs, m, r));
     }
 
-    public static string LCP(params string[] strs)
+    public static string LCP(params string?[] strs)
     {
         if (strs.Length == 0)
             return string.Empty;
         if (strs.Length == 1)
-            return strs[0];
+            return strs[0] ?? string.Empty;
         return _lcp(strs, 0, strs.Length);
     }
 
-    public static string LCP<T>(this IEnumerable<T> strs, Func<T, string> selector)
+    public static string LCP<T>(this IEnumerable<T> strs, Func<T, string?> selector)
     {
         return LCP(strs.Select(selector).ToArray());
     }

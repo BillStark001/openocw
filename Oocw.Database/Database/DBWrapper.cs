@@ -15,6 +15,7 @@ namespace Oocw.Database;
 public class DBWrapper
 {
     public delegate TResult TransactionCallback<TResult>(DBSessionWrapper wrapper, CancellationToken token);
+    public delegate void TransactionCallback(DBSessionWrapper wrapper, CancellationToken token);
 
     protected IMongoClient _client;
     protected IMongoDatabase _database;
@@ -159,11 +160,31 @@ public class DBWrapper
                 );
 
             var result = await sess.WithTransactionAsync(
-                (s, c) => callback(new DBSessionWrapper(s), c),
+                async (s, c) => await callback(new DBSessionWrapper(s), c),
                 options,
                 cToken ?? CancellationToken.None
             );
             return result;
+        }
+    }
+
+    public async Task UseTransactionAsync(
+        TransactionCallback<Task> callback,
+        CancellationToken? cToken = null)
+    {
+        using (var sess = await _client.StartSessionAsync())
+        {
+            var options = new TransactionOptions(
+                readPreference: ReadPreference.Primary,
+                readConcern: ReadConcern.Local,
+                writeConcern: WriteConcern.WMajority
+                );
+
+            await sess.WithTransactionAsync(
+                async (s, c) => { await callback(new DBSessionWrapper(s), c); return 0; },
+                options,
+                cToken ?? CancellationToken.None
+            );
         }
     }
 }

@@ -213,7 +213,8 @@ public static class DataExtractor
 
         // summary
         var dataCells = cnt_summ?.QuerySelectorAll<IHtmlElement>("dl");
-        DSS summ = ret.Summary;
+        DSS summ = new();
+        DSS retDetail = new();
         List<FacultyRecord> faculties = ret.Faculties;
 
         foreach (var dl in dataCells ?? Enumerable.Empty<IHtmlElement>())
@@ -243,6 +244,8 @@ public static class DataExtractor
             summ[summ_key] = summ_value;
         }
 
+        ret.Summary.AssignFrom(summ);
+
 
         foreach (var cont in cnt_inner?.QuerySelectorAll("div.cont-sec") ?? Enumerable.Empty<IElement>())
         {
@@ -270,7 +273,7 @@ public static class DataExtractor
                     var (vrow, vtmp) = vt.GetRowSelector();
                     foreach (var row in vtmp)
                     {
-                        ret.Syllabus.Add((
+                        ret.Schedule.Add((
                             int.Parse(NumberExtractor.Match(row.Cells[0].TextContent).Value),
                             row.Cells[1].TextContent,
                             row.Cells[2].TextContent
@@ -280,7 +283,7 @@ public static class DataExtractor
                 else if (ExperiencedTrigger.Contains(k))
                 {
                     var val = vt.GetRowSelector().Item2.Last().Cells[0].TextContent.FixWebString();
-                    ret.Detail[k] = val;
+                    retDetail[k] = val;
                 }
                 else
                 {
@@ -295,7 +298,7 @@ public static class DataExtractor
                     vcs += i is IElement e ? e.InnerHtml : i.TextContent;
                 }
                 vcs = vcs.Replace("<br/>", "\n");
-                ret.Detail[k] = vcs;
+                retDetail[k] = vcs;
             }
             else if (v is IHtmlUnorderedListElement vul) // related
             {
@@ -309,7 +312,7 @@ public static class DataExtractor
             else if (v is IHtmlDivElement vdiv)
             {
                 // TODO what about the god damn video format content?
-                ret.Detail[k] = v.OuterHtml;
+                retDetail[k] = v.OuterHtml;
                 /* 
                    vs = []
                    for dd in [x for x in v.contents if x.name == 'div']:
@@ -325,6 +328,8 @@ public static class DataExtractor
             {
                 throw new NotImplementedException($"{k}, {v.TagName}");
             }
+
+            ret.Detail.AssignFrom(retDetail);
         }
 
         // docs
@@ -338,7 +343,7 @@ public static class DataExtractor
                 foreach (var a in d.GetAllAnchors().Select(x => x.Item2))
                     if (!string.IsNullOrWhiteSpace(a))
                         links.Add(a);
-            var supp = new SyllabusRecord.Note()
+            var supp = new SyllabusRecord.NoteRecord()
             {
                 Title = "__supp__",
                 Links = links.ToArray(),
@@ -356,7 +361,7 @@ public static class DataExtractor
             if (nhead == null || nlower == null)
                 continue;// adobe pdf related 
 
-            var note = new SyllabusRecord.Note();
+            var note = new SyllabusRecord.NoteRecord();
 
             note.Title = nhead.GetElementsByTagName("h3").First().TextContent.FixWebString();
             note.LectureType = nhead.GetElementsByTagName("p").First().TextContent.FixWebString();

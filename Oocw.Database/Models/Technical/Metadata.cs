@@ -29,7 +29,7 @@ public class Metadata : IMergable<Metadata>
     [BsonIgnoreIfNull]
     public double? SeacrhScore { get; set; } = null;
     [BsonIgnoreIfNull]
-    public IEnumerable<string>? SearchRecord { get; set; } = null;
+    public string? SearchRecord { get; set; } = null;
 
     public UpdateDefinition<P> GetMergeDefinition<P>(Func<P, Metadata> expr)
     {
