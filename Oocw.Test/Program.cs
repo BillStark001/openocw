@@ -17,7 +17,7 @@ Func<int, int> fadd3 = x => finc(finc(finc(x)));
 Expression<Func<int, int>> eadd3 = x => fadd3(x);
 Expression<Func<int, int>> eadd31 = x => finc(finc(finc(x)));
 Expression<Func<int, int>> eadd32 = x => x + 3;
-Expression<Func<int, int>> eadd6 = ExpressionUtils.Combine(eadd32, eadd32);
+Expression<Func<int, int>> eadd6 = ExpressionUtils.Combine(eadd3, eadd32);
 
 
 driver.Initialize();

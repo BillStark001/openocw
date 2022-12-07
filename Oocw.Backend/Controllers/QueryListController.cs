@@ -59,11 +59,12 @@ public class QueryListController : ControllerBase
         {
             var courses = _db.Wrapper.Courses.Find(crsFilter);
             var clist = courses.Skip(dPage * dCount - dPage).Limit(dCount).ToList();
-            var cllist = clist.Select(x => x.Classes.Count() > 0 ? x.Classes.Max() : -1);
+            var cllist = clist.Where(x => x.Classes.Count() > 0).Select(x => x.Classes.Max().ToString());
             var classes = _db.Wrapper.Classes.Find(Builders<Class>.Filter.In(x => x.Meta.OcwId, cllist)).ToList();
-            Dictionary<int, Class> d = new(classes.Count);
+
+            Dictionary<string, Class> d = new(classes.Count);
             foreach (var cls in classes)
-                d[cls.Meta.OcwId] = cls;
+                d[cls.Meta.OcwId!] = cls;
             var ret = Enumerable.Zip(clist, cllist).Select((val) =>
             {
                 var crs = val.First;

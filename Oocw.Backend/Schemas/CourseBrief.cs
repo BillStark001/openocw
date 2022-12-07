@@ -76,7 +76,7 @@ public class CourseBrief
         // description
         if (dClass.Syllabus.Version == Definitions.VAL_VER_RAW)
         {
-            var rawSyl = dClass.Syllabus.TryGetCurrentVersion()!;
+            var rawSyl = dClass.Syllabus.GetItem()!;
             if (rawSyl.TryGetElement(Definitions.KEY_SYL_DESC, out var rawDesc))
             {
                 var desc = rawDesc.Value.TryGetTranslation(lang);

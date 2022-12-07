@@ -18,7 +18,6 @@ namespace Oocw.Database.Models;
 public class Class : IMergable<Class>
 {
 
-
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
     public string? IdRaw { get; set; }
@@ -29,11 +28,11 @@ public class Class : IMergable<Class>
 
 
     [BsonDateTimeOptions(Kind = DateTimeKind.Local)]
-    public DateTime UpdateTimeSyllabus { get; set; }
+    public DateTime UpdateTimeSyllabus { get; set; } = DateTime.MinValue;
 
 
     [BsonDateTimeOptions(Kind = DateTimeKind.Local)]
-    public DateTime UpdateTimeNotes { get; set; }
+    public DateTime UpdateTimeNotes { get; set; } = DateTime.MinValue;
 
 
     public string Code { get; set; } = "";
@@ -53,39 +52,47 @@ public class Class : IMergable<Class>
     public string Language { get; set; } = "null";
 
 
-    [BsonElement(Definitions.KEY_UNIT)]
-    public MultiLingualField Unit { get; set; } = new();
+    // public MultiLingualField Unit { get; set; } = new();
 
 
-    [BsonElement(Definitions.KEY_CLASSES)]
     public IEnumerable<int> Classes { get; set; } = new HashSet<int>();
 
+
+    public IEnumerable<LectureInfo> Schedule { get; set; } = Enumerable.Empty<LectureInfo>();
+
+
+    public IEnumerable<bool> Skills { get; set; } = new bool[5];
+    public Dictionary<int, LectureInfo> Lectures { get; set; } = new();
 
     [BsonElement(Definitions.KEY_SYLLABUS)]
     public MultiVersionField<BsonDocument> Syllabus { get; set; } = new();
 
-
-    [BsonElement(Definitions.KEY_NOTES)]
-
-    public MultiVersionField<BsonDocument> Notes { get; set; } = new();
     
     public UpdateDefinition<P> GetMergeDefinition<P>(Expression<Func<P, Class>> expr)
     {
         
-        var metaUpdate = Meta.GetMergeDefinition<P>(ExpressionUtils.Combine(expr, x => x.Meta));
-        var unitUpdate = Unit.GetMergeDefinition<P>(ExpressionUtils.Combine(expr, x => x.Unit));
-        var selfUpdate = Builders<P>.Update
-            .Set(ExpressionUtils.Combine(expr, x => x.Year), Year)
-            .Set(ExpressionUtils.Combine(expr, x => x.ClassName), ClassName)
-            .AddToSetEach(ExpressionUtils.Combine(expr, x => x.Lecturers), Lecturers)
-            .BitwiseAnd(ExpressionUtils.Combine(expr, x => x.Format), Format)
-            .BitwiseAnd(ExpressionUtils.Combine(expr, x => x.Quarter), Quarter)
-            .AddToSetEach(ExpressionUtils.Combine(expr, x => x.Addresses), Addresses)
-            .Set(ExpressionUtils.Combine(expr, x => x.Language), Language)
-            .AddToSetEach(ExpressionUtils.Combine(expr, x => x.Classes), Classes);
-        // return Builders<P>.Update.Combine(metaUpdate, unitUpdate, selfUpdate);
+        var metaUpdate = Meta.GetMergeDefinition(expr.Combine(x => x.Meta));
 
-        throw new NotImplementedException();
+        // var unitUpdate = Unit.GetMergeDefinition(expr.Combine(x => x.Unit));
+
+        var selfUpdate = Builders<P>.Update
+            .Set(expr.Combine(x => x.Year), Year)
+            .Set(expr.Combine(x => x.ClassName), ClassName)
+            .Set(expr.Combine(x => x.Lecturers), Lecturers)
+            .Set(expr.Combine(x => x.Format), Format)
+            .Set(expr.Combine(x => x.Quarter), Quarter)
+            .Set(expr.Combine(x => x.Addresses), Addresses)
+            .Set(expr.Combine(x => x.Language), Language)
+            .Set(expr.Combine(x => x.Skills), Skills)
+            .AddToSetEach(expr.Combine(x => x.Classes), Classes);
+
+        // TODO try to merge
+        var contentUpdate = Builders<P>.Update
+            .Set(expr.Combine(x => x.Syllabus), Syllabus)
+            .Set(expr.Combine(x => x.Lectures), Lectures);
+
+        return Builders<P>.Update.Combine(metaUpdate, /*unitUpdate, */selfUpdate, contentUpdate);
+
     }
 }
 

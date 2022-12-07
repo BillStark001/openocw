@@ -23,9 +23,9 @@ public static class ExpressionUtils
             _left = left;
             _right = right;
         }
-        public override Expression Visit(Expression node)
+        public override Expression? Visit(Expression? node)
         {
-            if (node.Equals(_left))
+            if (node != null && node.Equals(_left))
             {
                 return _right;
             }
@@ -37,7 +37,7 @@ public static class ExpressionUtils
 
     public static Expression Replace(Expression main, Expression current, Expression replacement)
     {
-        return (new ReplaceVisitor(current, replacement)).Visit(main);
+        return new ReplaceVisitor(current, replacement).Visit(main)!;
     }
 
     /// <summary>
@@ -65,7 +65,7 @@ public static class ExpressionUtils
     /// <param name="f">Expression like x => f(x)</param>
     /// <param name="g">Expression like x => g(x)</param>
     /// <returns>Expression line x => f(g(x))</returns>
-    public static Expression<Func<T, R>> Combine2<T, U, R>(this Expression<Func<T, U>> f, Expression<Func<U, R>> g)
+    public static Expression<Func<T, R>> SlowCombine<T, U, R>(this Expression<Func<T, U>> f, Expression<Func<U, R>> g)
     {
         var input = Expression.Variable(typeof(T), "input");
         var invoke1 = Expression.Invoke(f, input);

@@ -304,7 +304,7 @@ public static class DataExtractor
             {
                 foreach (var li in vul.Children.Select(x => x as IHtmlListItemElement).Where(x => x != null))
                 {
-                    var cls = li.TextContent.FixWebString();
+                    var cls = li!.TextContent.FixWebString();
                     var info = ColonSeparator.Split(cls);
                     ret.Related.Add((info[0], info[1]));
                 }
@@ -345,7 +345,7 @@ public static class DataExtractor
                         links.Add(a);
             var supp = new SyllabusRecord.NoteRecord()
             {
-                Title = "__supp__",
+                Title = SyllabusRecord.NoteRecord.SUPP_TITLE,
                 Links = links.ToArray(),
             };
 

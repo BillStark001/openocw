@@ -15,7 +15,7 @@ public static class Utils
 
 
     // reference: https://www.cnblogs.com/xu-yi/p/10525090.html
-    public static string ToSBC(this string input)
+    public static string ToFullWidth(this string input)
     {
         char[] c = input.ToCharArray();
         for (int i = 0; i < c.Length; i++)
@@ -31,7 +31,7 @@ public static class Utils
         return new string(c);
     }
 
-    public static string ToDBC(this string input)
+    public static string ToHalfWidth(this string input)
     {
         char[] c = input.ToCharArray();
         for (int i = 0; i < c.Length; i++)
@@ -53,7 +53,7 @@ public static class Utils
             .Replace("\r", "")
             .Replace("\n", "")
             .Replace("\t", "")
-            .Trim().ToDBC();
+            .Trim().ToHalfWidth();
         return ans;
     }
 

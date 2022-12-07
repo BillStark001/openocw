@@ -19,23 +19,30 @@ public static class ParseUtils
     /// 
     /// </summary>
     /// <param name="dstr">
-    /// 0b 00000000 00000000 00000000 00ED0CBA <br></br>
-    /// A: lect B: exer C: expr D: has online E: has offline
     /// </param>
-    /// <returns></returns>
+    /// <returns>
+    /// 0b 00000000 00000000 000000NM 000EDCBA <br></br>
+    /// A: lect B: exer C: expr D: exam E: supp <br></br>
+    /// M: has online N: has offline
+    /// </returns>
     public static int ParseForm(string dstr)
     {
         var ans = 0;
 
         dstr = dstr.NormalizeBrackets().ToLower();
-        var fl_lect = dstr.HasKeyword("講義", "lecture");
+        var fl_supp = dstr.HasKeyword("補講", "supplementary lecture");
+        var fl_lect = (!fl_supp) && dstr.HasKeyword("講義", "lecture");
         var fl_exer = dstr.HasKeyword("演習", "練習", "exercise", "recitation");
         var fl_expr = dstr.HasKeyword("実験", "experiment");
+        var fl_exam = dstr.HasKeyword("試験", "テスト", "exam", "examination", "test");
+        
 
         ans += Base.Utils.BoolToBinary(
             fl_lect,
             fl_exer,
-            fl_expr
+            fl_expr, 
+            fl_exam, 
+            fl_supp
         );
 
         var (brl, brr) = dstr.FindBrackets();
@@ -60,12 +67,12 @@ public static class ParseUtils
                 "対面",
                 "face-to-face",
                 "offline",
-                "オンライン"
+                "オフライン"
             );
             ans += Base.Utils.BoolToBinary(
                 fl_online || fl_hybrid,
                 fl_offline || fl_hybrid
-            ) * 16;
+            ) * 256;
         }
         return ans;
     }
@@ -218,12 +225,12 @@ public static class ParseUtils
                 int[] info = (from i in Enumerable.Range(1, 4 - 1)
                               select Convert.ToInt32(rs.Groups[i].Value.Trim())).ToArray();
                 ans = new(info[0], info[1], info[2]);
-                // aybe we have a better approach in c#?
+                // maybe we have a better approach in c#?
                 return ans;
             }
         }
         // return ans
-        return DateTime.MinValue;
+        return new DateTime(1970, 1, 1);
     }
 
 
@@ -240,7 +247,11 @@ public static class ParseUtils
         }
         return (ay, q);
     }
-
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="dstr"></param>
+    /// <returns>0b 00000000 00000000 00000000 0000DCBA<br></br>A: 1Q B: 2Q C: 3Q D: 4Q</returns>
     public static int ParseAcademicQuarter(string dstr)
     {
         var ans = 0;
@@ -284,5 +295,17 @@ public static class ParseUtils
     public static string ParseLanguage(string langIn)
     {
         return langIn.ToLower().HasKeyword("english", "英語") ? "en" : "ja";
+    }
+
+    public static readonly Regex IntRegex = new(@"-?[0-9]+");
+    public static bool ExtractInteger(this string strIn, out int ret)
+    {
+        ret = 0;
+        var match = IntRegex.Match(strIn);
+        if (match.Success)
+        {
+            return int.TryParse(match.Groups[1].Value, out ret);
+        }
+        return false;
     }
 }

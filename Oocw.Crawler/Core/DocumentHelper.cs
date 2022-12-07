@@ -53,7 +53,7 @@ public static class DocumentHelper
             var nodes = item.QuerySelectorAll("th,td");
             var keyNode = nodes.First();
 
-            var key = keyNode.TextContent.ToDBC().Cleanout().Replace(" ", "");
+            var key = keyNode.TextContent.ToHalfWidth().Cleanout().Replace(" ", "");
             var val = new StringBuilder();
 
             foreach (var valNode in nodes.Skip(1))
@@ -61,7 +61,7 @@ public static class DocumentHelper
                 val.AppendLine(valNode.TextContent);
             }
 
-            dss[key] = val.ToString().ToDBC()
+            dss[key] = val.ToString().ToHalfWidth()
                 .Replace("\r\n", "\n").Split('\n')
                 .Select(x => x.Cleanout()).Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
             ++i;
@@ -85,7 +85,7 @@ public static class DocumentHelper
         IReadOnlyList<string> headers = new List<string>();
         var headCells = table.Rows.First().Cells;
         foreach (var cell in headCells)
-            ((List<string>)headers).Add(cell.TextContent.ToDBC().Cleanout().Replace(" ", ""));
+            ((List<string>)headers).Add(cell.TextContent.ToHalfWidth().Cleanout().Replace(" ", ""));
         HashSet<string> x = new();
         for (int i = 0; i < headers.Count; ++i)
         {
@@ -131,7 +131,7 @@ public static class DocumentHelper
                     }
                     // cell = link;
                 }
-                _res[key] = cell.TextContent.ToDBC()
+                _res[key] = cell.TextContent.ToHalfWidth()
                     .Replace("\r\n", "\n").Split('\n')
                     .Select(x => x.Cleanout()).Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
             }

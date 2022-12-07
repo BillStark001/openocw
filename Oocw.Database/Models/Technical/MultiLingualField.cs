@@ -39,21 +39,11 @@ public class MultiLingualField : IMergable<MultiLingualField>
     public string? Ko { get; set; }
 
 
-    public static Expression<Func<T, bool>> TranslateOnFilter<T>(Func<T, MultiLingualField> expr, string info, string target = "ja")
+    public static Expression<Func<T, bool>> TranslateOnFilter<T>(Expression<Func<T, MultiLingualField>> expr, Expression<Func<string?, bool>> comparer, string target = "ja")
     {
-        Expression<Func<T, bool>>? ans = null;
-        target = target.ToLower();
-        if (target == KEY_LANG_KEY)
-            ans = x => info == expr(x).Key;
-        if (target.StartsWith("en"))
-            ans = x => info == expr(x).En;
-        else if (target.StartsWith("ja"))
-            ans = x => info == expr(x).Ja;
-        else if (target.StartsWith("zh"))
-            ans = x => info == expr(x).Zh;
-        else if (target.StartsWith("ko"))
-            ans = x => info == expr(x).Ko;
-        return ans ?? TranslateOnFilter(expr, info, KEY_LANG_KEY)!;
+
+        var middleExpr = Expressions.TryGetValue(target.ToLower(), out var middleExpr2) ? middleExpr2 : Expressions[KEY_LANG_KEY];
+        return expr.Combine(middleExpr).Combine(comparer);
     }
 
     public string? Translate(string target = "ja")
@@ -97,6 +87,7 @@ public class MultiLingualField : IMergable<MultiLingualField>
 
         Expressions = new()
         {
+            [KEY_LANG_KEY] = x => x.Key, 
             ["ja"] = x => x.Ja,
             ["en"] = x => x.En,
             ["zh"] = x => x.Zh,

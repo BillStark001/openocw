@@ -38,6 +38,7 @@ public class Faculty : IMergable<Faculty>
         var selfUpdate = Builders<T>.Update.Set(ExpressionUtils.Combine(expr, x => x.Id), Id);
         if (Contact != null && Contact.Count > 0)
         {
+            // TODO try merging?
             selfUpdate.Set(ExpressionUtils.Combine(expr, x => x.Contact), Contact);
         }
         return Builders<T>.Update.Combine(selfUpdate, nameUpdate, metaUpdate);
@@ -53,7 +54,8 @@ public static class FacultyExtensions
 
     public static async Task<Faculty?> FindFacultyAsync(this DBWrapper db, string name, string lang = "ja", CancellationToken token = default)
     {
-        return await db.GetItemAsync(db => db.Faculties, MultiLingualField.TranslateOnFilter<Faculty>(x => x.Name, name, lang), token);
+        var filter = MultiLingualField.TranslateOnFilter<Faculty>(x => x.Name, x => x == name, lang);
+        return await db.GetItemAsync(db => db.Faculties, filter, token);
     }
 
     public static async Task<bool> UpdateFacultyAsync(this DBWrapper db, Faculty f, CancellationToken token = default)

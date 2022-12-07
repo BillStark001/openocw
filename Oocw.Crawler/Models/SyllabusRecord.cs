@@ -12,6 +12,9 @@ public class SyllabusRecord
 {
     public class NoteRecord
     {
+        public const string SUPP_TITLE = "__supp__";
+
+        public int Number { get; set; } = -1;
         public string Title { get; set; } = "";
         public string LectureType { get; set; } = "";
         public string LectureDate { get; set; } = "";
@@ -87,7 +90,7 @@ public class SyllabusRecord
 
         [MatchKey("Class Format")]
         [MatchKey("授業形態")]
-        public string CourseType { get; set; } = "";
+        public string Format { get; set; } = "";
 
         [MatchKey("Media-enhanced courses")]
         [MatchKey("メディア利用科目")]
@@ -95,7 +98,7 @@ public class SyllabusRecord
 
         [MatchKey("Day/Period(Room No.)")]
         [MatchKey("曜日・時限(講義室)")]
-        public string DayPeriod { get; set; } = "";
+        public string Address { get; set; } = "";
 
         [MatchKey("Group")]
         [MatchKey("クラス")]
@@ -119,11 +122,11 @@ public class SyllabusRecord
 
         [MatchKey("Syllabus updated")]
         [MatchKey("シラバス更新日")]
-        public string SyllabusUpdate { get; set; } = "";
+        public string SyllabusUpdated { get; set; } = "";
 
         [MatchKey("Lecture notes updated")]
         [MatchKey("講義資料更新日")]
-        public string NotesUpdate { get; set; } = "";
+        public string NotesUpdated { get; set; } = "";
 
         [MatchKey("Language used")]
         [MatchKey("使用言語")]

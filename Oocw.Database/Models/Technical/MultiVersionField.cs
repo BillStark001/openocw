@@ -1,9 +1,4 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Oocw.Database.Models.Technical;
 
@@ -15,12 +10,17 @@ public class MultiVersionField<T> where T : class
 
     public Dictionary<string, T> Items { get; set; } = new();
 
-    public T? TryGetCurrentVersion()
+    public T? GetItem() => GetItem(Version);
+
+    public void PutItem(T item, string version, bool setVersion = true)
     {
-        T? ret = null;
-        var succ = Items != null && Items.TryGetValue(Version, out ret);
-        if (succ)
-            return ret;
-        return null;
+        Items[version] = item;
+        if (setVersion)
+            Version = version;
+    }
+
+    public T? GetItem(string version)
+    {
+        return Items.TryGetValue(version, out var ret) ? ret : null;
     }
 }

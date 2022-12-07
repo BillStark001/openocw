@@ -306,8 +306,8 @@ public class Crawler
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"{dcode}, {year}");
-                    throw e;
+                    Console.WriteLine($"{dcode}, {year}: {e}");
+                    throw;
                 }
             }
 
