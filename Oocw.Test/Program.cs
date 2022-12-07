@@ -2,8 +2,12 @@
 
 using Oocw.Base;
 using Oocw.Crawler.Core;
+using Oocw.Crawler.Models;
 using Oocw.Query;
 using System.Linq.Expressions;
+using System.Collections.Generic;
+using Oocw.Database;
+using Oocw.Cli.Tasks;
 
 var res = Lexer.NaiveMatch("a \\in [ false , true, , 2, \"3\", 4] && b #< ['ffff', 'fffffff']");
 foreach (var lex in res)
@@ -20,6 +24,28 @@ Expression<Func<int, int>> eadd32 = x => x + 3;
 Expression<Func<int, int>> eadd6 = ExpressionUtils.Combine(eadd3, eadd32);
 
 
-driver.Initialize();
-crawler.Task2(Meta.savepath_course_list_raw);
-crawler.Task3(Meta.savepath_course_list_raw, Meta.savepath_details_raw, 2020, 2022);
+if (true)
+{
+    Database db = Database.Instance;
+    db.Initialize();
+
+    var (courses, codes) = FileUtils.Load<(Dictionary<int, Dictionary<int, (SyllabusRecord?, SyllabusRecord?)>>, List<int>)>(Meta.savepath_details_raw);
+
+    foreach (var (code, course) in courses)
+        foreach (var (year, (courseJa, courseEn)) in course)
+        {
+            var id = year * 100000 + code % 100000;
+            var idStr = id.ToString();
+            if (courseJa != null)
+                await SingleUpdate.Syllabus(db.Wrapper, courseJa, idStr, "ja");
+            if (courseEn != null)
+                await SingleUpdate.Syllabus(db.Wrapper, courseEn, idStr, "en");
+        }
+}
+else
+{
+
+    driver.Initialize();
+    crawler.Task2(Meta.savepath_course_list_raw);
+    crawler.Task3(Meta.savepath_course_list_raw, Meta.savepath_details_raw, 2020, 2022);
+}

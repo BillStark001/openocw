@@ -83,6 +83,8 @@ public static class SingleUpdate
                     crdb.Credit = add.Credit2.Value;
                 else if (add.Credit > 0)
                     crdb.Credit = (crdb.Credit.Item1, crdb.Credit.Item2, crdb.Credit.Item3, add.Credit);
+                if (!string.IsNullOrWhiteSpace(add.OcwId) && !crdb.Classes.Contains(int.Parse(add.OcwId)))
+                    crdb.Classes = crdb.Classes.Append(int.Parse(add.OcwId));
             }
 
             await dbSess.UpdateCourseAsync(crdb);
@@ -104,7 +106,8 @@ public static class SingleUpdate
             new(syllabus, lang), 
             new() {
                 Unit = syllabus.Summary.Unit, 
-                Credit = int.TryParse(syllabus.Summary.Credit, out var c) ? c : -1
+                Credit = int.TryParse(syllabus.Summary.Credit, out var c) ? c : -1, 
+                OcwId = ocwId, 
             }, 
             lang);
 
@@ -149,9 +152,9 @@ public static class SingleUpdate
             foreach (var (number, title, detail) in syllabus.Schedule)
             {
                 if (!cldb.Lecturers.Contains(number))
-                    cldb.Lectures[number] = new() { Number = number, };
+                    cldb.Lectures[number.ToString()] = new() { Number = number, };
 
-                var lect = cldb.Lectures[number];
+                var lect = cldb.Lectures[number.ToString()];
                 if (forceUpdate || updateTimeSyllabus > cldb.UpdateTimeSyllabus)
                 {
                     lect.Title.Update(title, lang);
@@ -175,7 +178,7 @@ public static class SingleUpdate
                     note.Number = note.Title.ExtractInteger(out var n) ? n : -1;
 
                 if (!cldb.Lecturers.Contains(note.Number))
-                    cldb.Lectures[note.Number] = new() { Number = note.Number, };
+                    cldb.Lectures[note.Number.ToString()] = new() { Number = note.Number, };
             }
 
             // update update time
@@ -184,7 +187,7 @@ public static class SingleUpdate
 
             foreach (var note in syllabus.Notes)
             {
-                var nrec = cldb.Lectures[note.Number];
+                var nrec = cldb.Lectures[note.Number.ToString()];
                 var updateDate = nrec.Date.HasValue || forceUpdateNotes || updateTimeNotes > cldb.UpdateTimeNotes;
                 var updateType = nrec.Type == 0 || forceUpdateNotes || updateTimeNotes > cldb.UpdateTimeNotes;
 

@@ -13,6 +13,8 @@ public class CourseRecord
         public int Credit { get; set; } = -1;
         public (double, double, double, int)? Credit2 { get; set; } = null;
         public string Unit { get; set; } = "";
+
+        public string OcwId { get; set; } = "";
     }
 
     public string Code { get; set; } = "XXX.X000";

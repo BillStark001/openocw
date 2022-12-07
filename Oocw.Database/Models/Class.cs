@@ -23,7 +23,7 @@ public class Class : IMergable<Class>
     public string? IdRaw { get; set; }
 
     [BsonElement(Metadata.KEY_META)]
-    public Metadata Meta { get; set; } = null!;
+    public Metadata Meta { get; set; } = new();
 
 
 
@@ -62,7 +62,7 @@ public class Class : IMergable<Class>
 
 
     public IEnumerable<bool> Skills { get; set; } = new bool[5];
-    public Dictionary<int, LectureInfo> Lectures { get; set; } = new();
+    public Dictionary<string, LectureInfo> Lectures { get; set; } = new();
 
     [BsonElement(Definitions.KEY_SYLLABUS)]
     public MultiVersionField<BsonDocument> Syllabus { get; set; } = new();

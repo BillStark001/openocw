@@ -22,7 +22,7 @@ public class Course : IMergable<Course>
     public string? IdRaw { get; set; }
 
     [BsonElement(Metadata.KEY_META)]
-    public Metadata Meta { get; set; } = null!;
+    public Metadata Meta { get; set; } = new();
 
 
     public double AccessRank { get; set; }
