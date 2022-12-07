@@ -58,7 +58,7 @@ public class QueryListController : ControllerBase
         else
         {
             var courses = _db.Wrapper.Courses.Find(crsFilter);
-            var clist = courses.Skip(dPage * dCount - dPage).Limit(dCount).ToList();
+            var clist = courses/*.Skip(dPage * dCount - dPage)*/.Limit(dCount).ToList();
             var cllist = clist.Where(x => x.Classes.Count() > 0).Select(x => x.Classes.Max().ToString());
             var classes = _db.Wrapper.Classes.Find(Builders<Class>.Filter.In(x => x.Meta.OcwId, cllist)).ToList();
 

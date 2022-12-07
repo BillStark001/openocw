@@ -8,6 +8,7 @@ using System.Linq.Expressions;
 using System.Collections.Generic;
 using Oocw.Database;
 using Oocw.Cli.Tasks;
+using Oocw.Cli.Utils;
 
 var res = Lexer.NaiveMatch("a \\in [ false , true, , 2, \"3\", 4] && b #< ['ffff', 'fffffff']");
 foreach (var lex in res)
@@ -31,6 +32,8 @@ if (true)
 
     var (courses, codes) = FileUtils.Load<(Dictionary<int, Dictionary<int, (SyllabusRecord?, SyllabusRecord?)>>, List<int>)>(Meta.savepath_details_raw);
 
+    var (cl1, cl2, nr1, nr2) = FileUtils.Load<(List<CourseRecord>, List<CourseRecord>, int, int)>(Meta.savepath_course_list_raw);
+
     foreach (var (code, course) in courses)
         foreach (var (year, (courseJa, courseEn)) in course)
         {
@@ -41,6 +44,11 @@ if (true)
             if (courseEn != null)
                 await SingleUpdate.Syllabus(db.Wrapper, courseEn, idStr, "en");
         }
+
+    // foreach (var course in cl1)
+    //     await SingleUpdate.Course(db.Wrapper, course);
+
+    db.Wrapper.RefreshOrganizations();
 }
 else
 {

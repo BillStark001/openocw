@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 using System.Text.Json;
 using Oocw.Database.Models;
 using MongoDB.Driver;
+using Oocw.Database;
 
-namespace Oocw.Database.Utils;
+namespace Oocw.Cli.Utils;
 
 public static class TitechUtils
 {
@@ -101,10 +102,10 @@ public static class TitechUtils
         int cnt = 0;
         while (inOpr)
         {
-            inOpr = db.UseTransaction<bool>((dbSess, _) =>
+            inOpr = db.UseTransaction((dbSess, _) =>
             {
                 var crs = dbSess.Courses;
-                var res = crs.Find(dbSess.Session, x => x.Unit.Key == null).FirstOrDefault();
+                var res = crs.Find(dbSess.Session, x => x.Unit.Key == "null").FirstOrDefault();
                 if (res == null)
                     return false;
                 var replStr = res.Unit.Ja != null && Orgs.ContainsKey(res.Unit.Ja) ? Orgs[res.Unit.Ja] : KEY_UNCAT;

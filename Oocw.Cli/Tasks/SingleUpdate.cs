@@ -85,6 +85,9 @@ public static class SingleUpdate
                     crdb.Credit = (crdb.Credit.Item1, crdb.Credit.Item2, crdb.Credit.Item3, add.Credit);
                 if (!string.IsNullOrWhiteSpace(add.OcwId) && !crdb.Classes.Contains(int.Parse(add.OcwId)))
                     crdb.Classes = crdb.Classes.Append(int.Parse(add.OcwId));
+
+                if (!string.IsNullOrWhiteSpace(add.Unit))
+                    crdb.Unit.Update(add.Unit, lang);
             }
 
             await dbSess.UpdateCourseAsync(crdb);
