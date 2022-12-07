@@ -13,7 +13,7 @@ public class MultiVersionField<T> where T : class
 
     public string Version { get; set; } = VAL_VER_NONE;
 
-    public IDictionary<string, T> Items { get; set; } = null!;
+    public Dictionary<string, T> Items { get; set; } = new();
 
     public T? TryGetCurrentVersion()
     {

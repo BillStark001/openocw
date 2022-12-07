@@ -10,6 +10,8 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using Oocw.Database.Models.Technical;
 using System.Xml.Linq;
+using System.Linq.Expressions;
+using Oocw.Base;
 
 namespace Oocw.Database.Models;
 
@@ -34,46 +36,53 @@ public class Class : IMergable<Class>
     public DateTime UpdateTimeNotes { get; set; }
 
 
-    public string Code { get; set; } = null!;
+    public string Code { get; set; } = "";
 
     public int Year { get; set; } = 1970;
 
-    public string ClassName { get; set; } = null!;
+    public string ClassName { get; set; } = "";
 
-    public IEnumerable<int> Lecturers { get; set; } = null!;
+    public IEnumerable<int> Lecturers { get; set; } = new HashSet<int>();
 
     public int Format { get; set; }
 
     public int Quarter { get; set; }
 
-    public IEnumerable<AddressInfo> Addresses { get; set; } = null!;
+    public IEnumerable<AddressInfo> Addresses { get; set; } = Enumerable.Empty<AddressInfo>();
 
-    public string Language { get; set; } = null!;
+    public string Language { get; set; } = "null";
 
 
     [BsonElement(Definitions.KEY_UNIT)]
-    public MultiLingualField Unit { get; set; } = null!;
+    public MultiLingualField Unit { get; set; } = new();
 
 
     [BsonElement(Definitions.KEY_CLASSES)]
-    public IEnumerable<int> Classes { get; set; } = null!;
+    public IEnumerable<int> Classes { get; set; } = new HashSet<int>();
 
 
     [BsonElement(Definitions.KEY_SYLLABUS)]
-    public MultiVersionField<BsonDocument> Syllabus { get; set; } = null!;
+    public MultiVersionField<BsonDocument> Syllabus { get; set; } = new();
 
 
     [BsonElement(Definitions.KEY_NOTES)]
 
-    public MultiVersionField<BsonDocument> Notes { get; set; } = null!;
+    public MultiVersionField<BsonDocument> Notes { get; set; } = new();
     
-    public UpdateDefinition<P> GetMergeDefinition<P>(Func<P, Class> expr)
+    public UpdateDefinition<P> GetMergeDefinition<P>(Expression<Func<P, Class>> expr)
     {
-        var metaUpdate = Meta.GetMergeDefinition<P>(x => expr(x).Meta);
-        var unitUpdate = Unit.GetMergeDefinition<P>(x => expr(x).Unit);
+        
+        var metaUpdate = Meta.GetMergeDefinition<P>(ExpressionUtils.Combine(expr, x => x.Meta));
+        var unitUpdate = Unit.GetMergeDefinition<P>(ExpressionUtils.Combine(expr, x => x.Unit));
         var selfUpdate = Builders<P>.Update
-            .Set(x => expr(x).ClassName, ClassName)
-            .Set(x => expr(x).Classes, Classes);
+            .Set(ExpressionUtils.Combine(expr, x => x.Year), Year)
+            .Set(ExpressionUtils.Combine(expr, x => x.ClassName), ClassName)
+            .AddToSetEach(ExpressionUtils.Combine(expr, x => x.Lecturers), Lecturers)
+            .BitwiseAnd(ExpressionUtils.Combine(expr, x => x.Format), Format)
+            .BitwiseAnd(ExpressionUtils.Combine(expr, x => x.Quarter), Quarter)
+            .AddToSetEach(ExpressionUtils.Combine(expr, x => x.Addresses), Addresses)
+            .Set(ExpressionUtils.Combine(expr, x => x.Language), Language)
+            .AddToSetEach(ExpressionUtils.Combine(expr, x => x.Classes), Classes);
         // return Builders<P>.Update.Combine(metaUpdate, unitUpdate, selfUpdate);
 
         throw new NotImplementedException();
@@ -84,31 +93,11 @@ public static class ClassExtensions
 {
     public static async Task<Class?> FindClassAsync(this DBWrapper db, string classCode, CancellationToken token = default)
     {
-        var cursor =
-            db is DBSessionWrapper dbSess ?
-            await dbSess.Classes.FindAsync(dbSess.Session, x => x.Meta.OcwId == classCode, cancellationToken: token) :
-            await db.Classes.FindAsync(x => x.Meta.OcwId == classCode, cancellationToken: token);
-        return await cursor.FirstOrDefaultAsync(token);
+        return await db.GetItemAsync(db => db.Classes, x => x.Meta.OcwId == classCode, token);
     }
 
-    public static async Task UpdateClassAsync(this DBWrapper db, Class c, CancellationToken token = default)
+    public static async Task<bool> UpdateClassAsync(this DBWrapper db, Class c, CancellationToken token = default)
     {
-        var merge = c.GetMergeDefinition();
-        UpdateResult def;
-        if (db is DBSessionWrapper dbSess)
-            def = await dbSess.Classes.UpdateOneAsync(dbSess.Session, x => x.Meta.OcwId == c.Meta.OcwId, merge, cancellationToken: token);
-        else
-            def = await db.Classes.UpdateOneAsync(x => x.Meta.OcwId == c.Meta.OcwId, merge, cancellationToken: token);
-
-        if (def.MatchedCount > 0)
-            return;
-        else
-        {
-            // update matching failed, insert
-            if (db is DBSessionWrapper dbSess2)
-                await dbSess2.Classes.InsertOneAsync(dbSess2.Session, c, cancellationToken: token);
-            else
-                await db.Classes.InsertOneAsync(c, cancellationToken: token);
-        }
+        return await db.PutOrUpdateItemAsync(db => db.Classes, c, x => x.Meta.OcwId == c.Meta.OcwId, token);
     }
 }

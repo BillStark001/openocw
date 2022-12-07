@@ -7,17 +7,17 @@ using System.Threading.Tasks;
 
 namespace Oocw.Base;
 
-public static class DescriptionUtil
+public static class DescriptionUtils
 {
     private static readonly MethodInfo DictDescribe = null!;
     private static readonly MethodInfo ListDescribe = null!;
     private static readonly Type GenericDict;
     private static readonly Type GenericList;
 
-    static DescriptionUtil()
+    static DescriptionUtils()
     {
 
-        foreach (var method in typeof(DescriptionUtil).GetMethods())
+        foreach (var method in typeof(DescriptionUtils).GetMethods())
         {
             if (method.Name == "Describe")
             {

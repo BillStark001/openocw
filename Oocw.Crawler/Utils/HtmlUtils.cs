@@ -18,7 +18,7 @@ namespace Oocw.Crawler.Utils;
 
 using IDSS = IDictionary<string, string>;
 
-public static class HtmlUtil
+public static class HtmlUtils
 {
 
     // url

@@ -1,8 +1,10 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
+using Oocw.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -31,10 +33,10 @@ public class Metadata : IMergable<Metadata>
     [BsonIgnoreIfNull]
     public string? SearchRecord { get; set; } = null;
 
-    public UpdateDefinition<P> GetMergeDefinition<P>(Func<P, Metadata> expr)
+    public UpdateDefinition<P> GetMergeDefinition<P>(Expression<Func<P, Metadata>> expr)
     {
         return Builders<P>.Update
-            .Set(x => expr(x).Dirty, true)
-            .Set(x => expr(x).UpdateTime, DateTime.Now);
+            .Set(ExpressionUtils.Combine(expr, x => x.Dirty), true)
+            .Set(ExpressionUtils.Combine(expr, x => x.UpdateTime), DateTime.Now);
     }
 }

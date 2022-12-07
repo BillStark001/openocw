@@ -12,7 +12,7 @@ namespace Oocw.Crawler.Utils;
 
 using IDSS = IDictionary<string, string>;
 
-public static class Util
+public static class FilterUtils
 {
 
 

@@ -8,14 +8,14 @@ using System.Text.RegularExpressions;
 
 namespace Oocw.Base;
 
-public static class TokenUtil
+public static class TokenUtils
 {
     private static readonly MeCabTagger Tagger;
     private static readonly ImmutableHashSet<string> Stopwords;
 
     private static readonly Regex LineReturn = new(@"\r?\n");
 
-    static TokenUtil()
+    static TokenUtils()
     {
         var param = new MeCabParam();
         Tagger = MeCabTagger.Create(param);

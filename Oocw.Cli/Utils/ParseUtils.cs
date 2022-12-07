@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Oocw.Cli.Utils;
 
-public static class ParseUtil
+public static class ParseUtils
 {
 
 

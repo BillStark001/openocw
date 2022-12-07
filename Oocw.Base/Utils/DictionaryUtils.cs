@@ -17,7 +17,7 @@ public class MatchKeyAttribute : Attribute
     }
 }
 
-public static class DictionaryUtil
+public static class DictionaryUtils
 {
     public static void AssignFrom(this object obj, Dictionary<string, string> dict)
     {

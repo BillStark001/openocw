@@ -44,7 +44,7 @@ public class DBWrapper
     {
         DBNames = new List<string>
         {
-            Definitions.COL_USER_NAME, 
+            Definitions.COL_USER_NAME,
         }.AsReadOnly();
         F = Builders<BsonDocument>.Filter;
 
@@ -84,7 +84,8 @@ public class DBWrapper
         return client;
     }
 
-    public DBWrapper(string connStr = DEFAULT_HOST) : this(GetClientByString(connStr)) {
+    public DBWrapper(string connStr = DEFAULT_HOST) : this(GetClientByString(connStr))
+    {
 
         // check if counter is properly initialized
         foreach (var dbName in DBNames)
@@ -126,9 +127,9 @@ public class DBWrapper
     public async Task<int> GetUserIncrementalIdAsync() => await GetIncrementalIdAsync(Definitions.COL_USER_NAME);
 
 
-    public TResult? UseTransaction<TResult>(
+    public virtual TResult? UseTransaction<TResult>(
         TransactionCallback<TResult> callback,
-        CancellationToken? cToken = null)
+        CancellationToken cToken = default)
     {
         using (var sess = _client.StartSession())
         {
@@ -139,17 +140,17 @@ public class DBWrapper
                 );
 
             var result = sess.WithTransaction(
-                (s, c) => callback(new DBSessionWrapper(s), c), 
+                (s, c) => callback(new DBSessionWrapper(s), c),
                 options,
-                cToken ?? CancellationToken.None
+                cToken
             );
             return result;
         }
     }
 
-    public async Task<TResult?> UseTransactionAsync<TResult>(
+    public virtual async Task<TResult?> UseTransactionAsync<TResult>(
         TransactionCallback<Task<TResult>> callback,
-        CancellationToken? cToken = null)
+        CancellationToken cToken = default)
     {
         using (var sess = await _client.StartSessionAsync())
         {
@@ -162,29 +163,19 @@ public class DBWrapper
             var result = await sess.WithTransactionAsync(
                 async (s, c) => await callback(new DBSessionWrapper(s), c),
                 options,
-                cToken ?? CancellationToken.None
+                cToken
             );
             return result;
         }
     }
 
+    public void UseTransaction(
+        TransactionCallback callback,
+        CancellationToken cToken = default)
+        => UseTransaction((s, c) => { callback(s, c); return 0; }, cToken);
+
     public async Task UseTransactionAsync(
         TransactionCallback<Task> callback,
-        CancellationToken? cToken = null)
-    {
-        using (var sess = await _client.StartSessionAsync())
-        {
-            var options = new TransactionOptions(
-                readPreference: ReadPreference.Primary,
-                readConcern: ReadConcern.Local,
-                writeConcern: WriteConcern.WMajority
-                );
-
-            await sess.WithTransactionAsync(
-                async (s, c) => { await callback(new DBSessionWrapper(s), c); return 0; },
-                options,
-                cToken ?? CancellationToken.None
-            );
-        }
-    }
+        CancellationToken cToken = default)
+        => await UseTransactionAsync(async (s, c) => { await callback(s, c); return 0; }, cToken);
 }
