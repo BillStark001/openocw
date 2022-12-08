@@ -178,8 +178,8 @@ public static class ParseUtils
             var ins = res.Groups[1].Index;
             var dine = res.Groups[1].Length;
             loc_pos = res.Index + res.Length;
-            start = res.Groups.Count > 2 ? Convert.ToInt32(res.Groups[2].Value) : 0;
-            end = res.Groups.Count > 3 ? Convert.ToInt32(res.Groups[3].Value) : start;
+            start = res.Groups.Count > 2 && int.TryParse(res.Groups[2].Value, out var i) ? i : 0;
+            end = res.Groups.Count > 3 && int.TryParse(res.Groups[3].Value, out i) ? i : start;
             loc = loc_pos < dstrp.Length && dstrp[loc_pos] == '(' ? ParseLocation(loc_pos) : "";
 
             ansd = new AddressInfo();

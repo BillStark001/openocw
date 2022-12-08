@@ -33,7 +33,7 @@ Expression<Func<int, int>> eadd32 = x => x + 3;
 Expression<Func<int, int>> eadd6 = ExpressionUtils.Combine(eadd3, eadd32);
 
 
-if (false)
+if (true)
 {
     Database db = Database.Instance;
     db.Initialize();
@@ -42,19 +42,23 @@ if (false)
 
     var (cl1, cl2, nr1, nr2) = FileUtils.Load<(List<CourseRecord>, List<CourseRecord>, int, int)>(Meta.SAVEPATH_COURSE_LIST_RAW);
 
+    List<Task> tasks = new();
+
     foreach (var (code, course) in courses)
         foreach (var (year, (courseJa, courseEn)) in course)
         {
             var id = year * 100000 + code % 100000;
             var idStr = id.ToString();
             if (courseJa != null)
-                await SingleUpdate.Syllabus(db.Wrapper, courseJa, idStr, "ja");
+                tasks.Add(SingleUpdate.Syllabus(db.Wrapper, courseJa, idStr, "ja"));
             if (courseEn != null)
-                await SingleUpdate.Syllabus(db.Wrapper, courseEn, idStr, "en");
+                tasks.Add(SingleUpdate.Syllabus(db.Wrapper, courseEn, idStr, "en"));
         }
 
-    foreach (var course in cl1)
-        await SingleUpdate.Course(db.Wrapper, course);
+    Task.WaitAll(tasks.ToArray());
+
+    // foreach (var course in cl1)
+    //     await SingleUpdate.Course(db.Wrapper, course);
 
     db.Wrapper.RefreshOrganizations();
 }
