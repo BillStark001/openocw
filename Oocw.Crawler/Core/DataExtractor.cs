@@ -309,7 +309,10 @@ public static class DataExtractor
                 {
                     var cls = li!.TextContent.FixWebString();
                     var info = ColonSeparator.Split(cls);
-                    ret.Related.Add((info[0], info[1]));
+                    if (info.Length < 2)
+                        ret.Related.Add(("", cls));
+                    else
+                        ret.Related.Add((info[0], info[1]));
                 }
             }
             else if (v is IHtmlDivElement vdiv)

@@ -10,12 +10,13 @@ using Oocw.Cli.Utils;
 using Oocw.Database.Models;
 using System.Runtime.InteropServices;
 using MongoDB.Driver;
+using Yaap;
 /*
 
 
 var res = Lexer.NaiveMatch("a \\in [ false , true, , 2, \"3\", 4] && b #< ['ffff', 'fffffff']");
 foreach (var lex in res)
-    Console.WriteLine(lex);
+Console.WriteLine(lex);
 */
 string driverPath;
 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -54,9 +55,9 @@ if (false)
             var id = year * 100000 + code % 100000;
             var idStr = id.ToString();
             if (courseJa != null)
-                tasks.Add(SingleUpdate.Syllabus(db.Wrapper, courseJa, idStr, "ja"));
+                await (SingleUpdate.Syllabus(db.Wrapper, courseJa, idStr, "ja"));
             if (courseEn != null)
-                tasks.Add(SingleUpdate.Syllabus(db.Wrapper, courseEn, idStr, "en"));
+                await (SingleUpdate.Syllabus(db.Wrapper, courseEn, idStr, "en"));
         }
     
     var course1 = new CourseRecord()
@@ -89,11 +90,15 @@ if (false)
                 // await s.Courses.InsertOneAsync(s.Session, new Course() { Code = course.Code, Name = new() { En = course.Name } }, cancellationToken: c);
         }, CancellationToken.None));
         */
+    // Task.WaitAll(tasks.ToArray());
 
-    Task.WaitAll(tasks.ToArray());
+    Console.WriteLine("cl1");
+    foreach (var course in cl1)
+        await SingleUpdate.Course(db.Wrapper, course);
 
-    // foreach (var course in cl1)
-    //     await SingleUpdate.Course(db.Wrapper, course);
+    Console.WriteLine("cl2");
+    foreach (var course in cl2)
+        await SingleUpdate.Course(db.Wrapper, course, lang: "en");
 
     // db.Wrapper.RefreshOrganizations();
 }

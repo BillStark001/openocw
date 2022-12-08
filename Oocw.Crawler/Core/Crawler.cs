@@ -12,6 +12,7 @@ using Oocw.Crawler.Models;
 using OpenQA.Selenium.DevTools;
 using Oocw.Base;
 using System.Web;
+using Yaap;
 
 namespace Oocw.Crawler.Core;
 
@@ -180,6 +181,7 @@ public class Crawler
         ("情報理工学院", _k(4)),
         ("生命理工学院", _k(5)),
         ("環境・社会理工学院", _k(6)),
+        ("工系３学院", new DSS() { ["GakubuCD"]= "11", ["KamokuCD"]= "300001" }.ToImmutableDictionary()),
         ("教養科目群", new DSS() { ["GakubuCD"]= "7", ["GakkaCD"]= "370000" }.ToImmutableDictionary()),
         ("初年次専門科目", _k(10)),
     }.ToImmutableList();
@@ -198,6 +200,13 @@ public class Crawler
             {"focus", "100"}
         }.ToImmutableDictionary();
 
+    public static readonly IDSS args_e3 = new DSS
+        {
+            {"module", "General"},
+            {"action", "T0210"},
+            { "tab", "2"},
+            {"focus", "200"}
+        }.ToImmutableDictionary();
 
     /// <summary>
     /// Get course list
@@ -228,15 +237,26 @@ public class Crawler
 
             if (i < nr1)
                 continue;
+            var args = args_default;
+            if (target == "教養科目群")
+                args = args_la;
+            else if (target == "工系３学院")
+                args = args_e3;
 
-            var url = ADDR_DEFAULT.AddUrlEncodedParameters(dt, target == "教養科目群" ? args_la : args_default, args_lang("JA"));
+            var url = ADDR_DEFAULT.AddUrlEncodedParameters(dt, args, args_lang("JA"));
+            var urlEn = ADDR_DEFAULT.AddUrlEncodedParameters(dt, args, args_lang("EN"));
             Console.WriteLine($"{target} => {url}");
 
             var html = Driver.GetHtmlAfterLoaded(url);
             var lists = DataExtractor.GetCourseList(html.Dom());
 
+            var htmlEn = Driver.GetHtmlAfterLoaded(urlEn);
+            var listsEn = DataExtractor.GetCourseList(htmlEn.Dom());
+
             nr1 = i;
+            nr2 = i;
             cl1.AddRange(lists);
+            cl2.AddRange(listsEn);
 
             FileUtils.BackupFile(outpath);
             FileUtils.Dump((cl1, cl2, nr1, nr2), outpath);
@@ -317,7 +337,7 @@ public class Crawler
 
         // normal process
         var exit_tag = false;
-        foreach (var dcode in targets)
+        foreach (var dcode in targets.Yaap())
         {
             if (!details.ContainsKey(dcode))
                 details[dcode] = new();

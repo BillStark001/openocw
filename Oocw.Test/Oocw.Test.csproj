@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Yaap.zhipwang" Version="0.6.6" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Oocw.Base\Oocw.Base.csproj" />
     <ProjectReference Include="..\Oocw.Cli\Oocw.Cli.csproj" />
     <ProjectReference Include="..\Oocw.Crawler\Oocw.Crawler.csproj" />
