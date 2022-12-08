@@ -28,10 +28,12 @@ public static class DatabaseExtensions
         Expression<Func<T, bool>> filter,
         CancellationToken token = default)
     {
+        
         var cursor =
             db is DBSessionWrapper dbSess ?
             await col(dbSess).FindAsync(dbSess.Session, filter, cancellationToken: token) :
             await col(db).FindAsync(filter, cancellationToken: token);
+        
         return await cursor.FirstOrDefaultAsync(token);
     }
 
@@ -54,11 +56,12 @@ public static class DatabaseExtensions
         where T : IMergable<T>
     {
         var merge = c.GetMergeDefinition();
+        var dbSess = db as DBSessionWrapper;
         UpdateResult def;
         UpdateOptions options = new() {
             IsUpsert = false, 
         };
-        if (db is DBSessionWrapper dbSess)
+        if (dbSess != null)
             def = await col(dbSess).UpdateOneAsync(dbSess.Session, filter, merge, options, cancellationToken: token);
         else
             def = await col(db).UpdateOneAsync(filter, merge, options, cancellationToken: token);
@@ -68,8 +71,8 @@ public static class DatabaseExtensions
         else
         {
             // update matching failed, insert
-            if (db is DBSessionWrapper dbSess2)
-                await col(dbSess2).InsertOneAsync(dbSess2.Session, c, cancellationToken: token);
+            if (dbSess != null)
+                await col(dbSess).InsertOneAsync(dbSess.Session, c, cancellationToken: token);
             else
                 await col(db).InsertOneAsync(c, cancellationToken: token);
             return false;

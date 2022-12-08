@@ -127,7 +127,7 @@ public class DBWrapper
     public async Task<int> GetUserIncrementalIdAsync() => await GetIncrementalIdAsync(Definitions.COL_USER_NAME);
 
 
-    public virtual TResult? UseTransaction<TResult>(
+    public virtual TResult UseTransaction<TResult>(
         TransactionCallback<TResult> callback,
         CancellationToken cToken = default)
     {
@@ -148,18 +148,22 @@ public class DBWrapper
         }
     }
 
-    public virtual async Task<TResult?> UseTransactionAsync<TResult>(
+    public virtual async Task<TResult> UseTransactionAsync<TResult>(
         TransactionCallback<Task<TResult>> callback,
         CancellationToken cToken = default)
     {
-        using (var sess = await _client.StartSessionAsync())
+        var options = new TransactionOptions(
+            readPreference: ReadPreference.Primary,
+            readConcern: ReadConcern.Local,
+            writeConcern: WriteConcern.WMajority
+            );
+        var sessOptions = new ClientSessionOptions()
         {
-            var options = new TransactionOptions(
-                readPreference: ReadPreference.Primary,
-                readConcern: ReadConcern.Local,
-                writeConcern: WriteConcern.WMajority
-                );
-
+            CausalConsistency = true,
+            DefaultTransactionOptions = options
+        };
+        using (var sess = await _client.StartSessionAsync(sessOptions, cancellationToken: cToken))
+        {
             var result = await sess.WithTransactionAsync(
                 async (s, c) => await callback(new DBSessionWrapper(s), c),
                 options,

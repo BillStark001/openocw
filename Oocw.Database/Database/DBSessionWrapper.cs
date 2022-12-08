@@ -3,6 +3,7 @@ using MongoDB.Bson;
 using System;
 using System.Threading.Tasks;
 using Oocw.Database.Models.Technical;
+using System.Threading;
 
 namespace Oocw.Database;
 
@@ -33,6 +34,16 @@ public sealed class DBSessionWrapper : DBWrapper, IDisposable
     {
         var orig = await _counters.FindOneAndUpdateAsync(_sess, x => x.DBName == target, Builders<Counter>.Update.Inc(x => x.Sequel, 1));
         return orig.Sequel;
+    }
+
+    public override TResult UseTransaction<TResult>(TransactionCallback<TResult> callback, CancellationToken cToken = default)
+    {
+        throw new InvalidOperationException();
+    }
+
+    public override Task<TResult> UseTransactionAsync<TResult>(TransactionCallback<Task<TResult>> callback, CancellationToken cToken = default)
+    {
+        throw new InvalidOperationException();
     }
 }
 

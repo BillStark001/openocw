@@ -125,6 +125,9 @@ public static class DataExtractor
             {
                 var cells = elem.Cells;
                 var (name, url) = cells[1].GetAllAnchors().FirstOrDefault(("", ""));
+
+                var k = cells.Length == 7 ? 0 : 1;
+
                 var info = new CourseRecord()
                 {
                     Code = cells[0].TextContent.FixWebString(),
@@ -136,10 +139,10 @@ public static class DataExtractor
                         Name = x.Item1,
                         Code = int.Parse(HttpUtility.ParseQueryString(x.Item2).Get("id") ?? "-1")
                     }),
-                    Quarter = cells[3].TextContent.FixWebString(),
-                    SyllabusUpdated = cells[4].TextContent.FixWebString(),
-                    NotesUpdated = cells[5].TextContent.FixWebString(),
-                    AccessRanking = int.Parse(AcbarRegex.Match(cells[6].QuerySelector<IHtmlImageElement>("img")?.Source ?? "/images/acbar-1.gif").Groups[1].Value),
+                    Quarter = cells[3 + k].TextContent.FixWebString(),
+                    SyllabusUpdated = cells[4 + k].TextContent.FixWebString(),
+                    NotesUpdated = cells[5 + k].TextContent.FixWebString(),
+                    AccessRanking = int.Parse(AcbarRegex.Match(cells[6 + k].QuerySelector<IHtmlImageElement>("img")?.Source ?? "/images/acbar-1.gif").Groups[1].Value),
                 };
                 infos.Add(info);
             }
@@ -226,12 +229,12 @@ public static class DataExtractor
             string summ_value = "";
             if (summ_key == "担当教員名" || summ_key == "Instructor(s)")
             {
-                faculties = dd.GetAllAnchors()
+                faculties.AddRange(dd.GetAllAnchors()
                     .Select((x) => new FacultyRecord
                     {
                         Name = x.Item1,
                         Code = int.Parse(HttpUtility.ParseQueryString(x.Item2).Get("id") ?? "-1")
-                    }).ToList();
+                    }));
             }
             else if (summ_key == "アクセスランキング" || summ_key == "Access Index")
             {

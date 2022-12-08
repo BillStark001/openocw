@@ -124,7 +124,7 @@ public class MultiLingualField : IMergable<MultiLingualField>
         {
             var val = field.GetValue(this) as string;
             if (val != null) // intentional, even if empty, consider there is a value
-                ret.Set(ExpressionUtils.Combine(expr, Expressions[k]), val);
+                ret = ret.Set(ExpressionUtils.Combine(expr, Expressions[k]), val);
         }
         return ret;
     }

@@ -96,20 +96,20 @@ public static class TitechUtils
         Orgs = JsonSerializer.Deserialize<Dictionary<string, string>>(ORG_MAPPING)!;
     }
 
-    public static void RefreshOrganizations(this DBWrapper db)
+    public static async void RefreshOrganizations(this DBWrapper db)
     {
         var inOpr = true;
         int cnt = 0;
         while (inOpr)
         {
-            inOpr = db.UseTransaction((dbSess, _) =>
+            inOpr = await db.UseTransactionAsync(async (dbSess, _) =>
             {
                 var crs = dbSess.Courses;
-                var res = crs.Find(dbSess.Session, x => x.Unit.Key == "null").FirstOrDefault();
+                var res = (await crs.FindAsync(dbSess.Session, x => x.Unit.Key == "null")).FirstOrDefault();
                 if (res == null)
                     return false;
                 var replStr = res.Unit.Ja != null && Orgs.ContainsKey(res.Unit.Ja) ? Orgs[res.Unit.Ja] : KEY_UNCAT;
-                crs.FindOneAndUpdate(
+                await crs.FindOneAndUpdateAsync(
                     dbSess.Session,
                     x => x.IdRaw == res.IdRaw,
                     Builders<Course>.Update.Set(x => x.Unit.Key, replStr)
