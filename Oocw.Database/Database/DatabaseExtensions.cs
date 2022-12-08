@@ -55,10 +55,13 @@ public static class DatabaseExtensions
     {
         var merge = c.GetMergeDefinition();
         UpdateResult def;
+        UpdateOptions options = new() {
+            IsUpsert = false, 
+        };
         if (db is DBSessionWrapper dbSess)
-            def = await col(dbSess).UpdateOneAsync(dbSess.Session, filter, merge, cancellationToken: token);
+            def = await col(dbSess).UpdateOneAsync(dbSess.Session, filter, merge, options, cancellationToken: token);
         else
-            def = await col(db).UpdateOneAsync(filter, merge, cancellationToken: token);
+            def = await col(db).UpdateOneAsync(filter, merge, options, cancellationToken: token);
 
         if (def.MatchedCount > 0)
             return true;

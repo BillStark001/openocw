@@ -13,18 +13,18 @@ public static class Meta
 
     
 
-    public static readonly string root_path = Path.Combine(FileUtils.BASE_DIR, "operation") + "/";
+    public static readonly string ROOT_DIR = Path.Combine(FileUtils.BASE_DIR, "operation") + "/";
 
-    public static readonly string savepath_unit_tree_raw = root_path + "unit_tree_raw.json";
-    public static readonly string savepath_unit_tree = root_path + "unit_tree.json";
+    public static readonly string SAVEPATH_UNIT_TREE_RAW = ROOT_DIR + "unit_tree_raw.json";
+    public static readonly string SAVEPATH_UNIT_TREE = ROOT_DIR + "unit_tree.json";
 
-    public static readonly string savepath_course_list_raw = root_path + "course_list_raw.json";
-    public static readonly string savepath_course_list = root_path + "course_list.json";
+    public static readonly string SAVEPATH_COURSE_LIST_RAW = ROOT_DIR + "course_list_raw.json";
+    public static readonly string SAVEPATH_COURSE_LIST = ROOT_DIR + "course_list.json";
 
-    public static readonly string savepath_details_raw = root_path + "details_raw.json";
-    public static readonly string savepath_details_keys = root_path + "details_keys.json";
+    public static readonly string SAVEPATH_DETAILS_RAW = ROOT_DIR + "details_raw.json";
+    public static readonly string SAVEPATH_DETAILS_KEYS = ROOT_DIR + "details_keys.json";
 
-    public static readonly string data_path = FileUtils.BASE_DIR + "/";
+    public static readonly string DATA_DIR = FileUtils.BASE_DIR + "/";
 
-    public static readonly string school_dep_map_path = data_path + "school2dep.json";
+    public static readonly string SCHOOL_DEP_MAP_PATH = DATA_DIR + "school2dep.json";
 }

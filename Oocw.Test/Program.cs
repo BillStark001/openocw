@@ -1,6 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
-
-using Oocw.Base;
+﻿using Oocw.Base;
 using Oocw.Crawler.Core;
 using Oocw.Crawler.Models;
 using Oocw.Query;
@@ -9,12 +7,22 @@ using System.Collections.Generic;
 using Oocw.Database;
 using Oocw.Cli.Tasks;
 using Oocw.Cli.Utils;
+using System.Runtime.InteropServices;
 
+/*
 var res = Lexer.NaiveMatch("a \\in [ false , true, , 2, \"3\", 4] && b #< ['ffff', 'fffffff']");
 foreach (var lex in res)
     Console.WriteLine(lex);
+*/
+string driverPath;
+if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+    driverPath = "G:/chromedriver.exe";
+else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+    driverPath = "/Users/billstark001/Desktop/chromedriver_mac_arm64/chromedriver";
+else
+    driverPath = "/please/assign/a/valid/path";
 
-var driver = new DriverWrapper("G:/chromedriver.exe");
+var driver = new DriverWrapper(driverPath);
 var crawler = new Crawler(driver);
 
 Func<int, int> finc = x => x + 1;
@@ -25,14 +33,14 @@ Expression<Func<int, int>> eadd32 = x => x + 3;
 Expression<Func<int, int>> eadd6 = ExpressionUtils.Combine(eadd3, eadd32);
 
 
-if (true)
+if (false)
 {
     Database db = Database.Instance;
     db.Initialize();
 
-    var (courses, codes) = FileUtils.Load<(Dictionary<int, Dictionary<int, (SyllabusRecord?, SyllabusRecord?)>>, List<int>)>(Meta.savepath_details_raw);
+    var (courses, codes) = FileUtils.Load<(Dictionary<int, Dictionary<int, (SyllabusRecord?, SyllabusRecord?)>>, List<int>)>(Meta.SAVEPATH_DETAILS_RAW);
 
-    var (cl1, cl2, nr1, nr2) = FileUtils.Load<(List<CourseRecord>, List<CourseRecord>, int, int)>(Meta.savepath_course_list_raw);
+    var (cl1, cl2, nr1, nr2) = FileUtils.Load<(List<CourseRecord>, List<CourseRecord>, int, int)>(Meta.SAVEPATH_COURSE_LIST_RAW);
 
     foreach (var (code, course) in courses)
         foreach (var (year, (courseJa, courseEn)) in course)
@@ -45,8 +53,8 @@ if (true)
                 await SingleUpdate.Syllabus(db.Wrapper, courseEn, idStr, "en");
         }
 
-    // foreach (var course in cl1)
-    //     await SingleUpdate.Course(db.Wrapper, course);
+    foreach (var course in cl1)
+        await SingleUpdate.Course(db.Wrapper, course);
 
     db.Wrapper.RefreshOrganizations();
 }
@@ -54,6 +62,6 @@ else
 {
 
     driver.Initialize();
-    crawler.Task2(Meta.savepath_course_list_raw);
-    crawler.Task3(Meta.savepath_course_list_raw, Meta.savepath_details_raw, 2020, 2022);
+    crawler.Task2(Meta.SAVEPATH_COURSE_LIST_RAW);
+    crawler.Task3(Meta.SAVEPATH_COURSE_LIST_RAW, Meta.SAVEPATH_DETAILS_RAW, 2020, 2022);
 }
