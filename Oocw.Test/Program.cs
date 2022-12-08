@@ -37,7 +37,7 @@ Expression<Func<int, int>> eadd32 = x => x + 3;
 Expression<Func<int, int>> eadd6 = ExpressionUtils.Combine(eadd3, eadd32);
 
 
-if (false)
+if (true)
 {
     Database db = Database.Instance;
     db.Initialize();
@@ -92,15 +92,15 @@ if (false)
         */
     // Task.WaitAll(tasks.ToArray());
 
-    Console.WriteLine("cl1");
-    foreach (var course in cl1)
-        await SingleUpdate.Course(db.Wrapper, course);
+    // Console.WriteLine("cl1");
+    // foreach (var course in cl1)
+    //     await SingleUpdate.Course(db.Wrapper, course);
 
-    Console.WriteLine("cl2");
-    foreach (var course in cl2)
-        await SingleUpdate.Course(db.Wrapper, course, lang: "en");
+    // Console.WriteLine("cl2");
+    // foreach (var course in cl2)
+    //     await SingleUpdate.Course(db.Wrapper, course, lang: "en");
 
-    // db.Wrapper.RefreshOrganizations();
+    await db.Wrapper.RefreshOrganizations();
 }
 else
 {

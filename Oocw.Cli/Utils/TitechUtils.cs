@@ -87,6 +87,7 @@ public static class TitechUtils
   ""学位プログラムとして特別に設けた教育課程"": ""org.ext.ac""
 }";
 
+    public const string KEY_NULL = "null";
     public const string KEY_UNCAT = "uncat";
 
     private static IReadOnlyDictionary<string, string> Orgs;
@@ -96,7 +97,7 @@ public static class TitechUtils
         Orgs = JsonSerializer.Deserialize<Dictionary<string, string>>(ORG_MAPPING)!;
     }
 
-    public static async void RefreshOrganizations(this DBWrapper db)
+    public static async Task RefreshOrganizations(this DBWrapper db)
     {
         var inOpr = true;
         int cnt = 0;
@@ -105,7 +106,7 @@ public static class TitechUtils
             inOpr = await db.UseTransactionAsync(async (dbSess, _) =>
             {
                 var crs = dbSess.Courses;
-                var res = (await crs.FindAsync(dbSess.Session, x => x.Unit.Key == "null")).FirstOrDefault();
+                var res = (await crs.FindAsync(dbSess.Session, x => x.Unit.Key == KEY_NULL || x.Unit.Key == KEY_UNCAT)).FirstOrDefault();
                 if (res == null)
                     return false;
                 var replStr = res.Unit.Ja != null && Orgs.ContainsKey(res.Unit.Ja) ? Orgs[res.Unit.Ja] : KEY_UNCAT;
