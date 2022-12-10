@@ -400,3 +400,4 @@ FodyWeavers.xsd
 
 Oocw.Backend/wwwroot
 Oocw.Backend/wwwroot/**
+**/.DS_Store

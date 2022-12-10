@@ -13,6 +13,7 @@ using OpenQA.Selenium.DevTools;
 using Oocw.Base;
 using System.Web;
 using Yaap;
+using System.IO;
 
 namespace Oocw.Crawler.Core;
 
@@ -253,8 +254,8 @@ public class Crawler
             var htmlEn = Driver.GetHtmlAfterLoaded(urlEn);
             var listsEn = DataExtractor.GetCourseList(htmlEn.Dom());
 
-            nr1 = i;
-            nr2 = i;
+            nr1 = i + 1;
+            nr2 = i + 1;
             cl1.AddRange(lists);
             cl2.AddRange(listsEn);
 
@@ -274,77 +275,89 @@ public class Crawler
         detail[year] = (detail_jp, detail_en);
     }
 
-    
+
 
     /// <summary>
     /// get course data
     /// </summary>
     /// <param name="inpath"></param>
     /// <param name="outpath"></param>
-    /// <param name="start_year"></param>
-    /// <param name="end_year"></param>
+    /// <param name="startYear"></param>
+    /// <param name="endYear"></param>
     /// <exception cref="Exception"></exception>
-    public void Task3(string inpath, string outpath, int start_year = 2016, int end_year = 2022)
+    public void Task3(string inpath, string outpath, int startYear = 2016, int endYear = 2022)
     {
-        var (clist, _, _, _) = FileUtils.Load<(List<CourseRecord>, List<CourseRecord>, int, int)>(inpath);
-        var targets = clist.Select(x => HttpUtility.ParseQueryString(x.Url).Get("KougiCD", "JWC")).Select(x => int.Parse(x!));
+        var (courseList, _, _, _) = FileUtils.Load<(List<CourseRecord>, List<CourseRecord>, int, int)>(inpath);
+        var targets = courseList.Select(x =>
+        {
+            var idStr = HttpUtility.ParseQueryString(x.Url).Get("KougiCD", "JWC");
+            var parsed = int.TryParse(idStr, out var idInt);
+            if (!parsed)
+            {
+                Console.WriteLine($"Warning: Wrong format: {x.Url}");
+                return -1;
+            }
+            return idInt;
+        })
+        .Where(x => x > 0)
+        .ToList();
         // initialize storage
 
         Dictionary<int, DictIntSyl> details;
-        List<int> gshxd_code;
+        List<int> erroredCodes;
         try
         {
-            (details, gshxd_code) = FileUtils.Load<(Dictionary<int, DictIntSyl>, List<int>)>(outpath);
+            (details, erroredCodes) = FileUtils.Load<(Dictionary<int, DictIntSyl>, List<int>)>(outpath);
         }
         catch
         {
             details = new();
-            gshxd_code = new();
-            FileUtils.Dump((details, gshxd_code), outpath);
+            erroredCodes = new();
+            FileUtils.Dump((details, erroredCodes), outpath);
         }
 
 
         // error correction
-        while (gshxd_code.Count > 0)
+        while (erroredCodes.Count > 0)
         {
-            var dcode = gshxd_code.First();
-            gshxd_code.RemoveAt(0);
+            var errCode = erroredCodes.First();
+            erroredCodes.RemoveAt(0);
 
-            Console.WriteLine($"Retrying errored record {dcode} {gshxd_code.Count + 1} remains)");
+            Console.WriteLine($"Retrying errored record {errCode} ({erroredCodes.Count + 1} remains)");
 
-            if (!details.ContainsKey(dcode))
-                details[dcode] = new();
+            if (!details.ContainsKey(errCode))
+                details[errCode] = new();
 
-            var detail = details[dcode];
+            var detail = details[errCode];
 
-            for (var year = start_year; year <= end_year; ++year)
+            for (var year = startYear; year <= endYear; ++year)
             {
-                Task3Sub1(detail, dcode, year);
+                Task3Sub1(detail, errCode, year);
                 try
                 {
-                    
+
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"{dcode}, {year}: {e}");
+                    Console.WriteLine($"{errCode}, {year}: {e}");
                     throw;
                 }
             }
 
             FileUtils.BackupFile(outpath);
-            FileUtils.Dump((details, gshxd_code), outpath);
+            FileUtils.Dump((details, erroredCodes), outpath);
         }
 
         // normal process
-        var exit_tag = false;
+        var exitRequired = false;
         foreach (var dcode in targets.Yaap())
         {
             if (!details.ContainsKey(dcode))
                 details[dcode] = new();
 
             var detail = details[dcode];
-            var err_rec = false;
-            for (var year = start_year; year <= end_year; ++year)
+            var hasError = false;
+            for (var year = startYear; year <= endYear; ++year)
             {
 
                 // if cancelled: exit_tag = true; break;
@@ -354,23 +367,23 @@ public class Crawler
                 }
                 catch (Exception e)
                 {
-                    if (!err_rec)
+                    if (!hasError)
                     {
-                        gshxd_code.Add(dcode);
-                        err_rec = true;
+                        erroredCodes.Add(dcode);
+                        hasError = true;
                     }
                     Console.WriteLine($"ERROR {dcode} in year {year}: {e} {e.Message}");
                 }
             }
             // to avoid incomplete records
-            if (exit_tag)
+            if (exitRequired)
             {
                 Console.WriteLine("Interrupted by user.");
                 break;
             }
             details[dcode] = detail;
             FileUtils.BackupFile(outpath);
-            FileUtils.Dump((details, gshxd_code), outpath);
+            FileUtils.Dump((details, erroredCodes), outpath);
         }
     }
 

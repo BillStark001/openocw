@@ -80,6 +80,10 @@ public class SyllabusRecord
         [MatchKey("Other")]
         [MatchKey("その他")]
         public string Other { get; set; } = "";
+
+        // external
+        [MatchKey("skills")]
+        public string ExternalSkills { get; set; } = "";
     }
 
     public class SummaryRecord

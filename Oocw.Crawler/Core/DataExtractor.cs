@@ -35,33 +35,33 @@ public static class DataExtractor
             DictStrArgs,
             HashSet<string>
             )
-        GetDepartmentList(IDocument bf_base, string url_in = "")
+        GetDepartmentList(IDocument document, string url_in = "")
     {
 
         var lbs = new List<IHtmlDivElement?> {
-            bf_base.QuerySelector("div#left-body-1") as IHtmlDivElement,
-            bf_base.QuerySelector("div#left-body-2") as IHtmlDivElement,
-            bf_base.QuerySelector("div#left-body-3") as IHtmlDivElement,
-            bf_base.QuerySelector("div#left-body-4") as IHtmlDivElement,
+            document.QuerySelector("div#left-body-1") as IHtmlDivElement,
+            document.QuerySelector("div#left-body-2") as IHtmlDivElement,
+            document.QuerySelector("div#left-body-3") as IHtmlDivElement,
+            document.QuerySelector("div#left-body-4") as IHtmlDivElement,
         };
         var cats = new List<DictStrArgs>();
-        var cats_flat = new DictStrArgs();
+        var catsFlat = new DictStrArgs();
         var excluded = new HashSet<string>();
 
-        bool sub1(IHtmlListItemElement x, DictStrArgs prev)
+        bool Sub1(IHtmlListItemElement x, DictStrArgs prev)
         {
-            var xa = x.GetElementsByTagName("a").First() as IHtmlAnchorElement;
-            if (xa == null)
+            var anchor = x.GetElementsByTagName("a").First() as IHtmlAnchorElement;
+            if (anchor == null)
             {
                 return false;
             }
-            var xaspan = xa.GetElementsByTagName("span") as IHtmlSpanElement;
-            var name = (xaspan == null ? xa.InnerHtml : xaspan.InnerHtml).FixWebString();
+            var anchorSpan = anchor.GetElementsByTagName("span") as IHtmlSpanElement;
+            var name = (anchorSpan == null ? anchor.InnerHtml : anchorSpan.InnerHtml).FixWebString();
 
             DictStrArgs xah = new();
-            if (!string.IsNullOrWhiteSpace(xa.Href))
+            if (!string.IsNullOrWhiteSpace(anchor.Href))
             {
-                xah = HttpUtility.ParseQueryString(xa.Href != "#" ? xa.Href : url_in).ToNestedDictionary();
+                xah = HttpUtility.ParseQueryString(anchor.Href != "#" ? anchor.Href : url_in).ToNestedDictionary();
 
                 foreach (var (k, v) in xah)
                 {
@@ -72,44 +72,44 @@ public static class DataExtractor
                         // if k in ['LeftTab']: print(x.a['href'])
                     }
                 }
-                cats_flat[name] = xah;
+                catsFlat[name] = xah;
             }
             else
             {
                 foreach (var y in x.QuerySelectorAll<IHtmlListItemElement>("ul > li"))
                 {
-                    sub1(y, xah);
+                    Sub1(y, xah);
                 }
             }
             prev[name] = xah;
             return true;
         }
 
-        foreach (var lb in lbs)
+        foreach (var label in lbs)
         {
-            if (lb == null)
+            if (label == null)
                 continue;
             var sdmap = new DictStrArgs();
 
-            var li_classes = lb.QuerySelectorAll("ul > li").Select(x => x as IHtmlListItemElement);
-            foreach (var sch in li_classes)
+            var liClasses = label.QuerySelectorAll("ul > li").Select(x => x as IHtmlListItemElement);
+            foreach (var sch in liClasses)
             {
                 if (sch == null)
                     continue;
-                sub1(sch, sdmap);
+                Sub1(sch, sdmap);
             }
             cats.Add(sdmap);
         }
-        return (cats, cats_flat, excluded);
+        return (cats, catsFlat, excluded);
     }
 
-    private static Regex AcbarRegex = new(@"/images/acbar(-?[0-9]+)\.gif");
+    private static Regex AcBarRegex = new(@"/images/acbar(-?[0-9]+)\.gif");
 
     public static IEnumerable<CourseRecord> GetCourseList(IDocument bf_base)
     {
-        var tbls = bf_base.QuerySelectorAll<IHtmlTableElement>("table.ranking-list");
+        var tables = bf_base.QuerySelectorAll<IHtmlTableElement>("table.ranking-list");
 
-        if (tbls.Count() == 0)
+        if (tables.Count() == 0)
         {
             // no available data
             return Enumerable.Empty<CourseRecord>();
@@ -117,7 +117,7 @@ public static class DataExtractor
 
         List<CourseRecord> infos = new List<CourseRecord>();
 
-        foreach (var table in tbls)
+        foreach (var table in tables)
         {
             var (parsedHead, rows) = table.GetRowSelector();
 
@@ -142,7 +142,7 @@ public static class DataExtractor
                     Quarter = cells[3 + k].TextContent.FixWebString(),
                     SyllabusUpdated = cells[4 + k].TextContent.FixWebString(),
                     NotesUpdated = cells[5 + k].TextContent.FixWebString(),
-                    AccessRanking = int.Parse(AcbarRegex.Match(cells[6 + k].QuerySelector<IHtmlImageElement>("img")?.Source ?? "/images/acbar-1.gif").Groups[1].Value),
+                    AccessRanking = int.Parse(AcBarRegex.Match(cells[6 + k].QuerySelector<IHtmlImageElement>("img")?.Source ?? "/images/acbar-1.gif").Groups[1].Value),
                 };
                 infos.Add(info);
             }
@@ -190,34 +190,34 @@ public static class DataExtractor
 
 
 
-    public static SyllabusRecord? ParseLectureInfo((IElement?, IElement?, IElement?, IElement?) info_caches)
+    public static SyllabusRecord? ParseLectureInfo((IElement?, IElement?, IElement?, IElement?) infoCaches)
     {
 
-        var (cnt_lname, cnt_summ, cnt_inner, cnt_note) = info_caches;
-        if (cnt_lname == null)
+        var (nameContainer, summaryContainer, innerContainer, noteContainer) = infoCaches;
+        if (nameContainer == null)
             return null;
 
         SyllabusRecord ret = new();
 
         // title
-        var lname_ = cnt_lname.GetElementsByTagName("h3").First()?.TextContent ?? "";
-        var lname0 = lname_.Split("\u3000");
-        var lname1 = lname0[1].Split("\xa0\xa0\xa0");
-        ret.YearStr = lname0[0];
-        if (lname1.Length > 1)
+        var nameRaw = nameContainer.GetElementsByTagName("h3").First()?.TextContent ?? "";
+        var nameRaw2 = nameRaw.Split("\u3000");
+        var nameRaw21 = nameRaw2[1].Split("\xa0\xa0\xa0");
+        ret.YearStr = nameRaw2[0];
+        if (nameRaw21.Length > 1)
         {
-            ret.NameJa = lname1[0];
-            ret.NameEn = lname1[1];
+            ret.NameJa = nameRaw21[0];
+            ret.NameEn = nameRaw21[1];
         }
         else
         {
-            ret.NameEn = lname1[0];
+            ret.NameEn = nameRaw21[0];
         }
 
         // summary
-        var dataCells = cnt_summ?.QuerySelectorAll<IHtmlElement>("dl");
-        DSS summ = new();
-        DSS retDetail = new();
+        var dataCells = summaryContainer?.QuerySelectorAll<IHtmlElement>("dl");
+        DSS retSummary = new();
+        DSS retDetail = new() { ["skills"] = "" };
         List<FacultyRecord> faculties = ret.Faculties;
 
         foreach (var dl in dataCells ?? Enumerable.Empty<IHtmlElement>())
@@ -225,9 +225,9 @@ public static class DataExtractor
             var dt = dl.GetElementsByTagName("dt").First();
             var dd = dl.GetElementsByTagName("dd").First();
 
-            var summ_key = dt.TextContent.FixWebString();
-            string summ_value = "";
-            if (summ_key == "担当教員名" || summ_key == "Instructor(s)")
+            var sKey = dt.TextContent.FixWebString();
+            string sValue = "";
+            if (sKey == "担当教員名" || sKey == "Instructor(s)")
             {
                 faculties.AddRange(dd.GetAllAnchors()
                     .Select((x) => new FacultyRecord
@@ -236,21 +236,21 @@ public static class DataExtractor
                         Code = int.Parse(HttpUtility.ParseQueryString(x.Item2).Get("id") ?? "-1")
                     }));
             }
-            else if (summ_key == "アクセスランキング" || summ_key == "Access Index")
+            else if (sKey == "アクセスランキング" || sKey == "Access Index")
             {
-                summ_value = AcbarRegex.Match(dd.QuerySelector<IHtmlImageElement>("img")?.Source ?? "/images/acbar-1.gif").Groups[1].Value;
+                sValue = AcBarRegex.Match(dd.QuerySelector<IHtmlImageElement>("img")?.Source ?? "/images/acbar-1.gif").Groups[1].Value;
             }
             else
             {
-                summ_value = dd.TextContent.FixWebString();
+                sValue = dd.TextContent.FixWebString();
             }
-            summ[summ_key] = summ_value;
+            retSummary[sKey] = sValue;
         }
 
-        ret.Summary.AssignFrom(summ);
+        ret.Summary.AssignFrom(retSummary);
 
 
-        foreach (var cont in cnt_inner?.QuerySelectorAll("div.cont-sec") ?? Enumerable.Empty<IElement>())
+        foreach (var cont in innerContainer?.QuerySelectorAll("div.cont-sec") ?? Enumerable.Empty<IElement>())
         {
             var k = cont.QuerySelector("h3")!.TextContent.FixWebString();
             var v = cont.QuerySelector("h3")!.NextElementSibling!;
@@ -264,11 +264,17 @@ public static class DataExtractor
                         var skill = span.TextContent.FixWebString();
                         var active = span.PreviousSibling != null; // so far so good...
                         var ind = SkillsDict.IndexOf(skill);
-                        if (ind >= 0)
-                            ind %= 5;
-                        else
-                            throw new NotImplementedException(skill);
-                        ret.Skills[ind] = active;
+                        if (ind >= 0 && ind < 5)
+                        {
+                            ret.Skills[ind] = active;
+                        }
+                        else{
+                            var skillActive = $"{skill} : {active}";
+                            retDetail["skills"] =
+                            string.IsNullOrWhiteSpace(retDetail["skills"]) ?
+                            skillActive :
+                            retDetail["skills"] + " " + skillActive;
+                        }
                     }
                 }
                 else if (SyllabusTrigger.Contains(k))
@@ -340,12 +346,12 @@ public static class DataExtractor
 
         // docs
 
-        var docs_supp = cnt_note?.QuerySelectorAll<IHtmlListItemElement>("dl > dd li")
+        var docsSupp = noteContainer?.QuerySelectorAll<IHtmlListItemElement>("dl > dd li")
             ?? Enumerable.Empty<IHtmlListItemElement>();
-        if (docs_supp.Count() > 0)
+        if (docsSupp.Count() > 0)
         {
             HashSet<string> links = new();
-            foreach (var d in docs_supp)
+            foreach (var d in docsSupp)
                 foreach (var a in d.GetAllAnchors().Select(x => x.Item2))
                     if (!string.IsNullOrWhiteSpace(a))
                         links.Add(a);
@@ -358,23 +364,23 @@ public static class DataExtractor
             ret.Notes.Add(supp);
         }
 
-        var docs_orig = cnt_note?.QuerySelectorAll<IHtmlDivElement>("div.cont-sec")
+        var docsOrig = noteContainer?.QuerySelectorAll<IHtmlDivElement>("div.cont-sec")
            ?? Enumerable.Empty<IHtmlDivElement>();
-        foreach (var doc_orig in docs_orig)
+        foreach (var doc_orig in docsOrig)
         {
-            var nhead = doc_orig.QuerySelector<IHtmlElement>(".note-head");
-            var nlower = doc_orig.QuerySelector<IHtmlElement>(".clearfix.note-lower");
-            if (nhead == null || nlower == null)
+            var nHead = doc_orig.QuerySelector<IHtmlElement>(".note-head");
+            var nLower = doc_orig.QuerySelector<IHtmlElement>(".clearfix.note-lower");
+            if (nHead == null || nLower == null)
                 continue;// adobe pdf related 
 
             var note = new SyllabusRecord.NoteRecord();
 
-            note.Title = nhead.GetElementsByTagName("h3").First().TextContent.FixWebString();
-            note.LectureType = nhead.GetElementsByTagName("p").First().TextContent.FixWebString();
-            note.LectureDate = nlower.GetElementsByTagName("p").First().TextContent.FixWebString();
+            note.Title = nHead.GetElementsByTagName("h3").First().TextContent.FixWebString();
+            note.LectureType = nHead.GetElementsByTagName("p").First().TextContent.FixWebString();
+            note.LectureDate = nLower.GetElementsByTagName("p").First().TextContent.FixWebString();
 
             // TODO what to do with the img and strip_useless_elem(x.a.contents)[1]?
-            note.Links = nlower.QuerySelectorAll<IHtmlAnchorElement>("div.pdf-link a").Select(x => x.Href).ToArray();
+            note.Links = nLower.QuerySelectorAll<IHtmlAnchorElement>("div.pdf-link a").Select(x => x.Href).ToArray();
             ret.Notes.Add(note);
         }
 

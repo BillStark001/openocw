@@ -37,7 +37,7 @@ Expression<Func<int, int>> eadd32 = x => x + 3;
 Expression<Func<int, int>> eadd6 = ExpressionUtils.Combine(eadd3, eadd32);
 
 
-if (true)
+if (false)
 {
     Database db = Database.Instance;
     db.Initialize();
