@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Oocw.Base;
@@ -47,13 +48,47 @@ public static class Utils
         return new string(c);
     }
 
-    public static string Cleanout(this string str)
+    public static readonly Regex ReturnRegex = new(@"\r?\n");
+    public static string NormalizeReturns(this string strIn, bool crlf = false)
     {
-        var ans = str
-            .Replace("\r", "")
-            .Replace("\n", "")
-            .Replace("\t", "")
-            .Trim().ToHalfWidth();
+        return ReturnRegex.Replace(strIn, crlf ? "\r\n" : "\n");
+    }
+
+    public static readonly Regex SpaceRegex = new(@"[ \xa0\u3000]");
+    public static string NormalizeSpaces(this string strIn)
+    {
+        return SpaceRegex.Replace(strIn, " ");
+    }
+
+    public static readonly Regex SpacesBeforeReturnRegex = new(@"([ \xa0\u3000]*)$");
+    public static readonly Regex EmptyLineRegex = new(@"^[ \xa0\u3000]*\r?\n", RegexOptions.Multiline);
+    public static readonly Regex SpacesAtEndOfStringRegex = new(@"[ \xa0\u3000\r\n]*$");
+    public static readonly Regex SpacesAtBeginningOfStringRegex = new(@"^[ \xa0\u3000\r\n]*");
+    public static string RemoveUnnecessarySpaces(this string strIn)
+    {
+        var ans = strIn;
+        ans = EmptyLineRegex.Replace(strIn, "");
+        ans = SpacesBeforeReturnRegex.Replace(strIn, "");
+        ans = SpacesAtEndOfStringRegex.Replace(strIn, "");
+        ans = SpacesAtBeginningOfStringRegex.Replace(strIn, "");
+        return ans.TrimEnd();
+    }
+
+    public static string NormalizeWebString(this string strIn, bool replaceReturns = true)
+    {
+        var strOut = strIn;
+        strOut = strOut.Replace("\t", "    ").RemoveUnnecessarySpaces();
+        strOut = SpaceRegex.Replace(strOut, " ");
+        if (replaceReturns)
+            strOut = ReturnRegex.Replace(strOut, " ");
+        return strOut;
+    }
+
+    public static string RemoveReturnsAndTables(this string str)
+    {
+        var ans = str;
+        ans = ReturnRegex.Replace(ans, "");
+        ans = ans.Replace("\t", "").Trim();
         return ans;
     }
 
@@ -108,11 +143,15 @@ public static class Utils
     }
 
 
-    public static string NormalizeBrackets(this string dstr)
+    public static string NormalizeBrackets(this string strIn)
     {
-        return dstr
+        return strIn
             .Replace("（", "(").Replace("）", ")")
-            .Replace("【", "[").Replace("】", "]");
+            .Replace("｛", "{").Replace("｝", "}")
+            .Replace("【", "[").Replace("】", "]")
+            .Replace("〔", "[").Replace("〕", "]")
+            .Replace("［", "[").Replace("］", "]")
+            ;
     }
 
 
@@ -303,5 +342,4 @@ public static class Utils
     }
 
 
-    // string case
 }

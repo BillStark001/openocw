@@ -18,34 +18,36 @@ namespace Oocw.Crawler.Core;
 public class DriverWrapper
 {
 
-    private IWebDriver? driver;
-
-    public readonly string driver_path;
-    public readonly int html_timeout;
-    public readonly int mem_reset_limit;
-
-    private int mem_reset_count;
+    private IWebDriver? _driver;
 
 
-    public DriverWrapper(string driver_path = "chromedriver.exe", int mem_reset_limit = 300, int html_timeout = 60)
+    public virtual bool IsInitialized => _driver != null;
+
+    public string DriverPath { get; }
+    public int HtmlTimeout { get; }
+    public int MemoryResetLimit { get; }
+
+    private int _memoryResetCount;
+
+
+    public DriverWrapper(string driverPath = "chromedriver.exe", int memoryResetLimit = 300, int htmlTimeout = 60)
     {
-        this.mem_reset_limit = mem_reset_limit;
-        this.driver_path = driver_path;
-        this.html_timeout = html_timeout;
+        MemoryResetLimit = memoryResetLimit;
+        DriverPath = driverPath;
+        HtmlTimeout = htmlTimeout;
 
-        mem_reset_count = 0;
-        driver = null;
+        _memoryResetCount = 0;
+        _driver = null;
     }
 
-    public virtual bool IsInitialized => driver != null;
 
     public bool TryCloseDriver()
     {
-        if (driver != null)
+        if (_driver != null)
         {
-            driver.Quit();
-            driver.Dispose();
-            driver = null;
+            _driver.Quit();
+            _driver.Dispose();
+            _driver = null;
             return true;
         }
         return false;
@@ -58,8 +60,8 @@ public class DriverWrapper
         //options.add_argument('user-agent="Mozilla/5.0 (Linux; Android 4.0.4; Galaxy Nexus Build/IMM76B) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.133 Mobile Safari/535.19"')
         options.AddArgument("user_agent=\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36\"");
         options.AddArgument("-Referer=\"http://www.ocw.titech.ac.jp/\"");
-        driver = new ChromeDriver(driver_path, options: options);
-        mem_reset_count = 0;
+        _driver = new ChromeDriver(DriverPath, options: options);
+        _memoryResetCount = 0;
     }
 
     private Exception DriverNotInitialized()
@@ -69,30 +71,30 @@ public class DriverWrapper
 
     public virtual string GetHtml (string url)
     {
-        if (mem_reset_count >= mem_reset_limit)
+        if (_memoryResetCount >= MemoryResetLimit)
             Initialize();
-        if (driver == null)
+        if (_driver == null)
             throw DriverNotInitialized();
 
-        driver.Navigate().GoToUrl(url);
-        var html = driver.PageSource;
-        mem_reset_count += 1;
+        _driver.Navigate().GoToUrl(url);
+        var html = _driver.PageSource;
+        _memoryResetCount += 1;
         return html;
     }
 
     public virtual string GetHtmlAfterLoaded(string url)
     {
-        var timeout = html_timeout;
+        var timeout = HtmlTimeout;
         var html = this.GetHtml(url);
-        var full_loaded = -1;
+        var fullLoaded = -1;
         var time_start = DateTime.Now;
-        var dtime = TimeSpan.Zero;
-        while (full_loaded < 0)
+        var dTime = TimeSpan.Zero;
+        while (fullLoaded < 0)
         {
-            html = driver!.PageSource;
-            full_loaded = Math.Min(html.IndexOf("left-menu"), html.IndexOf("right-contents"));
-            dtime = DateTime.Now - time_start;
-            if (timeout < dtime.Seconds)
+            html = _driver!.PageSource;
+            fullLoaded = Math.Min(html.IndexOf("left-menu"), html.IndexOf("right-contents"));
+            dTime = DateTime.Now - time_start;
+            if (timeout < dTime.Seconds)
             {
                 return "timeout";
             }

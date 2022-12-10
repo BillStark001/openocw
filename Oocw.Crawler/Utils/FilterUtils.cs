@@ -67,12 +67,4 @@ public static class FilterUtils
         return sb.ToString();
     }
 
-    public static string FixWebString(this string strIn)
-    {
-        var strOut = strIn
-            .Replace("\t", " ").Replace("\n", " ")
-            .Replace("\xa0", " ").Replace("\u3000", " ")
-            .Trim(' ');
-        return strOut;
-    }
 }

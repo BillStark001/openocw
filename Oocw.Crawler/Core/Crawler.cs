@@ -119,7 +119,7 @@ public class Crawler
         {
             var dom = Driver.GetHtmlAfterLoaded(url).Dom();
             var isCurrentYear = dom.QuerySelectorAll<IHtmlTableElement>("table.ranking-list").Where(
-                x => x.Rows.Where(x => x.Cells[4].TextContent.FixWebString().StartsWith(year.ToString())).Count() > 0)
+                x => x.Rows.Where(x => x.Cells[4].TextContent.NormalizeWebString().StartsWith(year.ToString())).Count() > 0)
                 .Count() > 0;
 
             if (isCurrentYear)
@@ -145,19 +145,22 @@ public class Crawler
         {
             return (null, null, null, null);
         }
-        var bf_base_page = html.Dom();
-        var cnt_lname = bf_base_page.QuerySelector(".page-title-area.clearfix");
-        var cnt_summ = bf_base_page.QuerySelector(".gaiyo-data");
-        var cnt_inner = bf_base_page.QuerySelector(".right-inner");
+        var dom = html.Dom();
+        var nameTitleContainer = dom.QuerySelector(".page-title-area.clearfix");
+        var summaryContainer = dom.QuerySelector(".gaiyo-data");
+        var innerContainer = dom.QuerySelector(".right-inner");
+        IElement? notesContainer = null;
 
-        html = Driver.GetHtmlAfterLoaded(url2);
-        bf_base_page = html.Dom();
-        var cnt_note = bf_base_page.QuerySelector(".right-inner");
-        if (cnt_note == null)
-        {
-            cnt_note = bf_base_page.QuerySelector("#right-inner");
+        var hasSummary = dom.QuerySelector("li a.summary") != null;
+        var hasNotes = dom.QuerySelector("li a.notes") != null;
+
+        if (hasNotes) {
+            html = Driver.GetHtmlAfterLoaded(url2);
+            dom = html.Dom();
+            notesContainer = dom.QuerySelector(".right-inner") ?? dom.QuerySelector("#right-inner");
         }
-        var ans = (cnt_lname, cnt_summ, cnt_inner, cnt_note);
+        
+        var ans = (nameTitleContainer, summaryContainer, innerContainer, notesContainer);
         return ans;
     }
 
@@ -212,8 +215,8 @@ public class Crawler
     /// <summary>
     /// Get course list
     /// </summary>
-    /// <param name="outpath"></param>
-    public void Task2(string outpath)
+    /// <param name="outPath"></param>
+    public void Task2(string outPath)
     {
         List<CourseRecord> cl1, cl2;
         int nr1, nr2;
@@ -221,7 +224,7 @@ public class Crawler
         // load cache
         try
         {
-            (cl1, cl2, nr1, nr2) = FileUtils.Load<(List<CourseRecord>, List<CourseRecord>, int, int)>(outpath);
+            (cl1, cl2, nr1, nr2) = FileUtils.Load<(List<CourseRecord>, List<CourseRecord>, int, int)>(outPath);
         }
         catch
         {
@@ -229,7 +232,7 @@ public class Crawler
             cl2 = new();
             nr1 = 0;
             nr2 = 0;
-            FileUtils.Dump((cl1, cl2, nr1, nr2), outpath);
+            FileUtils.Dump((cl1, cl2, nr1, nr2), outPath);
         }
 
         for (int i = 0; i < DepartmentCodes.Count; ++i)
@@ -259,20 +262,21 @@ public class Crawler
             cl1.AddRange(lists);
             cl2.AddRange(listsEn);
 
-            FileUtils.BackupFile(outpath);
-            FileUtils.Dump((cl1, cl2, nr1, nr2), outpath);
+            FileUtils.BackupFile(outPath);
+            FileUtils.Dump((cl1, cl2, nr1, nr2), outPath);
         }
     }
 
-    void Task3Sub1(DictIntSyl detail, int dcode, int year)
+    bool Task3Sub1(DictIntSyl detail, int courseCode, int year)
     {
         if (detail.ContainsKey(year))
         {
-            return;
+            return false;
         }
-        var detail_jp = DataExtractor.ParseLectureInfo(GetLectureInfo(dcode, year));
-        var detail_en = DataExtractor.ParseLectureInfo(GetLectureInfo(dcode, year, en: true));
+        var detail_jp = DataExtractor.ParseLectureInfo(GetLectureInfo(courseCode, year));
+        var detail_en = DataExtractor.ParseLectureInfo(GetLectureInfo(courseCode, year, en: true));
         detail[year] = (detail_jp, detail_en);
+        return true;
     }
 
 
@@ -280,14 +284,14 @@ public class Crawler
     /// <summary>
     /// get course data
     /// </summary>
-    /// <param name="inpath"></param>
-    /// <param name="outpath"></param>
+    /// <param name="inPath"></param>
+    /// <param name="outPath"></param>
     /// <param name="startYear"></param>
     /// <param name="endYear"></param>
     /// <exception cref="Exception"></exception>
-    public void Task3(string inpath, string outpath, int startYear = 2016, int endYear = 2022)
+    public void Task3(string inPath, string outPath, int startYear = 2016, int endYear = 2022)
     {
-        var (courseList, _, _, _) = FileUtils.Load<(List<CourseRecord>, List<CourseRecord>, int, int)>(inpath);
+        var (courseList, _, _, _) = FileUtils.Load<(List<CourseRecord>, List<CourseRecord>, int, int)>(inPath);
         var targets = courseList.Select(x =>
         {
             var idStr = HttpUtility.ParseQueryString(x.Url).Get("KougiCD", "JWC");
@@ -307,13 +311,13 @@ public class Crawler
         List<int> erroredCodes;
         try
         {
-            (details, erroredCodes) = FileUtils.Load<(Dictionary<int, DictIntSyl>, List<int>)>(outpath);
+            (details, erroredCodes) = FileUtils.Load<(Dictionary<int, DictIntSyl>, List<int>)>(outPath);
         }
         catch
         {
             details = new();
             erroredCodes = new();
-            FileUtils.Dump((details, erroredCodes), outpath);
+            FileUtils.Dump((details, erroredCodes), outPath);
         }
 
 
@@ -333,46 +337,37 @@ public class Crawler
             for (var year = startYear; year <= endYear; ++year)
             {
                 Task3Sub1(detail, errCode, year);
-                try
-                {
-
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine($"{errCode}, {year}: {e}");
-                    throw;
-                }
             }
 
-            FileUtils.BackupFile(outpath);
-            FileUtils.Dump((details, erroredCodes), outpath);
+            FileUtils.BackupFile(outPath);
+            FileUtils.Dump((details, erroredCodes), outPath);
         }
 
         // normal process
         var exitRequired = false;
-        foreach (var dcode in targets.Yaap())
+        foreach (var courseCode in targets.Yaap())
         {
-            if (!details.ContainsKey(dcode))
-                details[dcode] = new();
+            if (!details.ContainsKey(courseCode))
+                details[courseCode] = new();
 
-            var detail = details[dcode];
-            var hasError = false;
+            var detail = details[courseCode];
+            var isCurrentCodeRecorded = false;
+            var needDump = true;
             for (var year = startYear; year <= endYear; ++year)
             {
-
-                // if cancelled: exit_tag = true; break;
                 try
                 {
-                    Task3Sub1(detail, dcode, year);
+                    needDump = Task3Sub1(detail, courseCode, year);
                 }
                 catch (Exception e)
                 {
-                    if (!hasError)
+                    if (!isCurrentCodeRecorded)
                     {
-                        erroredCodes.Add(dcode);
-                        hasError = true;
+                        erroredCodes.Add(courseCode);
+                        isCurrentCodeRecorded = true;
                     }
-                    Console.WriteLine($"ERROR {dcode} in year {year}: {e} {e.Message}");
+                    needDump = true;
+                    Console.WriteLine($"ERROR {courseCode} in year {year}: {e}");
                 }
             }
             // to avoid incomplete records
@@ -381,9 +376,11 @@ public class Crawler
                 Console.WriteLine("Interrupted by user.");
                 break;
             }
-            details[dcode] = detail;
-            FileUtils.BackupFile(outpath);
-            FileUtils.Dump((details, erroredCodes), outpath);
+            details[courseCode] = detail;
+            if (needDump) {
+                FileUtils.BackupFile(outPath);
+                FileUtils.Dump((details, erroredCodes), outPath);
+            }
         }
     }
 
