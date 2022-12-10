@@ -1,5 +1,7 @@
 <template>
-  <NavItem :to="isSuperGreen()? '/main': '/'">{{ t('navbar.homepage') }}</NavItem>
+  <NavItem :to="isSuperGreen()? '/main': '/'">
+    {{ t('navbar.homepage') }}
+  </NavItem>
   <NavItem to="/db">
     {{ t('navbar.database') }}
     <template v-slot:dropdown>
@@ -30,6 +32,6 @@ import { shouldBeActive } from '@/router';
 const { t } = useI18n({ useScope: 'global' });
 const targets: Array<string> = Orgs.map(x => x.key);
 function isSuperGreen() {
-  return false; // What the hell is this?
+  return false; 
 }
 </script>
