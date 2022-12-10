@@ -12,10 +12,13 @@
 import { defineComponent } from 'vue';
 import NavBar from './components/NavBar.vue';
 import { useI18n } from './i18n';
+import { provideCurrentUserStore } from './stores/CurrentUserStore';
+import { provideUIStore } from './stores/UIStore';
 import { Settings } from './utils/settings';
 
+
 export interface RootData {
-  darkMode: boolean, 
+  darkMode: boolean,
 }
 
 export default defineComponent({
@@ -24,37 +27,30 @@ export default defineComponent({
     return {
       darkMode: Settings.darkMode
     };
-  }, 
+  },
   setup() {
+    provideCurrentUserStore();
+    provideUIStore();
     const { t } = useI18n();
     return { t };
   },
   components: {
     NavBar,
-  }, 
+  },
   methods: {
-    updateDarkMode(): string {
-      let dmClass = '';
-      if (this.darkMode) {
-        dmClass += ' dark-mode';
-      }
-      this.$el.className = dmClass;
-      return dmClass;
-    }, 
-    setDarkMode(value: boolean) {
-      Settings.darkMode = this.darkMode = value;
-      this.updateDarkMode();
-    }
   },
   mounted() {
-    this.updateDarkMode();
+     
   }
 });
 
 </script>
 
+
+
 <style src="./styles/controls.css" />
 <style src="./styles/common.css">
+
 </style>
 <style>
 * {

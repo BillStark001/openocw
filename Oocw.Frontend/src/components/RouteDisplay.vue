@@ -19,12 +19,12 @@ import { decodePath } from '@/utils/query';
 import { defineComponent } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-interface RouteData {
+export interface RouteData {
   displayKey: string,
   routeTarget?: string,
 }
 
-interface RouteDisplayData {
+export interface RouteDisplayData {
   fullPath?: string;
   updateFlag: boolean;
   separatedPaths: RouteData[];
@@ -88,11 +88,6 @@ export default defineComponent({
     this.updateFlag = true;
   }*/
 });
-
-export {
-  RouteData,
-  RouteDisplayData,
-}
 
 </script>
 

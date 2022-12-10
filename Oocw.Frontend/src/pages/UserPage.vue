@@ -1,6 +1,5 @@
 <template>
   <PageFrame>
-    <img src="@/assets/img/banner.jpg" class="banner">
     <p>User Page</p>
     <button class="round-button" v-on:click="logout">Log Out</button>
   </PageFrame>

@@ -1,5 +1,14 @@
 /* shading styles*/
 
+a.link {
+  color: var(--color-s-acc-main);
+}
+
+a.link:hover {
+  text-decoration: underline;
+}
+
+
 .s-main {
   background-color: var(--color-s-main-light-2);
   border: 1px solid var(--color-s-main-dark-2);

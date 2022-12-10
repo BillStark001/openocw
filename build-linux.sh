@@ -6,11 +6,13 @@ cd $frontend_path
 npm run build
 cd ..
 
-if [ -d "${server_path}/${debug_path}" ]; then
-  echo "${server_path}/${debug_path} does exist."
+target_path="${server_path}"
+
+if [ -d "${target_path}/wwwroot" ]; then
+  echo "${target_path}/wwwroot does exist."
 else
-  mkdir ${server_path}/${debug_path}/wwwroot
+  mkdir ${target_path}/wwwroot
 fi
 
-cp -r ${frontend_path}/dist/* ${server_path}/${debug_path}/wwwroot
-# dotnet run --project ${server_path}/Oocw.Backend.csproj --configuration Release
+cp -r ${frontend_path}/dist/* ${target_path}/wwwroot
+dotnet run --project ${server_path}/Oocw.Backend.csproj --configuration Release

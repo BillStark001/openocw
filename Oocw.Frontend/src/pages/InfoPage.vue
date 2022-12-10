@@ -22,6 +22,7 @@ import { Settings } from '@/utils/settings';
 import PageFrame from '../components/PageFrame.vue'
 import PageBanner from '@/components/lesser/PageBanner.vue';
 import PageFooter from '@/components/lesser/PageFooter.vue';
+import { useUIStore } from '@/stores/UIStore';
 
 export default defineComponent({
     name: "InfoPage",
@@ -40,7 +41,7 @@ export default defineComponent({
     }, 
     methods: {
       changeDarkMode() {
-        (this.$root as any).setDarkMode(!Settings.darkMode);
+        (useUIStore().toggleDarkMode());
       }
     }
 })
