@@ -250,10 +250,10 @@ public static class DataExtractor
         ret.Summary.AssignFrom(retSummary);
 
 
-        foreach (var cont in innerContainer?.QuerySelectorAll("div.cont-sec") ?? Enumerable.Empty<IElement>())
+        foreach (var contSec in innerContainer?.QuerySelectorAll("div.cont-sec") ?? Enumerable.Empty<IElement>())
         {
-            var k = cont.QuerySelector("h3")!.TextContent.NormalizeWebString();
-            var v = cont.QuerySelector("h3")!.NextElementSibling!;
+            var k = contSec.QuerySelector("h3")!.TextContent.NormalizeWebString();
+            var v = contSec.QuerySelector("h3")!.NextElementSibling;
             if (v is IHtmlTableElement vt)
             {
                 if (SkillsTrigger.Contains(k))
@@ -337,6 +337,16 @@ public static class DataExtractor
                    v = vs
                    ";
                 */
+            }
+            else if (v == null) {
+                // http://www.ocw.titech.ac.jp/index.php?module=General&action=T0300&JWC=202131265&lang=EN
+                var detail = string.Join('\n', contSec.ChildNodes
+                    .Where(x => (x is IElement elem && elem.QuerySelector("h3") == null) || x is not IElement)
+                    .Select(x => x.TextContent))
+                    .NormalizeWebString(replaceReturns: false)
+                    .RemoveUnnecessarySpaces();
+                retDetail[k] = detail;
+                
             }
             else
             {
