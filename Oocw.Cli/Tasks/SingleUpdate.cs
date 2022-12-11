@@ -155,7 +155,7 @@ public static class SingleUpdate
             // handle lecture 
             foreach (var (number, title, detail) in syllabus.Schedule)
             {
-                if (!cldb.Lecturers.Contains(number))
+                if (!cldb.Lectures.ContainsKey(number.ToString()))
                     cldb.Lectures[number.ToString()] = new() { Number = number, };
 
                 var lect = cldb.Lectures[number.ToString()];

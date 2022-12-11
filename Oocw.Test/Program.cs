@@ -37,7 +37,7 @@ Expression<Func<int, int>> eadd32 = x => x + 3;
 Expression<Func<int, int>> eadd6 = ExpressionUtils.Combine(eadd3, eadd32);
 
 
-if (false)
+if (true)
 {
     Database db = Database.Instance;
     db.Initialize();
@@ -49,7 +49,7 @@ if (false)
 
     List<Task> tasks = new();
     
-    foreach (var (code, course) in courses)
+    foreach (var (code, course) in courses.Yaap().Take(courses.Count()))
         foreach (var (year, (courseJa, courseEn)) in course)
         {
             var id = year * 100000 + code % 100000;
