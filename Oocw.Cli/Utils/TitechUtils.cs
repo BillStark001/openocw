@@ -7,6 +7,8 @@ using System.Text.Json;
 using Oocw.Database.Models;
 using MongoDB.Driver;
 using Oocw.Database;
+using System.Linq.Expressions;
+using Yaap;
 
 namespace Oocw.Cli.Utils;
 
@@ -97,11 +99,17 @@ public static class TitechUtils
         Orgs = JsonSerializer.Deserialize<Dictionary<string, string>>(ORG_MAPPING)!;
     }
 
-    public static async Task RefreshOrganizations(this DBWrapper db)
+    public static async Task RefreshOrganizations(this DBWrapper db, bool handleUncategorized = false)
     {
         var inOpr = true;
-        int cnt = 0;
-        while (inOpr)
+        int count = 0;
+        Expression<Func<Course, bool>> filter = 
+            handleUncategorized ? 
+            x => x.Unit.Key == null || x.Unit.Key == KEY_NULL || x.Unit.Key == KEY_UNCAT : 
+            x => x.Unit.Key == null || x.Unit.Key == KEY_NULL;
+
+        var totalCount = (await db.Courses.CountDocumentsAsync(filter));
+        foreach (var cnt in Enumerable.Range(0, (int)(totalCount * 1.1)))
         {
             inOpr = await db.UseTransactionAsync(async (dbSess, _) =>
             {
@@ -117,12 +125,13 @@ public static class TitechUtils
                 );
                 return true;
             });
-            if (inOpr)
-                ++cnt;
+            count = cnt;
+            if (!inOpr)
+                break;
             if (cnt % 100 == 0)
-                Console.WriteLine(cnt);
+                Console.WriteLine($"{cnt}/{totalCount}");
         }
-        Console.WriteLine(cnt);
+        Console.WriteLine($"{count} uncategorized documents handled");
     }
 
 }

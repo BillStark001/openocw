@@ -43,21 +43,23 @@ if (true)
     db.Initialize();
     db.Wrapper.CreateUniqueIndex();
 
+    await db.Wrapper.RefreshOrganizations();
+
     var (courses, codes) = FileUtils.Load<(Dictionary<int, Dictionary<int, (SyllabusRecord?, SyllabusRecord?)>>, List<int>)>(Meta.SAVEPATH_DETAILS_RAW);
 
     var (cl1, cl2, nr1, nr2) = FileUtils.Load<(List<CourseRecord>, List<CourseRecord>, int, int)>(Meta.SAVEPATH_COURSE_LIST_RAW);
 
     List<Task> tasks = new();
     
-    foreach (var (code, course) in courses.Yaap().Take(courses.Count()))
+    foreach (var (code, course) in courses)
         foreach (var (year, (courseJa, courseEn)) in course)
         {
             var id = year * 100000 + code % 100000;
             var idStr = id.ToString();
             if (courseJa != null)
-                await (SingleUpdate.Syllabus(db.Wrapper, courseJa, idStr, "ja"));
+                tasks.Add(Task.Run((() => SingleUpdate.Syllabus(db.Wrapper, courseJa, idStr, "ja"))));
             if (courseEn != null)
-                await (SingleUpdate.Syllabus(db.Wrapper, courseEn, idStr, "en"));
+                tasks.Add(Task.Run((() => SingleUpdate.Syllabus(db.Wrapper, courseEn, idStr, "en"))));
         }
     
     var course1 = new CourseRecord()
@@ -90,7 +92,21 @@ if (true)
                 // await s.Courses.InsertOneAsync(s.Session, new Course() { Code = course.Code, Name = new() { En = course.Name } }, cancellationToken: c);
         }, CancellationToken.None));
         */
-    // Task.WaitAll(tasks.ToArray());
+
+    var c = () => Console.WriteLine($"{tasks.Where(x => x.IsCompleted).Count()}/{tasks.Count}");
+
+    Task.Run(async () => {
+        while (true) {
+            await Task.Delay(2000);
+            c();
+            if (tasks.Where(x => x.Status == TaskStatus.Running).Count() == 0) {
+                c();
+                break;
+            }
+        }
+    });
+    await Task.WhenAll(tasks.ToArray());
+    
 
     // Console.WriteLine("cl1");
     // foreach (var course in cl1)
