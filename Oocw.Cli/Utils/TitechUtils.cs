@@ -9,6 +9,7 @@ using MongoDB.Driver;
 using Oocw.Database;
 using System.Linq.Expressions;
 using Yaap;
+using System.Threading;
 
 namespace Oocw.Cli.Utils;
 
@@ -99,39 +100,35 @@ public static class TitechUtils
         Orgs = JsonSerializer.Deserialize<Dictionary<string, string>>(ORG_MAPPING)!;
     }
 
-    public static async Task RefreshOrganizations(this DBWrapper db, bool handleUncategorized = false)
+    public static async Task RefreshOrganizations(this DBWrapper db, bool handleUncategorized = false, CancellationToken token = default)
     {
-        var inOpr = true;
-        int count = 0;
         Expression<Func<Course, bool>> filter = 
             handleUncategorized ? 
             x => x.Unit.Key == null || x.Unit.Key == KEY_NULL || x.Unit.Key == KEY_UNCAT : 
             x => x.Unit.Key == null || x.Unit.Key == KEY_NULL;
 
-        var totalCount = (await db.Courses.CountDocumentsAsync(filter));
-        foreach (var cnt in Enumerable.Range(0, (int)(totalCount * 1.1)))
+        var totalCount = (await db.Courses.CountDocumentsAsync(filter, cancellationToken: token));
+
+        var cursor = 
+            db is DBSessionWrapper dbSess ? 
+            dbSess.Courses.FindAsync(dbSess.Session, filter, cancellationToken: token) : 
+            db.Courses.FindAsync(filter, cancellationToken: token);
+
+        long cnt = 0;
+        foreach (var res in (await cursor).ToEnumerable())
         {
-            inOpr = await db.UseTransactionAsync(async (dbSess, _) =>
-            {
-                var crs = dbSess.Courses;
-                var res = (await crs.FindAsync(dbSess.Session, x => x.Unit.Key == KEY_NULL || x.Unit.Key == KEY_UNCAT)).FirstOrDefault();
-                if (res == null)
-                    return false;
-                var replStr = res.Unit.Ja != null && Orgs.ContainsKey(res.Unit.Ja) ? Orgs[res.Unit.Ja] : KEY_UNCAT;
-                await crs.FindOneAndUpdateAsync(
-                    dbSess.Session,
-                    x => x.IdRaw == res.IdRaw,
-                    Builders<Course>.Update.Set(x => x.Unit.Key, replStr)
-                );
-                return true;
-            });
-            count = cnt;
-            if (!inOpr)
-                break;
+            var replStr = res.Unit.Ja != null && Orgs.ContainsKey(res.Unit.Ja) ? Orgs[res.Unit.Ja] : KEY_UNCAT;
+            var setDef = Builders<Course>.Update.Set(x => x.Unit.Key, replStr);
+            if (db is DBSessionWrapper dbSess2)
+                await dbSess2.Courses.UpdateOneAsync(dbSess2.Session, x => x.IdRaw == res.IdRaw, setDef, cancellationToken: token);
+            else
+                await db.Courses.UpdateOneAsync(x => x.IdRaw == res.IdRaw, setDef, cancellationToken: token);
+            
+            ++cnt;
             if (cnt % 100 == 0)
                 Console.WriteLine($"{cnt}/{totalCount}");
         }
-        Console.WriteLine($"{count} uncategorized documents handled");
+        Console.WriteLine($"{cnt} uncategorized documents handled");
     }
 
 }

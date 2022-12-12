@@ -37,13 +37,13 @@ Expression<Func<int, int>> eadd32 = x => x + 3;
 Expression<Func<int, int>> eadd6 = ExpressionUtils.Combine(eadd3, eadd32);
 
 
-if (false)
+if (true)
 {
     Database db = Database.Instance;
     db.Initialize();
     db.Wrapper.CreateUniqueIndex();
 
-    await db.Wrapper.RefreshOrganizations();
+    await db.Wrapper.RefreshOrganizations(true);
 
     var (courses, codes) = FileUtils.Load<(Dictionary<int, Dictionary<int, (SyllabusRecord?, SyllabusRecord?)>>, List<int>)>(Meta.SAVEPATH_DETAILS_RAW);
 
@@ -57,9 +57,9 @@ if (false)
             var id = year * 100000 + code % 100000;
             var idStr = id.ToString();
             if (courseJa != null)
-                tasks.Add(Task.Run((() => SingleUpdate.Syllabus(db.Wrapper, courseJa, idStr, "ja"))));
+                tasks.Add(SingleUpdate.Syllabus(db.Wrapper, courseJa, idStr, "ja"));
             if (courseEn != null)
-                tasks.Add(Task.Run((() => SingleUpdate.Syllabus(db.Wrapper, courseEn, idStr, "en"))));
+                tasks.Add(SingleUpdate.Syllabus(db.Wrapper, courseEn, idStr, "en"));
         }
     
     var course1 = new CourseRecord()
@@ -93,7 +93,7 @@ if (false)
         }, CancellationToken.None));
         */
 
-    var c = () => Console.WriteLine($"{tasks.Where(x => x.IsCompleted).Count()}/{tasks.Count}");
+    var c = () => Console.WriteLine($"{tasks.Where(x => x.IsCompleted).Count()}({tasks.Where(x => x.Status == TaskStatus.Running).Count()})/{tasks.Count}");
 
     Task.Run(async () => {
         while (true) {
