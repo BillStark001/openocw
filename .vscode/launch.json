@@ -9,9 +9,9 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build-backend",
-      "program": "${workspaceFolder}/Oocw.Backend/bin/Debug/net6.0/Oocw.Backend",
+      "program": "${workspaceFolder}/Oocw.Backend/bin/Debug/net8.0/Oocw.Backend",
       "args": [],
-      "cwd": "${workspaceFolder}/Oocw.Backend/bin/Debug/net6.0/",
+      "cwd": "${workspaceFolder}/Oocw.Backend/bin/Debug/net8.0/",
       "stopAtEntry": false,
       "serverReadyAction": {
         "action": "openExternally",
@@ -30,9 +30,9 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build-test",
-      "program": "${workspaceFolder}/Oocw.Test/bin/Debug/net6.0/Oocw.Test",
+      "program": "${workspaceFolder}/Oocw.Test/bin/Debug/net8.0/Oocw.Test",
       "args": [],
-      "cwd": "${workspaceFolder}/Oocw.Test/bin/Debug/net6.0/",
+      "cwd": "${workspaceFolder}/Oocw.Test/bin/Debug/net8.0/",
       "stopAtEntry": false,
       "console": "internalConsole"
     },

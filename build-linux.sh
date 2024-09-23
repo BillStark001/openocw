@@ -1,6 +1,6 @@
 frontend_path=./Oocw.Frontend
 server_path=./Oocw.Backend
-debug_path=bin/debug/net6.0
+debug_path=bin/debug/net8.0
 
 cd $frontend_path
 npm run build
