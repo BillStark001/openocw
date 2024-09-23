@@ -17,24 +17,11 @@ namespace Oocw.Backend.Controllers;
 
 [ApiController]
 [Route("api/info")]
-public class QueryController : ControllerBase
+public class QueryController : Controller
 {
-    // var defs
+    [FromServices] public DatabaseService DbService { get; set; } = null!;
+    private readonly FilterDefinitionBuilder<Class> _f = Builders<Class>.Filter;
 
-    private readonly ILogger<QueryController> _logger;
-    private readonly DatabaseService _db;
-    private readonly FilterDefinitionBuilder<Class> _f;
-
-    // init
-
-    public QueryController(ILogger<QueryController> logger, DatabaseService db)
-    {
-        _logger = logger;
-        _db = db;
-        _f = Builders<Class>.Filter;
-    }
-
-    // api
 
     [HttpGet("course/{id}")]
     public ActionResult<string> Info(string id, int? year, string? className, string? lang)
@@ -46,8 +33,8 @@ public class QueryController : ControllerBase
             query &= _f.Eq(x => x.Year, year);
 
 
-        var cls = _db.Wrapper.Classes.Find(query).FirstOrDefault();
-        var crs = cls != null ? _db.Wrapper.GetCourseInfo(id) : null;
+        var cls = DbService.Wrapper.Classes.Find(query).FirstOrDefault();
+        var crs = cls != null ? DbService.Wrapper.GetCourseInfo(id) : null;
 
         if (cls == null || crs == null)
         {
@@ -69,15 +56,15 @@ public class QueryController : ControllerBase
 
         lang = lang ?? this.TryGetLanguage();
 
-        var cls = _db.Wrapper.Classes.Find(query).FirstOrDefault();
-        var crs = cls != null ? _db.Wrapper.GetCourseInfo(id) : null;
+        var cls = DbService.Wrapper.Classes.Find(query).FirstOrDefault();
+        var crs = cls != null ? DbService.Wrapper.GetCourseInfo(id) : null;
 
         if (cls == null || crs == null)
         {
             return NotFound();
         }
 
-        return CourseBrief.FromScheme(cls, crs, lang: lang).SetLecturers(cls, lang: lang, db: _db.Wrapper);
+        return CourseBrief.FromScheme(cls, crs, lang: lang).SetLecturers(cls, lang: lang, db: DbService.Wrapper);
     }
 
     [HttpGet("faculty/{id}")]
@@ -85,7 +72,7 @@ public class QueryController : ControllerBase
     {
         lang = lang ?? this.TryGetLanguage();
 
-        var dinfo = _db.Wrapper.Faculties.Find(x => x.Id == id).FirstOrDefault();
+        var dinfo = DbService.Wrapper.Faculties.Find(x => x.Id == id).FirstOrDefault();
         if (dinfo == null)
             return NotFound();
 

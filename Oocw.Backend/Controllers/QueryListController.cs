@@ -18,22 +18,14 @@ namespace Oocw.Backend.Controllers;
 
 [ApiController]
 [Route("api/list")]
-public class QueryListController : ControllerBase
+public class QueryListController : Controller
 {
     // var defs
 
-    private readonly ILogger<QueryController> _logger;
-    private readonly DatabaseService _db;
-    private readonly FilterDefinitionBuilder<Class> _f;
+    [FromServices] public DatabaseService DbService { get; set; } = null!;
+    private readonly FilterDefinitionBuilder<Class> _f = Builders<Class>.Filter;
 
     // init
-
-    public QueryListController(ILogger<QueryController> logger, DatabaseService db)
-    {
-        _logger = logger;
-        _db = db;
-        _f = Builders<Class>.Filter;
-    }
 
     // api
 
@@ -57,10 +49,10 @@ public class QueryListController : ControllerBase
         }
         else
         {
-            var courses = _db.Wrapper.Courses.Find(crsFilter);
+            var courses = DbService.Wrapper.Courses.Find(crsFilter);
             var clist = courses/*.Skip(dPage * dCount - dPage)*/.Limit(dCount).ToList();
             var cllist = clist.Where(x => x.Classes.Count() > 0).Select(x => x.Classes.Max().ToString());
-            var classes = _db.Wrapper.Classes.Find(Builders<Class>.Filter.In(x => x.Meta.OcwId, cllist)).ToList();
+            var classes = DbService.Wrapper.Classes.Find(Builders<Class>.Filter.In(x => x.Meta.OcwId, cllist)).ToList();
 
             Dictionary<string, Class> d = new(classes.Count);
             foreach (var cls in classes)
@@ -71,7 +63,7 @@ public class QueryListController : ControllerBase
                 var clsid = val.Second;
                 CourseBrief b;
                 if (d.ContainsKey(clsid))
-                    b = CourseBrief.FromScheme(d[clsid], crs, lang).SetLecturers(d[clsid], _db.Wrapper, lang);
+                    b = CourseBrief.FromScheme(d[clsid], crs, lang).SetLecturers(d[clsid], DbService.Wrapper, lang);
                 else
                     b = new(crs, lang);
                 return b;

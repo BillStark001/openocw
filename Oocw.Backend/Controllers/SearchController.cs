@@ -21,20 +21,7 @@ namespace Oocw.Backend.Controllers;
 public class SearchController : ControllerBase
 {
     // var defs
-
-    private readonly ILogger<QueryController> _logger;
-    private readonly DatabaseService _db;
-    private readonly FilterDefinitionBuilder<BsonDocument> _f;
-
-    // init
-
-    public SearchController(ILogger<QueryController> logger, DatabaseService db)
-    {
-        _logger = logger;
-        _db = db;
-        _f = Builders<BsonDocument>.Filter;
-    }
-
+    [FromServices] public DatabaseService DbService { get; set; } = null!;
     // api
 
 
@@ -51,12 +38,12 @@ public class SearchController : ControllerBase
         var sorter = Builders<Class>.Sort.MetaTextScore(Definitions.MetaTextScoreTarget);
 
         // TODO target db!
-        var cls = _db.Wrapper.Classes.Find(query).Project<Class>(projection).Sort(sorter);
+        var cls = DbService.Wrapper.Classes.Find(query).Project<Class>(projection).Sort(sorter);
         cls = cls.Skip(dPage * dCount - dPage).Limit(dCount);
 
         IEnumerable<CourseBrief> ans = cls.ToList().Select(x =>
         {
-            return CourseBrief.FromScheme(x, _db.Wrapper.GetCourseInfo(x.Code), lang: lang).SetLecturers(x, lang: lang, db: _db.Wrapper);
+            return CourseBrief.FromScheme(x, DbService.Wrapper.GetCourseInfo(x.Code), lang: lang).SetLecturers(x, lang: lang, db: DbService.Wrapper);
         });
         return ans;
     }
@@ -74,7 +61,7 @@ public class SearchController : ControllerBase
         var sorter = Builders<Course>.Sort.MetaTextScore(Definitions.MetaTextScoreTarget);
 
         // TODO target db!
-        var cls = _db.Wrapper.Courses.Find(query).Project<Course>(projection).Sort(sorter);
+        var cls = DbService.Wrapper.Courses.Find(query).Project<Course>(projection).Sort(sorter);
         cls = cls.Skip(dPage * dCount - dPage).Limit(dCount);
 
         throw new NotImplementedException();
@@ -88,7 +75,7 @@ public class SearchController : ControllerBase
         var (dCount, dPage) = QueryUtils.GetPageInfo(dispCount, page);
 
         var query = Builders<Faculty>.Filter.Text(tokens);
-        var fct = _db.Wrapper.Faculties.Find(query).Skip(dPage * dCount - dPage).Limit(dCount);
+        var fct = DbService.Wrapper.Faculties.Find(query).Skip(dPage * dCount - dPage).Limit(dCount);
 
         IEnumerable<FacultyBrief> ans = fct.ToList().Select(x => new FacultyBrief(x, lang));
         return ans;

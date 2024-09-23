@@ -1,10 +1,15 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.AspNetCore.Server.Kestrel.Https;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Oocw.Backend.Auth;
 using Oocw.Backend.Services;
+using Oocw.Backend.Utils;
 using System;
 using System.IO;
 using System.Text;
@@ -13,7 +18,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -40,7 +44,7 @@ builder.Services.AddAuthentication(options =>
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(jwt =>
 {
-    var key = Encoding.ASCII.GetBytes(builder.Configuration["JWT:Secret"]);
+    var key = Encoding.ASCII.GetBytes(builder.Configuration["JWT:Secret"]!);
     jwt.SaveToken = true;
     jwt.TokenValidationParameters = new TokenValidationParameters
     {
@@ -53,6 +57,16 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+// ssl
+
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.ConfigureHttpsDefaults(listenOptions =>
+    {
+        listenOptions.SslProtocols = System.Security.Authentication.SslProtocols.Tls12 | System.Security.Authentication.SslProtocols.Tls13;
+    });
+});
+
 // build
 var app = builder.Build();
 
@@ -63,17 +77,21 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseHttpsRedirection();
+
 app.UseSession();
 app.UseAuthentication();
-app.UseHttpsRedirection();
 app.UseAuthorization();
 
-var wwwroot = Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
-if (!Directory.Exists(wwwroot))
-    Directory.CreateDirectory(wwwroot);
+app.UseMiddleware<JwtAuthMiddleware>();
+
+
+var wwwRootPath = Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
+if (!Directory.Exists(wwwRootPath))
+    Directory.CreateDirectory(wwwRootPath);
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(wwwroot),
+    FileProvider = new PhysicalFileProvider(wwwRootPath),
     RequestPath = ""
 });
 

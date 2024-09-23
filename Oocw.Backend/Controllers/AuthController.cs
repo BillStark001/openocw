@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Definitions = Oocw.Backend.Models.Definitions;
 using Oocw.Utils;
+using Oocw.Backend.Auth;
 
 namespace Oocw.Backend.Controllers;
 
@@ -27,15 +28,11 @@ public class UnameBody
 
 [ApiController]
 [Route("/api/user")]
-public class AuthController : ServedController
+public class AuthController : Controller
 {
-    public AuthController(
-        ILogger<AuthController> logger,
-        DatabaseService service,
-        IOptions<JwtConfig> jwtConfig
-        ): base(logger, service, jwtConfig)
-    {
-    }
+    [FromServices] public DatabaseService DbService { get; set; } = null!;
+    [FromServices] public IOptions<JwtConfig> JwtConfig { get; set; } = null!;
+    
 
     [HttpPost("register")]
     public ActionResult<StandardResult> Register(UnamePwdBody b)
@@ -47,7 +44,7 @@ public class AuthController : ServedController
 
         try
         {
-            _dbService.Wrapper.Register(b.uname, b.pwd);
+            DbService.Wrapper.Register(b.uname, b.pwd);
         }
         catch (UserNameConflictException)
         {
@@ -64,12 +61,12 @@ public class AuthController : ServedController
     [HttpPost("auth")]
     public ActionResult<StandardResult> Auth(UnamePwdBody b)
     {
-        var u = _dbService.Wrapper.QueryUser(b.uname);
+        var u = DbService.Wrapper.QueryUser(b.uname);
         if (u == null || !UserUtils.verifyPassword(b.pwd, u.PasswordEncrypted))
             return new StandardResult(Definitions.CODE_ERR_BAD_UNAME_OR_PWD);
 
         // TODO add additional security measures
-        var token = u.GenerateRefreshToken(_jwtConfig);
+        var token = u.GenerateRefreshToken(JwtConfig.Value);
 
         return new AuthResult(token);
     }
@@ -90,27 +87,26 @@ public class AuthController : ServedController
     [HttpPost("forget")]
     public ActionResult<StandardResult> ForgetPassword(UnameBody b)
     {
-        var u = _dbService.Wrapper.QueryUser(b.uname);
+        var u = DbService.Wrapper.QueryUser(b.uname);
         if (u == null)
             return new StandardResult(Definitions.CODE_ERR_INVALID_UNAME, b.uname);
 
         throw new NotImplementedException();
     }
 
+    [RequireAuth]
     [HttpGet("status")]
     public ActionResult<StandardResult> Check()
     {
-        return this.RequireAuth<StandardResult>(user => new StandardResult(Definitions.CODE_SUCC));
+        return new StandardResult(Definitions.CODE_SUCC);
     }
 
+    [RequireAuth]
     [HttpPost("logout")]
     public ActionResult<StandardResult> LogOut()
     {
-        return this.RequireAuth<StandardResult>(user =>
-        {
-            Response.Cookies.Delete(Definitions.KEY_REFRESH_TOKEN);
-            Response.Cookies.Delete(Definitions.KEY_ACCESS_TOKEN);
-            return new StandardResult(Definitions.CODE_SUCC);
-        });
+        Response.Cookies.Delete(Definitions.KEY_REFRESH_TOKEN);
+        Response.Cookies.Delete(Definitions.KEY_ACCESS_TOKEN);
+        return new StandardResult(Definitions.CODE_SUCC);
     }
 }
