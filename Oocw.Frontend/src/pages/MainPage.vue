@@ -27,51 +27,29 @@
     </div>
   </div>
 
-  <PageFooter static="true"></PageFooter>
+  <PageFooter :static="true"></PageFooter>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import PageFooter from '@/components/lesser/PageFooter.vue';
 
+const { t } = useI18n({
+  inheritLocale: true,
+  useScope: "local"
+});
 
+const searchText = ref('');
+function triggerSearch(e: KeyboardEvent): void {
+  if (e.key === 'Enter')
+    triggerSearch2();
+};
+function triggerSearch2(): void {
+  // TODO
+  console.log(`search ${searchText.value}`);
+};
 
-interface MainPageData {
-  searchText: string,
-}
-
-export default defineComponent({
-  name: "MainPage",
-  setup() {
-    const { t } = useI18n({
-      inheritLocale: true,
-      useScope: "local"
-    });
-    return { t };
-  },
-  data(): MainPageData {
-    return {
-      searchText: "",
-    };
-  },
-  methods: {
-    triggerSearch(e: KeyboardEvent): void {
-      if (e.key === 'Enter')
-        this.triggerSearch2();
-    },
-    triggerSearch2(): void {
-      // TODO
-      console.log(`search ${this.searchText}`);
-    },
-  },
-  mounted() {
-
-  },
-  components: {
-    PageFooter
-  }
-})
 </script>
 
 

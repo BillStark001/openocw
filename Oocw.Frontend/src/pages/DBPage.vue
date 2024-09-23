@@ -2,7 +2,7 @@
   <PageFrame>
     <PageBanner />
     <RouteDisplay v-if="treeData"></RouteDisplay>
-    <div v-if="!($route.params.target)" class="org-area">
+    <div v-if="!route.params.target" class="org-area">
       <div v-for="org in orgs" :key="org.key" class="org-panel">
         <router-link :to="'/db/' + (org.key)">
           <img v-if="org.key == 'org.sos'" src="@/assets/svg/tit/chem.svg">
@@ -17,23 +17,24 @@
         </router-link>
       </div>
     </div>
-    <div id="subframe" v-if="($route.params.target)">
+    <div id="subframe" v-if="route.params.target">
       <div id="sf-left">
-        <NavList v-if="treeData" v-bind:data="treeData"></NavList>
+        <NavList v-if="treeData" :data="treeData"></NavList>
       </div>
       <div id="sf-right">
-        <CourseList v-if="courses" :query="courses" place="db"/>
+        <CourseList v-if="courses" :query="courses" place="db" />
       </div>
     </div>
-
   </PageFrame>
   <PageFooter></PageFooter>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
-import { useI18n } from 'vue-i18n'
-import PageFrame from '../components/PageFrame.vue'
+<script setup lang="ts">
+import { ref, onMounted, watch, nextTick } from 'vue';
+import { useRoute } from 'vue-router';
+import { useI18n } from 'vue-i18n';
+
+import PageFrame from '../components/PageFrame.vue';
 import RouteDisplay from '@/components/RouteDisplay.vue';
 import NavList from '@/components/NavList.vue';
 import { NavNode, NavListData } from '@/components/NavList.vue';
@@ -44,141 +45,79 @@ import CourseList from '@/components/courses/CourseList.vue';
 import OrgTree from '@/assets/meta/orgtree.json';
 import Orgs from '@/assets/meta/orgs.json';
 import * as utils from '@/utils/query';
-import { RouteParams } from 'vue-router';
 import { CourseBrief, getCourseListByDepartment } from '@/api/query';
 
+const { t } = useI18n();
+const route = useRoute();
+
+const treeData = ref<NavListData | undefined>();
+const curOpr = ref<string | undefined>();
+const courses = ref<utils.QueryResult<CourseBrief[]> | undefined>();
+
+const orgs = Orgs as { key: string }[];
+
 function getCurrentOpr(cur: NavNode, parents: NavNode[]): string[] {
-  var ret: string[] = [];
-  if (cur.action == 'self')
-    ret.push(cur.key);
-  else if (cur.action == 'uncat')
-    ret.push(cur.action);
-  else if (cur.action == 'parent')
-    ret = parents.length > 1 ? [parents[0].key] : [];
-  else if (cur.action == 'children') {
-    cur.children.map(c => ret = ret.concat(getCurrentOpr(c, [cur].concat(parents))));
+  let ret: string[] = [];
+  if (cur.action === 'self') ret.push(cur.key);
+  else if (cur.action === 'uncat') ret.push(cur.action);
+  else if (cur.action === 'parent') ret = parents.length > 1 ? [parents[0].key] : [];
+  else if (cur.action === 'children') {
+    cur.children.forEach(c => ret = ret.concat(getCurrentOpr(c, [cur, ...parents])));
   }
   return ret;
 }
 
 function identifyCurrentOpr(root: NavNode, path: string[]): string | undefined {
-  var parent: NavNode[] = [];
-  var i: number = 0;
+  let parent: NavNode[] = [];
+  let i = 0;
 
-  // find the current node
-  var cur: NavNode = root;
+  let cur: NavNode = root;
   while (i < path.length) {
-    var matched = false;
-    for (var child of cur.children) {
-      if (child.key == path[i]) {
-        parent = [cur].concat(parent);
-        cur = child;
-        ++i;
-        matched = true;
-        break;
-      }
-    }
-    if (!matched) {
+    const matched = cur.children.find(child => child.key === path[i]);
+    if (matched) {
+      parent = [cur, ...parent];
+      cur = matched;
+      i++;
+    } else {
       cur = root;
       parent = [];
       break;
     }
   }
 
-  var ret: string | undefined = undefined;
   const rets = getCurrentOpr(cur, parent);
-  if (rets.length > 0)
-    ret = rets.join(",");
-  
-  // TODO expand this after the restriction scheme is determined
-  return ret;
+  return rets.length > 0 ? rets.join(",") : undefined;
 }
 
-export interface DBPageData {
-  treeData?: NavListData,
-  curOpr?: string,
-  courses?: utils.QueryResult<CourseBrief[]>,
+function getTargetPath() {
+  const target = route.params.target;
+  if (target === undefined) return [];
+  if (Array.isArray(target)) return utils.decodePath(target.join());
+  return utils.decodePath(target);
 }
 
-interface Org {
-  key: string,
+
+async function updateData() {
+  const target = getTargetPath();
+  curOpr.value = identifyCurrentOpr(OrgTree as NavNode, target);
+
+  const _res = await getCourseListByDepartment(curOpr.value ?? "uncat");
+  courses.value = undefined;
+
+  treeData.value = {
+    node: OrgTree as NavNode,
+    selected: target,
+    path: [],
+  }
+
+  await nextTick();
+  courses.value = _res;
 }
 
-export default defineComponent({
-  name: "DBPage",
-  data(): DBPageData {
+onMounted(updateData);
 
-    var target = this.getTargetPath();
-
-    var data: NavListData = {
-      node: OrgTree as NavNode,
-      selected: target,
-      path: [],
-    }
-    return {
-      treeData: data,
-      curOpr: identifyCurrentOpr(OrgTree as NavNode, target),
-      courses: undefined, 
-    };
-  },
-  setup() {
-    const { t } = useI18n({
-      inheritLocale: true,
-      useScope: "local"
-    });
-    const orgs = Orgs as Org[];
-    // Something todo ..
-    return { t, orgs };
-  },
-  components: {
-    PageFrame,
-    RouteDisplay,
-    NavList,
-    PageBanner,
-    PageFooter,
-    CourseList,
-  },
-  methods: {
-    getTargetPath(params?: RouteParams): string[] {
-      var target = (params || this.$route.params).target;
-      if (target == undefined)
-        target = '';
-      else if (target instanceof Array)
-        target = target.join(); // TODO in what case???
-      return utils.decodePath(target);
-    }
-  },
-  async mounted() {
-    const _res = await getCourseListByDepartment(this.curOpr ?? "uncat");
-    this.courses = undefined;
-    await this.$nextTick();
-    this.courses = _res;
-  }, 
-  async updated() {
-
-    var target = this.getTargetPath();
-    this.curOpr = undefined;
-    this.curOpr = identifyCurrentOpr(OrgTree as NavNode, target);
-    
-    const _res = await getCourseListByDepartment(this.curOpr ?? "uncat");
-    this.courses = undefined;
-
-    var data: NavListData = {
-      node: OrgTree as NavNode,
-      selected: target,
-      path: [],
-    }
-
-    this.treeData = undefined;
-
-    await this.$nextTick();
-
-    this.treeData = data;
-    this.courses = _res;
-  },
-});
+watch(() => route.params, updateData);
 </script>
-
 
 <style scoped>
 #subframe {
@@ -208,7 +147,6 @@ export default defineComponent({
   min-width: 120px;
   box-sizing: border-box;
   margin: 30px;
-
   background-color: var(--db-panel-color);
   box-shadow: 0 0 17px #00000055;
 }
@@ -220,7 +158,6 @@ export default defineComponent({
   align-items: center;
   text-align: center;
   padding: 45px 0;
-
 }
 
 .org-panel * {
@@ -229,7 +166,6 @@ export default defineComponent({
 
 .org-panel a:hover {
   background-color: #ffffff22;
-
 }
 
 .org-panel a:hover * {
@@ -239,7 +175,6 @@ export default defineComponent({
 .dark-mode .org-panel a:hover * {
   opacity: 1;
 }
-
 
 .org-panel img {
   height: 100px;

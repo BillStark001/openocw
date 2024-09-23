@@ -5,25 +5,17 @@
       <p>Gan Si Huang Xu Dong</p>
       <p>Beat Xudong Huang To Death.</p>
     </div>
-    
+
   </div>
-  
+
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-
-export default defineComponent({
-
-  name: "PageBanner", 
-})
-
+<script setup lang="ts">
 </script>
 
 <style scoped>
-
 .banner {
-  width: 100%; 
+  width: 100%;
   height: var(--banner-height);
   box-sizing: border-box;
   display: block;
@@ -32,7 +24,7 @@ export default defineComponent({
 }
 
 .bg-img {
-  position:absolute;
+  position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
@@ -66,14 +58,13 @@ export default defineComponent({
 }
 
 .fg-txt>p {
-  font-size:small;
+  font-size: small;
   text-shadow: 0px 0px 8px #000000;
   color: white;
 }
+
 .fg-txt>p:first-child {
-  font-size:larger;
+  font-size: larger;
   padding: 5px 0;
 }
-
-
 </style>

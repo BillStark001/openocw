@@ -29,7 +29,7 @@
                   {{ t('navbar.admin') }}
                 </RouterLink>
                 <a href="javascript:void(0)" @click="logout">{{
-                    t('btn.logout')
+                  t('btn.logout')
                 }}</a>
               </div>
             </div>

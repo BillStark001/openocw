@@ -7,19 +7,15 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
+import clsx from 'clsx';
 
-import { defineComponent } from 'vue';
 
-export default defineComponent({
-  name: 'PopupItem',
-  props: ['alignRight'],
-  methods: {
-    r() {
-      return 'submenu' + (this.alignRight ? ' align-right' : "");
-    }
-  }
-})
+const props = defineProps(['alignRight']);
+
+function r() {
+  return clsx('submenu', props.alignRight ? ' align-right' : "");
+}
 
 </script>
 

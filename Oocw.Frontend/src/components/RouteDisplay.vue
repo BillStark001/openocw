@@ -5,7 +5,8 @@
     <router-link class="rkey h" to="/">{{ t('pos.root') }}</router-link>
     <template v-for="path in separatedPaths" :key="path">
       <span class="rkey rsign">></span>
-      <router-link class="rkey h" v-if="path.routeTarget" v-bind:to="path.routeTarget">{{ t(path.displayKey) }}
+      <router-link class="rkey h" v-if="path.routeTarget" :to="path.routeTarget">
+        {{ t(path.displayKey) }}
       </router-link>
       <span class="rkey" v-if="!path.routeTarget">{{ t(path.displayKey) }}</span>
     </template>
@@ -13,82 +14,63 @@
   <span class="route-div"></span>
 </template>
 
-<script lang="ts">
-
-import { decodePath } from '@/utils/query';
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { ref, onMounted, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRoute, onBeforeRouteUpdate } from 'vue-router';
+import { decodePath } from '@/utils/query';
 
-export interface RouteData {
-  displayKey: string,
-  routeTarget?: string,
+interface RouteData {
+  displayKey: string;
+  routeTarget?: string;
 }
 
-export interface RouteDisplayData {
-  fullPath?: string;
-  updateFlag: boolean;
-  separatedPaths: RouteData[];
-}
+const { t } = useI18n();
+const route = useRoute();
 
-export default defineComponent({
-  name: "RouteDisplay",
-  data(): RouteDisplayData {
-    return {
-      fullPath: undefined,
-      updateFlag: true, 
-      separatedPaths: [],
-    };
-  },
-  setup() {
-    const { t } = useI18n();
-    return { t };
-  },
-  methods: {
-    updateRoute(fullPath?: string) {
-      this.fullPath = fullPath || this.$route.fullPath;
-      var separatedPaths = [];
-      const paths = this.fullPath.split('/');
-      for (let i = 0; i < paths.length; ++i) {
-        if (i == 0 || (paths[i] == '' && i == paths.length - 1))
-          continue;
-        let path = paths[i];
-        let key = `pos.${path}`;
-        // special judges
-        if (paths[1] == 'db' && i == 2) {
-          if (path == 'uncat')
-            key = 'meta.uncat';
-          else {
-            let _key = decodePath(path);
-            key = _key[_key.length - 1];
-          }
-        }
+const fullPath = ref<string | undefined>(undefined);
+const updateFlag = ref(true);
+const separatedPaths = ref<RouteData[]>([]);
 
-        separatedPaths.push({
-          displayKey: key,
-          routeTarget: paths.slice(0, i + 1).join('/')
-        });
+const updateRoute = (path?: string) => {
+  fullPath.value = path || route.fullPath;
+  const paths = fullPath.value.split('/');
+  separatedPaths.value = [];
+
+  for (let i = 0; i < paths.length; ++i) {
+    if (i == 0 || (paths[i] == '' && i == paths.length - 1)) continue;
+    
+    let path = paths[i];
+    let key = `pos.${path}`;
+    
+    // special judges
+    if (paths[1] == 'db' && i == 2) {
+      if (path == 'uncat') {
+        key = 'meta.uncat';
+      } else {
+        let _key = decodePath(path);
+        key = _key[_key.length - 1];
       }
-      this.separatedPaths = separatedPaths;
     }
-  },
-  mounted() {
-    this.updateRoute();
-  },
-  async beforeRouteUpdate(from, to) {
-    this.updateFlag = false;
-    this.updateRoute(to.fullPath);
-    await this.$nextTick();
-    console.log(this.separatedPaths);
-    this.updateFlag = true;
-  }, 
-  /*
-  async updated() {
-    this.updateFlag = false;
-    await this.$nextTick();
-    this.updateFlag = true;
-  }*/
+
+    separatedPaths.value.push({
+      displayKey: key,
+      routeTarget: paths.slice(0, i + 1).join('/')
+    });
+  }
+};
+
+onMounted(() => {
+  updateRoute();
 });
 
+onBeforeRouteUpdate(async (to) => {
+  updateFlag.value = false;
+  updateRoute(to.fullPath);
+  await nextTick();
+  console.log(separatedPaths.value);
+  updateFlag.value = true;
+});
 </script>
 
 <style scoped>

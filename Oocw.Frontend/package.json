@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "animejs": "^3.2.2",
+    "clsx": "^2.1.1",
     "cookie-store": "^3.0.0",
     "vue": "^3.4.37",
     "vue-i18n": "^10.0.0",
@@ -17,6 +18,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.11.0",
+    "@types/animejs": "^3.1.12",
     "@types/node": "^22.5.5",
     "@vitejs/plugin-vue": "^5.1.2",
     "eslint": "^9.11.0",

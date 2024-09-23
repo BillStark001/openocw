@@ -83,7 +83,7 @@ const key = Symbol('CurrentUserStore') as InjectionKey<CurrentUserStore>;
 
 export function provideCurrentUserStore() {
   const store = new CurrentUserStore();
-  provide(key, reactive(store));
+  provide(key, reactive(store) as CurrentUserStore);
   return store;
 }
 

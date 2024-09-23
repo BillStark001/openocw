@@ -24,7 +24,15 @@ public class JwtAuthMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
-        var accessType = context.Request.Headers["X-Access-Type"].ToString();
+        var endpoint = context.GetEndpoint();
+        var authorizeAttribute = endpoint?.Metadata.GetMetadata<RequireAuthAttribute>();
+        if (authorizeAttribute == null) {
+            // authorization is not needed
+            await _next(context);
+            return;
+        }
+
+        var accessType = authorizeAttribute.AccessType;
 
         var fullAccessType = string.IsNullOrEmpty(accessType)
             ? Definitions.KEY_ACCESS_TOKEN

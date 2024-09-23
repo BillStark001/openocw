@@ -1,8 +1,3 @@
-import { stringify } from "querystring";
-
-interface StrDict {
-  [key: string]: string;
-}
 
 interface FilterScheme {
   quarter: string;
@@ -23,7 +18,7 @@ export abstract class BaseFilter {
 
 export function concat(strs: Array<string>): string {
   return strs
-    .map(x => x.replaceAll(',', '%2c'))
+    .map(x => x.replace(/,/g, '%2c'))
     .join(',');
 }
 

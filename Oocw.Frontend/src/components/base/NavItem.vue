@@ -9,21 +9,16 @@
     <slot name="dropdown" />
   </div>
 </template>
-  
-<script lang="ts">
-import { defineComponent } from 'vue';
-export default defineComponent({
-  props: {
-    to: {
-      type: String,
-    },
-    preventActive: {
-      type: Boolean,
-    },
-  },
-});
+
+<script setup lang="ts">
+
+defineProps<{
+  to?: string,
+  preventActive?: boolean,
+}>();
+
 </script>
-  
+
 <style scoped>
 .navitem {
   float: left;

@@ -1,7 +1,7 @@
 <template>
   <NavItem @click="toggleDarkMode">
     <svg
-      ref="svg"
+      ref="svgRef"
       xmlns="http://www.w3.org/2000/svg"
       width="24"
       height="24"
@@ -14,16 +14,16 @@
     >
       <mask :id="maskId">
         <rect x="0" y="0" width="100%" height="100%" fill="white" />
-        <circle ref="maskedCircle" r="9" fill="black" />
+        <circle ref="maskedCircleRef" r="9" fill="black" />
       </mask>
       <circle
-        ref="centerCircle"
+        ref="centerCircleRef"
         fill="currentColor"
         cx="12"
         cy="12"
         :mask="`url(#${maskId})`"
       />
-      <g ref="lines" stroke="currentColor">
+      <g ref="linesRef" stroke="currentColor">
         <line x1="12" y1="1" x2="12" y2="3" />
         <line x1="12" y1="21" x2="12" y2="23" />
         <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
@@ -36,12 +36,14 @@
     </svg>
   </NavItem>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue';
+
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
 import anime from 'animejs';
 import { Settings } from '@/utils/settings';
 import NavItem from '@/components/base/NavItem.vue';
 import { useUIStore } from '@/stores/UIStore';
+
 const properties = {
   light: {
     svg: { rotate: '90deg' },
@@ -60,59 +62,62 @@ const properties = {
     duration: 300,
   },
 };
-function getProperty(isDarkMode: boolean) {
-  return isDarkMode ? properties.dark : properties.light;
-}
-export default defineComponent({
-  data() {
-    return {
-      maskId: `mask_${Date.now()}`,
-    };
-  },
-  setup() {
-    const uiStore = useUIStore();
-    return { uiStore };
-  },
-  mounted() {
-    const isDarkMode = Settings.darkMode;
-    const property = getProperty(isDarkMode);
-    const svg = this.$refs.svg as SVGElement;
-    svg.setAttribute('style', `transform: rotate(${property.svg.rotate})`);
-    const maskedCircle = this.$refs.maskedCircle as SVGCircleElement;
-    maskedCircle.setAttribute('cx', String(property.maskedCircle.cx));
-    maskedCircle.setAttribute('cy', String(property.maskedCircle.cy));
-    const centerCircle = this.$refs.centerCircle as SVGCircleElement;
-    centerCircle.setAttribute('r', String(property.centerCircle.r));
-    const lines = this.$refs.lines as SVGGElement;
-    lines.setAttribute('opacity', String(property.lines.opacity));
-  },
-  methods: {
-    toggleDarkMode() {
-      const endProperty = getProperty(!Settings.darkMode);
-      anime({
-        targets: this.$refs.svg as SVGElement,
-        rotate: endProperty.svg.rotate,
-        ...properties.common,
-      });
-      anime({
-        targets: this.$refs.maskedCircle as SVGCircleElement,
-        cx: endProperty.maskedCircle.cx,
-        cy: endProperty.maskedCircle.cy,
-        ...properties.common,
-      });
-      anime({
-        targets: this.$refs.centerCircle as SVGCircleElement,
-        r: endProperty.centerCircle.r,
-        ...properties.common,
-      });
-      anime({
-        targets: this.$refs.lines as SVGGElement,
-        opacity: endProperty.lines.opacity,
-        ...properties.common,
-      });
-      this.uiStore.toggleDarkMode();
-    },
-  },
-  components: { NavItem },
+
+const getProperty = (isDarkMode: boolean) => 
+  isDarkMode ? properties.dark : properties.light;
+
+const maskId = ref(`mask_${Date.now()}`);
+const uiStore = useUIStore();
+
+const svgRef = ref<SVGElement | null>(null);
+const maskedCircleRef = ref<SVGCircleElement | null>(null);
+const centerCircleRef = ref<SVGCircleElement | null>(null);
+const linesRef = ref<SVGGElement | null>(null);
+
+onMounted(() => {
+  const isDarkMode = Settings.darkMode;
+  const property = getProperty(isDarkMode);
+
+  if (svgRef.value) {
+    svgRef.value.setAttribute('style', `transform: rotate(${property.svg.rotate})`);
+  }
+  if (maskedCircleRef.value) {
+    maskedCircleRef.value.setAttribute('cx', String(property.maskedCircle.cx));
+    maskedCircleRef.value.setAttribute('cy', String(property.maskedCircle.cy));
+  }
+  if (centerCircleRef.value) {
+    centerCircleRef.value.setAttribute('r', String(property.centerCircle.r));
+  }
+  if (linesRef.value) {
+    linesRef.value.setAttribute('opacity', String(property.lines.opacity));
+  }
 });
+
+const toggleDarkMode = () => {
+  const endProperty = getProperty(!Settings.darkMode);
+
+  anime({
+    targets: svgRef.value,
+    rotate: endProperty.svg.rotate,
+    ...properties.common,
+  });
+  anime({
+    targets: maskedCircleRef.value,
+    cx: endProperty.maskedCircle.cx,
+    cy: endProperty.maskedCircle.cy,
+    ...properties.common,
+  });
+  anime({
+    targets: centerCircleRef.value,
+    r: endProperty.centerCircle.r,
+    ...properties.common,
+  });
+  anime({
+    targets: linesRef.value,
+    opacity: endProperty.lines.opacity,
+    ...properties.common,
+  });
+
+  uiStore.toggleDarkMode();
+};
 </script>

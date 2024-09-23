@@ -1,34 +1,23 @@
-<!-- eslint-disable no-irregular-whitespace -->
 <template>
   <div id="regDiv" class="blurred-panel">
     <form id="form" action="javascript:void(0);" style="padding: 40px">
-
       <h1 style="text-align: center">{{ t('reg.title') }}</h1>
       <br>
 
-      <table>
-        <tr>
-          <td>
-            <p>{{ t('f.uname') }}</p>
-          </td>
-          <td><input id="uname" type="text" v-model="uname" v-bind:placeholder="t('f.uname.hint')"><label
-              id="uname_l"></label></td>
-        </tr>
-        <tr>
-          <td>
-            <p>{{ t('f.pwd') }}</p>
-          </td>
-          <td><input id="pwd" type="password" v-model="pwd" v-bind:placeholder="t('f.pwd.hint')"><label
-              id="pwd_l"></label></td>
-        </tr>
-      </table>
+      <div id="regGrid">
+        <p>{{ t('f.uname') }}</p>
+        <input id="uname" type="text" v-model="uname" :placeholder="t('f.uname.hint')">
+        <p>{{ t('f.pwd') }}</p>
+        <input id="pwd" type="password" v-model="pwd" :placeholder="t('f.pwd.hint')">
+      </div>
+
       <br>
 
       <div v-if="requiring">
         <p>{{ t('hint.requesting') }}</p>
       </div>
 
-      <div v-if="res != null">
+      <div v-if="res !== null">
         <div id="status">
           <p>{{ t('hint.code') }}{{ res.code }}</p>
           <p>{{ t('hint.info') }}{{ res.info }}</p>
@@ -36,97 +25,89 @@
       </div>
 
       <div style="text-align: center;margin-top: 30px;">
-        <button type="submit" class="square-button s-sub h" v-on:click="submit(false)">{{ t('btn.login') }}</button>
-        <button type="reset" class="square-button s-sub h" v-on:click="reset">{{ t('btn.reset') }}</button>
-        <button type="submit" class="square-button s-sub h" v-on:click="submit(true)">{{ t('btn.reg') }}</button>
+        <button type="submit" class="square-button s-sub h" @click="submit(false)">{{ t('btn.login') }}</button>
+        <button type="reset" class="square-button s-sub h" @click="reset">{{ t('btn.reset') }}</button>
+        <button type="submit" class="square-button s-sub h" @click="submit(true)">{{ t('btn.reg') }}</button>
       </div>
       <p>{{ t('hint.restr') }}</p>
     </form>
   </div>
 </template>
 
-<script lang="ts">
-
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { AuthResult, requestRegister, requestLogin } from '../api/auth';
 import { useI18n } from '../i18n';
 
-interface PanelData {
-  uname: string,
-  pwd: string,
-  requiring: boolean,
-  res: AuthResult | null
-}
+const router = useRouter();
+const { t } = useI18n();
 
-export default defineComponent({
-  data(): PanelData {
-    return {
-      uname: '',
-      pwd: '',
-      requiring: false,
-      res: null,
-    };
-  },
-  setup() {
-    const { t } = useI18n();
-    return { t };
-  },
-  methods: {
-    async submit(reg: boolean): Promise<void> {
-      this.requiring = true;
-      this.res = null;
-      if (reg) {
-        this.res = await requestRegister(this.uname, this.pwd);
-        this.requiring = false;
-      } else {
-        this.res = await requestLogin(this.uname, this.pwd);
-        this.requiring = false;
-        if (this.res.code == 0)
-          this.$router.push('/user');
-      }
-      
-    },
-    reset(): void {
-      this.uname = '';
-      this.pwd = '';
-      this.requiring = false;
-      this.res = null;
+const uname = ref('');
+const pwd = ref('');
+const requiring = ref(false);
+const res = ref<AuthResult | null>(null);
+
+async function submit(reg: boolean): Promise<void> {
+  requiring.value = true;
+  res.value = null;
+  if (reg) {
+    res.value = await requestRegister(uname.value, pwd.value);
+  } else {
+    res.value = await requestLogin(uname.value, pwd.value);
+    if (res.value.code === 0) {
+      router.push('/user');
     }
   }
-});
+  requiring.value = false;
+}
 
+function reset(): void {
+  uname.value = '';
+  pwd.value = '';
+  requiring.value = false;
+  res.value = null;
+}
 </script>
 
-<style>
-#regDiv {
+<style scoped>
+:root {
   width: 450px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-#regDiv p {
+p {
   margin: 10px 0px;
 }
 
-#regDiv input {
+input {
   margin: 0px 10px;
   padding: 0px 10px;
   border-radius: 5px;
   border-style: hidden;
   height: 30px;
-  width: 140px;
+  min-width: 140px;
   background-color: var(--color-txt-trs3);
   outline: none;
 }
 
-#regDiv table {
+table {
   align-self: center;
   margin: auto;
 }
 
-#regDiv #status {
+#status {
   width: 100%;
   text-align: left;
+}
+
+#regGrid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  justify-items: stretch;
+  align-items: center;
+  grid-gap: 2px;
 }
 </style>

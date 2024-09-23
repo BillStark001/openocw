@@ -8,50 +8,24 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+
 import NavBar from './components/NavBar.vue';
 import { useI18n } from './i18n';
 import { provideCurrentUserStore } from './stores/CurrentUserStore';
 import { provideUIStore } from './stores/UIStore';
-import { Settings } from './utils/settings';
 
+const { t } = useI18n();
 
-export interface RootData {
-  darkMode: boolean,
-}
-
-export default defineComponent({
-  name: 'App',
-  data(): RootData {
-    return {
-      darkMode: Settings.darkMode
-    };
-  },
-  setup() {
-    provideCurrentUserStore();
-    provideUIStore();
-    const { t } = useI18n();
-    return { t };
-  },
-  components: {
-    NavBar,
-  },
-  methods: {
-  },
-  mounted() {
-     
-  }
-});
+provideCurrentUserStore();
+provideUIStore();
 
 </script>
 
 
 
 <style src="./styles/controls.css" />
-<style src="./styles/common.css">
-
-</style>
+<style src="./styles/common.css"></style>
 <style>
 * {
   margin: 0;

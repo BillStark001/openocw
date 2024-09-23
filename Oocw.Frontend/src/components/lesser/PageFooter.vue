@@ -1,11 +1,11 @@
 <template>
   <footer>
-    <div v-bind:class="static == 'true' || static == true ? 'footer static' : 'footer'">
+    <div v-bind:class="clsx('footer', !!props.static && 'static')">
       <div class="footer-inner">
         <Logo size="120px" fontSize="70px" />
         <span class="v-div" />
         <div>
-          <button class="round-button s-main h" > button1</button>
+          <button class="round-button s-main h"> button1</button>
           <div class="round-button s-sub h"> button2</div>
           <div class="square-button s-hollow h"> button3</div>
           <div class="round-button s-main h"> button4</div>
@@ -20,18 +20,13 @@
   </footer>
 </template>
 
-<script lang="tsx">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import clsx from 'clsx';
 
-export default defineComponent({
-  name: "PageFooter", 
-  methods: {
-    
-  }, 
-  props: ['static']
 
-});
-
+const props = defineProps < {
+  static?: boolean
+} > ();
 
 </script>
 

@@ -1,6 +1,5 @@
 <template>
   <div class="course-list">
-
     <div class="res" v-if="result.status != 200">
       <p>{{ t('crsl.noitem.error') }}{{ result.status }} / {{ result.info }}</p>
     </div>
@@ -10,58 +9,38 @@
     <div class="real-res" v-if="result.result && result.result.length > 0">
       <CourseCard v-for="course in result.result" :key="course.id" :info="course"></CourseCard>
     </div>
-
   </div>
 </template>
 
-
-<script lang="ts">
-import { CourseBrief } from '@/api/query';
-import { QueryResult } from '@/utils/query';
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import CourseCard from './CourseBrief.vue';
+import { CourseBrief } from '@/api/query';
+import { QueryResult } from '@/utils/query';
 
+const props = defineProps<{
+  query: QueryResult<CourseBrief[]> | undefined,
+  place?: 'db' | 'faculty' | string
+}>();
 
-export interface CourseListData {
-  result: QueryResult<CourseBrief[]>,
-  placeStr: string
-}
+const { t } = useI18n();
 
-export default defineComponent({
-  name: "CourseList",
-  data(): CourseListData {
-    var res: QueryResult<CourseBrief[]>;
-    if (!this.$props.query || typeof (this.$props.query) != 'object') {
-      res = { status: -1, info: 'No Result Assigned', }
-    }
-    res = this.$props.query as QueryResult<CourseBrief[]>;
+const result = computed(() => {
+  if (!props.query || typeof props.query !== 'object') {
+    return { status: -1, info: 'No Result Assigned' } as QueryResult<CourseBrief[]>;
+  }
+  return props.query;
+});
 
-    var placeStr = 'crsl.noitem.search';
-    if (this.$props.place == 'db')
-      placeStr = 'crsl.noitem.db';
-    else if (this.$props.place == 'faculty')
-      placeStr = 'crsl.noitem.faculty';
-
-    return {
-      result: res,
-      placeStr: placeStr
-    };
-  },
-  setup() {
-    const { t } = useI18n();
-    return { t };
-  },
-  components: {
-    CourseCard
-  },
-  props: ['query', 'place'],
-})
-
+const placeStr = computed(() => {
+  if (props.place === 'db') return 'crsl.noitem.db';
+  if (props.place === 'faculty') return 'crsl.noitem.faculty';
+  return 'crsl.noitem.search';
+});
 </script>
 
 <style scoped>
-
 .course-list {
   width: 100%;
   height: 100%;
@@ -83,5 +62,4 @@ export default defineComponent({
   height: max-content;
   text-align: justify;
 }
-
 </style>

@@ -1,50 +1,40 @@
 <template>
-
   <div class="page-frame-wrapper">
-    <div class="page-frame" id="pf">
+    <div class="page-frame" ref="pageFrameRef">
       <slot></slot>
     </div>
-
-
   </div>
-
-
 </template>
 
-<script lang="tsx">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue';
 
-export interface PageFrameData {
+interface PageFrameData {
   width: number;
   height: number;
 }
 
-export default defineComponent({
-  data(): PageFrameData {
-    return {
-      width: 1440, 
-      height: 600
-    };
-  }, 
-  methods: {
-    updateData() {
-      const el = this.$el.querySelector('#pf');
-      if (el) {
-        this.width = el.clientWidth;
-        this.height = el.clientHeight;
-      }
-    }
-  }, 
-  mounted() {
-    window.addEventListener('resize', this.updateData);
-    this.updateData();
-  }, 
-  beforeUnmount() {
-    window.removeEventListener('resize', this.updateData);
-  }
+const pageFrameRef = ref<HTMLElement | null>(null);
+const frameData = ref<PageFrameData>({
+  width: 1440,
+  height: 600
 });
 
+const updateData = () => {
+  if (pageFrameRef.value) {
+    frameData.value.width = pageFrameRef.value.clientWidth;
+    frameData.value.height = pageFrameRef.value.clientHeight;
+  }
+};
 
+onMounted(() => {
+  window.addEventListener('resize', updateData);
+  updateData();
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', updateData);
+});
 </script>
 
 <style scoped>
