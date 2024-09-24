@@ -6,7 +6,7 @@ public static class Definitions
     public static readonly (int, string) CODE_ERR_BAD_ARGS = (1, "Missing Arguments: {0}.");
     public static readonly (int, string) CODE_ERR_BAD_PARSE = (2, "Failed to parse arguments: {0}.");
         
-    public static readonly (int, string) CODE_ERR_UNAME_CNFL = (3, "Username conflict: {0}.");
+    public static readonly (int, string) CODE_ERR_UNAME_CONFLICT = (3, "Username conflict: {0}.");
     public static readonly (int, string) CODE_ERR_INVALID_UNAME = (4, "Invalid user name: {0}. The user name should have and only have 6~127 printable ASCII characters.");
     public static readonly (int, string) CODE_ERR_INVALID_PWD = (5, "Invalid Password. The password should have and only have 6~32 printable ASCII characters.");
     public static readonly (int, string) CODE_ERR_INVALID_PWD_STRICT = (5, "Invalid Password. The password should have and only have 6~32 characters including at least 3 of the following: A-Z, a-z, 0-9 and other printable ASCII characters.");

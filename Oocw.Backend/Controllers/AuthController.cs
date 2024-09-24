@@ -12,6 +12,9 @@ using System.Linq;
 using Definitions = Oocw.Backend.Models.Definitions;
 using Oocw.Utils;
 using Oocw.Backend.Auth;
+using Oocw.Database.Utils;
+using Oocw.Database.Models.Technical;
+using System.Threading.Tasks;
 
 namespace Oocw.Backend.Controllers;
 
@@ -35,7 +38,7 @@ public class AuthController : Controller
     
 
     [HttpPost("register")]
-    public ActionResult<StandardResult> Register(UnamePwdBody b)
+    public async Task<ActionResult<StandardResult>> Register(UnamePwdBody b)
     {
         if (!UserUtils.IsValidUsername(b.uname))
             return BadRequest(new StandardResult(Definitions.CODE_ERR_INVALID_UNAME, b.uname));
@@ -44,11 +47,11 @@ public class AuthController : Controller
 
         try
         {
-            DbService.Wrapper.Register(b.uname, b.pwd);
+            await DbService.Wrapper.CreateUserAsync(b.uname, UserUtils.HashPassword(b.pwd));
         }
         catch (UserNameConflictException)
         {
-            return BadRequest(new StandardResult(Definitions.CODE_ERR_UNAME_CNFL, b.uname));
+            return BadRequest(new StandardResult(Definitions.CODE_ERR_UNAME_CONFLICT, b.uname));
         }
         catch (DatabaseInternalException e)
         {
@@ -62,10 +65,9 @@ public class AuthController : Controller
     public ActionResult<StandardResult> Auth(UnamePwdBody b)
     {
         var u = DbService.Wrapper.QueryUser(b.uname);
-        if (u == null || !UserUtils.verifyPassword(b.pwd, u.PasswordEncrypted))
+        if (u == null || !UserUtils.VerifyPassword(b.pwd, u.PasswordEncrypted))
             return new StandardResult(Definitions.CODE_ERR_BAD_UNAME_OR_PWD);
 
-        // TODO add additional security measures
         var token = u.GenerateRefreshToken(JwtConfig.Value);
 
         return new AuthResult(token);

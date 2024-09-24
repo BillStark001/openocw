@@ -8,7 +8,7 @@ public class MultiVersionField<T> where T : class
 
     public string Version { get; set; } = VAL_VER_NONE;
 
-    public Dictionary<string, T> Items { get; set; } = new();
+    public Dictionary<string, T> Items { get; set; } = [];
 
     public T? GetItem() => GetItem(Version);
 

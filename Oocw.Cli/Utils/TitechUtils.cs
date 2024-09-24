@@ -100,12 +100,12 @@ public static class TitechUtils
         Orgs = JsonSerializer.Deserialize<Dictionary<string, string>>(ORG_MAPPING)!;
     }
 
-    public static async Task RefreshOrganizations(this DBWrapper db, bool handleUncategorized = false, CancellationToken token = default)
+    public static async Task RefreshOrganizations(this OocwDatabase db, bool handleUncategorized = false, CancellationToken token = default)
     {
         Expression<Func<Course, bool>> filter = 
             handleUncategorized ? 
-            x => x.Unit.Key == null || x.Unit.Key == KEY_NULL || x.Unit.Key == KEY_UNCAT : 
-            x => x.Unit.Key == null || x.Unit.Key == KEY_NULL;
+            x => x.Departments.Key == null || x.Departments.Key == KEY_NULL || x.Departments.Key == KEY_UNCAT : 
+            x => x.Departments.Key == null || x.Departments.Key == KEY_NULL;
 
         var totalCount = (await db.Courses.CountDocumentsAsync(filter, cancellationToken: token));
 
@@ -117,12 +117,12 @@ public static class TitechUtils
         long cnt = 0;
         foreach (var res in (await cursor).ToEnumerable())
         {
-            var replStr = res.Unit.Ja != null && Orgs.ContainsKey(res.Unit.Ja) ? Orgs[res.Unit.Ja] : KEY_UNCAT;
-            var setDef = Builders<Course>.Update.Set(x => x.Unit.Key, replStr);
+            var replStr = res.Departments.Ja != null && Orgs.ContainsKey(res.Departments.Ja) ? Orgs[res.Departments.Ja] : KEY_UNCAT;
+            var setDef = Builders<Course>.Update.Set(x => x.Departments.Key, replStr);
             if (db is DBSessionWrapper dbSess2)
-                await dbSess2.Courses.UpdateOneAsync(dbSess2.Session, x => x.IdRaw == res.IdRaw, setDef, cancellationToken: token);
+                await dbSess2.Courses.UpdateOneAsync(dbSess2.Session, x => x.SystemId == res.SystemId, setDef, cancellationToken: token);
             else
-                await db.Courses.UpdateOneAsync(x => x.IdRaw == res.IdRaw, setDef, cancellationToken: token);
+                await db.Courses.UpdateOneAsync(x => x.SystemId == res.SystemId, setDef, cancellationToken: token);
             
             ++cnt;
             if (cnt % 100 == 0)

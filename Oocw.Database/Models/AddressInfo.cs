@@ -19,29 +19,30 @@ public class AddressInfo
     public class TimeInfo
     {
         [BsonIgnoreIfNull]
-        [BsonElement(Definitions.KEY_ADDR_DESC)]
+        [BsonElement]
         public string? Description { get; set; }
 
         [BsonIgnoreIfNull]
-        [BsonElement(Definitions.KEY_ADDR_DAY)]
+        [BsonElement]
         public int? Day { get; set; }
 
         [BsonIgnoreIfNull]
-        [BsonElement(Definitions.KEY_ADDR_START)]
+        [BsonElement]
         public int? Start { get; set; }
 
         [BsonIgnoreIfNull]
-        [BsonElement(Definitions.KEY_ADDR_END)]
+        [BsonElement]
         public int? End { get; set; }
     }
 
-    [BsonElement(Definitions.KEY_ADDR_TYPE)]
     public AddressType Type { get; set; }
 
-    [BsonElement(Definitions.KEY_ADDR_TIME)]
-    public TimeInfo Time { get; set; } = null!;
+    public int Year { get; set; }
 
-    [BsonElement(Definitions.KEY_ADDR_LOCATION)]
-    public string Location { get; set; } = null!;
+    public int Term { get; set; }
+
+    public TimeInfo Time { get; set; } = new();
+
+    public string Location { get; set; } = "";
 
 }

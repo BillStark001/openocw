@@ -13,7 +13,7 @@ using MongoDB.Driver;
 using Oocw.Base;
 
 namespace Oocw.Database.Models.Technical;
-public class MultiLingualField : IMergable<MultiLingualField>
+public class MultiLingualField
 {
 
     public const string KEY_LANG_KEY = "__key__";

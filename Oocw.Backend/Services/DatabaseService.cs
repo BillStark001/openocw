@@ -7,14 +7,14 @@ public class DatabaseService
 {
     public class Settings
     {
-        public string ConnectionHost { get; set; } = DBWrapper.DEFAULT_HOST;
+        public string ConnectionHost { get; set; } = OocwDatabase.DEFAULT_HOST;
     }
 
-    private DBWrapper _db;
-    public DBWrapper Wrapper => _db;
+    private OocwDatabase _db;
+    public OocwDatabase Wrapper => _db;
 
     public DatabaseService(IOptions<Settings> settings)
     {
-        _db = new DBWrapper(settings.Value.ConnectionHost);
+        _db = new OocwDatabase(settings.Value.ConnectionHost);
     }
 }

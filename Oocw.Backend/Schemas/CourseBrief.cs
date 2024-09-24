@@ -28,7 +28,7 @@ public class CourseBrief
 
     public CourseBrief(Course course, string lang = "ja")
     {
-        Id = course.Code;
+        Id = course.CourseCode;
         Name = course.Name.Translate(lang) ?? course.Name.ForceTranslate();
     }
 
@@ -94,13 +94,13 @@ public class CourseBrief
         return this;
     }
 
-    public CourseBrief SetLecturers(BsonDocument dClass, DBWrapper db, string lang = "ja")
+    public CourseBrief SetLecturers(BsonDocument dClass, OocwDatabase db, string lang = "ja")
     {
         dClass.TryGetElement(Definitions.KEY_LECTURERS, out var lecturers);
         return SetLecturers(db.GetFacultyNames(lecturers.Value.AsBsonArray.Values.Select(x => x.BsonType == BsonType.Int32 || x.BsonType == BsonType.Int64 ? x.ToInt32() : -1), lang));
     }
 
-    public CourseBrief SetLecturers(Class dClass, DBWrapper db, string lang = "ja")
+    public CourseBrief SetLecturers(Class dClass, OocwDatabase db, string lang = "ja")
     {
         return SetLecturers(db.GetFacultyNames(dClass.Lecturers, lang));
     }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Oocw.Backend.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -46,6 +47,11 @@ public class WebController : Controller
             return Redirect("/index.html");
         }
 
+    }
+
+    [HttpGet("/api/root")]
+    public ActionResult<StandardResult> GetApiRoot() {
+        return new StandardResult(Definitions.CODE_SUCC);
     }
 }
 

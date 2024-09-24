@@ -23,8 +23,8 @@ public static class DatabaseExtensions
     /// <param name="token"></param>
     /// <returns>The item if got, null if did not get</returns>
     public static async Task<T?> GetItemAsync<T>(
-        this DBWrapper db,
-        Func<DBWrapper, IMongoCollection<T>> col,
+        this OocwDatabase db,
+        Func<OocwDatabase, IMongoCollection<T>> col,
         Expression<Func<T, bool>> filter,
         CancellationToken token = default)
     {
@@ -48,8 +48,8 @@ public static class DatabaseExtensions
     /// <param name="token"></param>
     /// <returns>True if update, false if put</returns>
     public static async Task<bool> PutOrUpdateItemAsync<T>(
-        this DBWrapper db,
-        Func<DBWrapper, IMongoCollection<T>> col,
+        this OocwDatabase db,
+        Func<OocwDatabase, IMongoCollection<T>> col,
         T c,
         Expression<Func<T, bool>> filter,
         CancellationToken token = default) 

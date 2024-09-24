@@ -1,6 +1,7 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
 using Oocw.Base;
+using Oocw.Database.Models.Technical;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +9,9 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Oocw.Database.Models.Technical;
+namespace Oocw.Database.Models;
 
-public class Metadata : IMergable<Metadata>
+public class CourseMetadata
 {
 
     public const int CURRENT_VERSION = 1;
@@ -23,7 +24,7 @@ public class Metadata : IMergable<Metadata>
     public bool Dirty { get; set; } = true;
 
 
-    [BsonDateTimeOptions(Kind = DateTimeKind.Local)]
+    [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
     public DateTime UpdateTime { get; set; } = DateTime.Now;
     public int Version { get; set; } = CURRENT_VERSION;
 
@@ -33,10 +34,4 @@ public class Metadata : IMergable<Metadata>
     [BsonIgnoreIfNull]
     public string? SearchRecord { get; set; } = null;
 
-    public UpdateDefinition<P> GetMergeDefinition<P>(Expression<Func<P, Metadata>> expr)
-    {
-        return Builders<P>.Update
-            .Set(ExpressionUtils.Combine(expr, x => x.Dirty), true)
-            .Set(ExpressionUtils.Combine(expr, x => x.UpdateTime), DateTime.Now);
-    }
 }

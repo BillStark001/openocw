@@ -12,24 +12,9 @@ namespace Oocw.Utils;
 
 public static class DatabaseUtils
 {
-    public static Course? GetCourseInfo(this DBWrapper db, string code)
+    public static Course? GetCourseInfo(this OocwDatabase db, string code)
     {
-        return db.Courses.Find(x => x.Code == code).FirstOrDefault();
-    }
-
-    public static IEnumerable<(int, string)> GetFacultyNames(this DBWrapper db, IEnumerable<int> fs, string lang = "ja")
-    {
-        List<(int, string)> ans = new();
-        Dictionary<int, string?> dt = new();
-        foreach (var f in db.Faculties.Find(x => fs.Contains(x.Id)).ToList())
-        {
-            dt[f.Id] = f.Name.Translate(lang) ?? f.Name.ForceTranslate();
-        }
-        foreach (var id in fs)
-        {
-            ans.Add((id, dt[id] ?? $"Not Found ({id})"));
-        }
-        return ans;
+        return db.Courses.Find(x => x.CourseCode == code).FirstOrDefault();
     }
 
     public static string? TryGetTranslation(this object dict, string lang = "ja")

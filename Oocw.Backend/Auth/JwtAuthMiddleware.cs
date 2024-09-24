@@ -40,9 +40,10 @@ public class JwtAuthMiddleware
 
         if (context.Request.Cookies.TryGetValue(fullAccessType, out var accessToken))
         {
-            if (AuthUtils.VerifyAccessToken(accessToken, _jwtConfig, accessType, _dbService, out var user))
+            var user = await _dbService.VerifyAccessTokenAsync(accessToken, _jwtConfig, accessType);
+            if (user != null)
             {
-                context.Items[AuthUtils.KEY_ITEM_USER] = user;
+                context.Items[TokenUtils.KEY_ITEM_USER] = user;
                 await _next(context);
                 return;
             }
@@ -50,11 +51,12 @@ public class JwtAuthMiddleware
 
         if (context.Request.Cookies.TryGetValue(Definitions.KEY_REFRESH_TOKEN, out var refreshToken))
         {
-            if (AuthUtils.VerifyRefreshToken(refreshToken, _jwtConfig, _dbService, out var user))
+            var user = await _dbService.VerifyRefreshTokenAsync(refreshToken, _jwtConfig);
+            if (user != null)
             {
-                var newAccessToken = AuthUtils.GenerateAccessToken(user!, accessType, _jwtConfig);
+                var newAccessToken = TokenUtils.GenerateAccessToken(user!, accessType, _jwtConfig);
                 context.Response.Cookies.Append(fullAccessType, newAccessToken);
-                context.Items[AuthUtils.KEY_ITEM_USER] = user;
+                context.Items[TokenUtils.KEY_ITEM_USER] = user;
                 await _next(context);
                 return;
             }

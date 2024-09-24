@@ -18,7 +18,7 @@ namespace Oocw.Cli.Tasks;
 
 public static class SingleUpdate
 {
-    public static async Task Faculty(DBWrapper db, FacultyRecord faculty, string lang)
+    public static async Task Faculty(OocwDatabase db, FacultyRecord faculty, string lang)
     {
         await db.UseTransactionAsync(async (dbSess, c) =>
         {
@@ -36,12 +36,12 @@ public static class SingleUpdate
         }, default);
     }
 
-    public static async Task Course(DBWrapper db, CourseRecord course, CourseRecord.Additional? add = null, string lang = "ja")
+    public static async Task Course(OocwDatabase db, CourseRecord course, CourseRecord.Additional? add = null, string lang = "ja")
     {
         // process faculty
         foreach (var f in course.Faculties)
             await Faculty(db, f, lang);
-        await db.UseTransactionAsync(async (dbSess, c) =>
+        await db.UseTransactionAsync((OocwDatabase.TransactionCallback<Task>)(async (dbSess, c) =>
         {
 
             // ensure object & process name
@@ -49,7 +49,7 @@ public static class SingleUpdate
             if (crdb == null)
             {
                 crdb = new();
-                crdb.Code = course.Code;
+                crdb.CourseCode = course.Code;
                 crdb.Name.Update(course.Name.Trim(), lang);
             } 
             else if (string.IsNullOrWhiteSpace(crdb.Name.Translate(lang)))
@@ -88,15 +88,15 @@ public static class SingleUpdate
                     crdb.Classes = crdb.Classes.Append(int.Parse(add.OcwId));
 
                 if (!string.IsNullOrWhiteSpace(add.Unit))
-                    crdb.Unit.Update(add.Unit, lang);
+                    crdb.Departments.Update(add.Unit, lang);
             }
 
             await dbSess.UpdateCourseAsync(crdb);
 
-        }, default);
+        }), default);
     }
 
-    public static async Task Syllabus(DBWrapper db, SyllabusRecord syllabus, string ocwId, string lang = "ja", bool forceUpdate = false, bool forceUpdateNotes = false)
+    public static async Task Syllabus(OocwDatabase db, SyllabusRecord syllabus, string ocwId, string lang = "ja", bool forceUpdate = false, bool forceUpdateNotes = false)
     {
         // since it is processed in course, omit
         /*

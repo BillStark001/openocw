@@ -20,7 +20,7 @@ public class LectureInfo
 
     public int Type { get; set; }
 
-    [BsonDateTimeOptions(Kind = DateTimeKind.Local)]
+    [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
     [BsonIgnoreIfNull]
     public DateTime? Date { get; set; }
 

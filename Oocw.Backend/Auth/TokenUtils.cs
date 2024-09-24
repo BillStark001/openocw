@@ -11,11 +11,14 @@ using Oocw.Backend.Controllers;
 using Oocw.Backend.Models;
 using Oocw.Backend.Services;
 using Microsoft.AspNetCore.Http;
+using System.Threading.Tasks;
+using MongoDB.Driver;
+using Oocw.Database.Models.Technical;
 
 namespace Oocw.Backend.Auth;
 
 
-public static class AuthUtils
+public static class TokenUtils
 {
     private static readonly JwtSecurityTokenHandler TokenHandler = new();
 
@@ -26,14 +29,16 @@ public static class AuthUtils
     public static string GenerateRefreshToken(this User user, JwtConfig config)
     {
         var key = Encoding.ASCII.GetBytes(config.Secret);
-
+        var updateTime = user.UpdateTime != null
+            ? user.UpdateTime.Value.ToBinary().ToString()
+            : "";
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(
             [
                 new Claim(JwtRegisteredClaimNames.Aud, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(KEY_UPDATED_AT, user.RefreshTime.ToBinary().ToString())
+                new Claim(JwtRegisteredClaimNames.UpdatedAt, updateTime)
             ]),
 
             Expires = DateTime.UtcNow.AddDays(config.RefreshExpiration),
@@ -70,7 +75,7 @@ public static class AuthUtils
         return jwtToken;
     }
 
-    public static bool VerifyRefreshToken(string tokenRaw, JwtConfig config, DatabaseService dbs, out User? user)
+    public static async Task<User?> VerifyRefreshTokenAsync(this DatabaseService dbs, string tokenRaw, JwtConfig config)
     {
         var key = Encoding.ASCII.GetBytes(config.Secret);
         var validations = new TokenValidationParameters
@@ -84,21 +89,19 @@ public static class AuthUtils
         try
         {
             var token = TokenHandler.ValidateToken(tokenRaw, validations, out var tokenValidated);
-            user = dbs.Wrapper.FindUser(int.Parse(token.FindFirstValue(JwtRegisteredClaimNames.Aud)));
-            if (user == null)
-                return false;
-            if (user.RefreshTime > DateTime.FromBinary(long.Parse(token.FindFirstValue(KEY_UPDATED_AT))))
-                return false; // a force logout is triggered due to pwd change, etc.
-            return true;
+            var userId = token.FindFirstValue(JwtRegisteredClaimNames.Aud);
+            var user = await dbs.Wrapper.Users.FindByIdAsync(null, userId);
+            if (user != null && user.UpdateTime > DateTime.FromBinary(long.Parse(token.FindFirstValue(JwtRegisteredClaimNames.UpdatedAt) ?? "0")))
+                return null; // a force logout is triggered due to pwd change, etc.
+            return user;
         }
         catch (Exception)
         {
-            user = null;
-            return false;
+            return null;
         }
     }
 
-    public static bool VerifyAccessToken(string tokenRaw, JwtConfig config, string? accessType, DatabaseService dbs, out User? user)
+    public static async Task<User?> VerifyAccessTokenAsync(this DatabaseService dbs, string tokenRaw, JwtConfig config, string? accessType)
     {
         var key = Encoding.ASCII.GetBytes(config.Secret);
         var validations = new TokenValidationParameters
@@ -108,18 +111,17 @@ public static class AuthUtils
             ValidateIssuer = false,
             ValidateAudience = false,
         };
-        user = null;
         try
         {
             var token = TokenHandler.ValidateToken(tokenRaw, validations, out var tokenValidated);
             if (token.FindFirstValue(KEY_USAGE) != (accessType ?? ""))
-                return false;
-            user = dbs.Wrapper.FindUser(int.Parse(token.FindFirstValue(JwtRegisteredClaimNames.Aud)));
-            return user != null;
+                return null;
+            var user = await dbs.Wrapper.Users.FindByIdAsync(null, token.FindFirstValue(JwtRegisteredClaimNames.Aud));
+            return user;
         }
         catch (Exception)
         {
-            return false;
+            return null;
         }
     }
 
