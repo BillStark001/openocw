@@ -25,6 +25,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.Configure<DatabaseService.Settings>(builder.Configuration.GetSection("Database"));
 builder.Services.AddSingleton<DatabaseService>();
 
+// search
+builder.Services.AddSingleton<SearchService>();
+builder.Services.AddHostedService<RecordUpdateService>();
+
 // session
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>

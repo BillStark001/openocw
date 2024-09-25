@@ -17,7 +17,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Oocw.Base\Oocw.Base.csproj" />
-		<ProjectReference Include="..\Oocw.Database\Oocw.Database.csproj" />
 	</ItemGroup>
 
 </Project>
