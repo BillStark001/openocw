@@ -8,12 +8,18 @@ using System.Threading.Tasks;
 namespace Oocw.Database.Models;
 public class AddressInfo
 {
+
+    public const int VAL_TYPE_NONE = 0;
+    public const int VAL_TYPE_NORMAL = 1;
+    public const int VAL_TYPE_SPECIAL = 2;
+    public const int VAL_TYPE_UNKNOWN = 3;
+    
     public enum AddressType
     {
-        None = Definitions.VAL_TYPE_NONE,
-        Normal = Definitions.VAL_TYPE_NORMAL,
-        Special = Definitions.VAL_TYPE_SPECIAL,
-        Unknown = Definitions.VAL_TYPE_UNKNOWN,
+        None = VAL_TYPE_NONE,
+        Normal = VAL_TYPE_NORMAL,
+        Special = VAL_TYPE_SPECIAL,
+        Unknown = VAL_TYPE_UNKNOWN,
     }
 
     public class TimeInfo

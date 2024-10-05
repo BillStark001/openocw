@@ -19,12 +19,6 @@ public class Course : DataModel
     [BsonElement(CourseMetadata.KEY_META)]
     public CourseMetadata Meta { get; set; } = new();
 
-    // technical
-
-
-    public double AccessRank { get; set; }
-
-    // info
 
     public MultiLingualField Name { get; set; } = new();
 

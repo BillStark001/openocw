@@ -26,7 +26,7 @@ public class SearchService
 
         var query = Builders<Course>.Filter.Text(tokens);
         var projection = Builders<Course>.Projection.MetaTextScore(x => x.Meta.SearchScore);
-        var sorter = Builders<Course>.Sort.MetaTextScore("meta.searchScore");
+        var sorter = Builders<Course>.Sort.MetaTextScore("__meta__.searchScore");
 
         var cursor = DbService.Wrapper.Courses.Find(query)
             .Project<Course>(projection)

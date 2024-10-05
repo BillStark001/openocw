@@ -33,33 +33,6 @@ public class CourseBrief
     }
 
 
-    public static CourseBrief FromBson(BsonDocument dClass, BsonDocument? dCourse = null, string lang = "ja")
-    {
-        CourseBrief ans = new()
-        {
-            Id = dClass[Definitions.KEY_CODE].AsString,
-            ClassName = dClass[Definitions.KEY_CLASS_NAME].AsString,
-        };
-        if (dCourse != null)
-        {
-            ans.Name = dCourse[Definitions.KEY_NAME].TryGetTranslation(lang) ?? "";
-        }
-
-        // description
-        var sylVer = dClass[Definitions.KEY_SYLLABUS][Definitions.KEY_VERSION].AsString;
-        if (sylVer == Definitions.VAL_VER_RAW)
-        {
-            var rawSyl = dClass[Definitions.KEY_SYLLABUS][sylVer];
-            if (rawSyl.AsBsonDocument.TryGetElement(Definitions.KEY_SYL_DESC, out var rawDesc))
-            {
-                var desc = rawDesc.Value.TryGetTranslation(lang);
-                if (!string.IsNullOrWhiteSpace(desc))
-                    ans.Description = desc;
-            }
-        }
-
-        return ans;
-    }
 
     public static CourseBrief FromScheme(Class dClass, Course? dCourse = null, string lang = "ja")
     {
@@ -74,10 +47,10 @@ public class CourseBrief
         }
 
         // description
-        if (dClass.Syllabus.Version == Definitions.VAL_VER_RAW)
+        if (dClass.Syllabus.Version == "raw")
         {
             var rawSyl = dClass.Syllabus.GetItem()!;
-            if (rawSyl.TryGetElement(Definitions.KEY_SYL_DESC, out var rawDesc))
+            if (rawSyl.TryGetElement("desc", out var rawDesc))
             {
                 var desc = rawDesc.Value.TryGetTranslation(lang);
                 if (!string.IsNullOrWhiteSpace(desc))
@@ -92,12 +65,6 @@ public class CourseBrief
     {
         Lecturers = lects.Select(x => new Lecturer() { Id = x.Item1, Name = x.Item2 });
         return this;
-    }
-
-    public CourseBrief SetLecturers(BsonDocument dClass, OocwDatabase db, string lang = "ja")
-    {
-        dClass.TryGetElement(Definitions.KEY_LECTURERS, out var lecturers);
-        return SetLecturers(db.GetFacultyNames(lecturers.Value.AsBsonArray.Values.Select(x => x.BsonType == BsonType.Int32 || x.BsonType == BsonType.Int64 ? x.ToInt32() : -1), lang));
     }
 
     public CourseBrief SetLecturers(Class dClass, OocwDatabase db, string lang = "ja")

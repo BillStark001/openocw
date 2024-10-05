@@ -16,6 +16,8 @@ namespace Oocw.Database;
 public class OocwDatabase
 {
     
+    public const string DB_SET_NAME = "openocw";
+    
     public IMongoClient Client { get; protected set; }
     public IMongoDatabase Database { get; protected set; }
 
@@ -55,7 +57,7 @@ public class OocwDatabase
 
         Client = client;
 
-        Database = Client.GetDatabase(Definitions.DB_SET_NAME);
+        Database = Client.GetDatabase(DB_SET_NAME);
 
         Users = Database.GetCollection<User>(nameof(User));
         Notifications = Database.GetCollection<Notification>(nameof(Notification));

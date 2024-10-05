@@ -27,7 +27,7 @@ public class SearchRecordService : BackgroundService
         {
             try
             {
-                await DoWorkAsync();
+                await DoWorkAsync(stoppingToken);
             }
             catch (Exception ex)
             {
@@ -38,7 +38,7 @@ public class SearchRecordService : BackgroundService
         }
     }
 
-    protected async Task DoWorkAsync()
+    protected async Task DoWorkAsync(CancellationToken cancellationToken = default)
     {
         var currentTime = DateTime.UtcNow;
 
@@ -50,8 +50,9 @@ public class SearchRecordService : BackgroundService
             (x.UpdateTime != null && x.Meta.UpdateTime < x.UpdateTime)
         ).Limit(128);
 
-        await cursor.ForEachAsync(x => {
-
+        var items = await cursor.ToListAsync(cancellationToken: cancellationToken);
+        foreach (var x in items) {
+            
             // TODO add chinese support
             var colJa = string.Join(' ', SearchUtils.TokenizeJapanese(x.Content.Ja ?? ""));
             var colEn = string.Join(' ', SearchUtils.TokenizeJapanese(x.Content.En ?? ""));
@@ -64,7 +65,11 @@ public class SearchRecordService : BackgroundService
 
             x.Meta.Dirty = false;
             x.Meta.UpdateTime = currentTime;
-        });
+
+            // TODO aggregate more fields
+            
+            await Courses.UpdateOneAsync(c => c.SystemId == x.SystemId, Builders<Course>.Update.Set(c => c, x), cancellationToken: cancellationToken);
+        }
 
 
         await Task.CompletedTask;

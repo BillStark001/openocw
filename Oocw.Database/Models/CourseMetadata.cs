@@ -36,4 +36,7 @@ public class CourseMetadata
 
     public MultiLingualField SearchRecordByLanguage { get; set; } = new();
 
+
+    public double AccessRank { get; set; }
+
 }
