@@ -38,7 +38,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { AuthResult, requestRegister, requestLogin } from '../api/auth';
-import { useI18n } from '../i18n';
+import { useI18n } from 'vue-i18n';
 
 const router = useRouter();
 const { t } = useI18n();

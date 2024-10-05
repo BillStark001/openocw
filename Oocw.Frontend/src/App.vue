@@ -11,7 +11,7 @@
 <script setup lang="ts">
 
 import NavBar from './components/NavBar.vue';
-import { useI18n } from './i18n';
+import { useI18n } from 'vue-i18n';
 import { provideCurrentUserStore } from './stores/CurrentUserStore';
 import { provideUIStore } from './stores/UIStore';
 

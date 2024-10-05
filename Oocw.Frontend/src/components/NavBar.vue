@@ -45,7 +45,7 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
-import { useI18n } from '@/i18n';
+import { useI18n } from 'vue-i18n';
 import NavItem from '@/components/base/NavItem.vue';
 import NavLinks from '@/components/nav/NavLinks.vue';
 import NavActions from './nav/NavActions.vue';
@@ -55,7 +55,7 @@ import { useUIStore } from '@/stores/UIStore';
 const router = useRouter();
 const user = useCurrentUserStore();
 const uiStore = useUIStore();
-const { t } = useI18n({ useScope: 'global' });
+const { t } = useI18n();
 
 function logout() {
   user.clear();

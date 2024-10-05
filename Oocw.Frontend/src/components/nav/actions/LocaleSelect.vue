@@ -22,10 +22,18 @@
 
 <script setup lang="ts">
 
-import { useI18n, changeLocale } from '@/i18n';
 import NavItem from '@/components/base/NavItem.vue';
+import { useI18n } from 'vue-i18n';
 
-const { t, locale } = useI18n({ useScope: 'global' });
+const { t, locale } = useI18n();
 
+function changeLocale(lang?: string) {
+  if (!lang) {
+    locale.value = navigator.language;
+  } else {
+    locale.value = lang;
+  }
+  // Settings.locale = locale.value;
+}
 
 </script>

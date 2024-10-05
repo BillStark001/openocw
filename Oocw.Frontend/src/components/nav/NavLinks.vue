@@ -25,11 +25,11 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from '@/i18n';
+import { useI18n } from 'vue-i18n';
 import NavItem from '@/components/base/NavItem.vue';
 import Orgs from '@/assets/meta/orgs.json';
 import { shouldBeActive } from '@/router';
-const { t } = useI18n({ useScope: 'global' });
+const { t } = useI18n();
 const targets: Array<string> = Orgs.map(x => x.key);
 function isSuperGreen() {
   return false; 
