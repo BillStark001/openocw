@@ -180,7 +180,7 @@ public static class Lexer
 
     public static IEnumerable<Token> NaiveMatch(string strIn)
     {
-        List<Token> result = new();
+        List<Token> result = [];
         int index = 0;
         Match m;
         while (index < strIn.Length)

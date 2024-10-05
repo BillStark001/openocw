@@ -74,7 +74,7 @@ public class MultiLingualField
     private static Dictionary<string, Expression<Func<MultiLingualField, string?>>> Expressions;
     static MultiLingualField()
     {
-        Fields = new();
+        Fields = [];
         foreach (var p in typeof(MultiLingualField).GetProperties())
         {
             var key = p.GetCustomAttributes()
@@ -103,7 +103,7 @@ public class MultiLingualField
 
     public Dictionary<string, string> AsDictionary(bool preserveNull = false)
     {
-        Dictionary<string, string> dic = new Dictionary<string, string>();
+        Dictionary<string, string> dic = [];
         foreach (var (key, prop) in Fields)
         {
             var val = (string?)prop.GetGetMethod()!.Invoke(this, Array.Empty<object?>());

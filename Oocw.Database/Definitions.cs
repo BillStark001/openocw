@@ -9,13 +9,6 @@ public class Definitions
 
     // technical
 
-    public const string KEY_META = "__meta__";
-
-
-    public const string KEY_SEARCH_SCORE = "sscore";
-
-    public const string MetaTextScoreTarget = $"{KEY_META}.{KEY_SEARCH_SCORE}";
-
 
     // universal
 

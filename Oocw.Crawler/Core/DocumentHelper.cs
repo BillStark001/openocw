@@ -86,7 +86,7 @@ public static class DocumentHelper
         var headCells = table.Rows.First().Cells;
         foreach (var cell in headCells)
             ((List<string>)headers).Add(cell.TextContent.ToHalfWidth().RemoveReturnsAndTables().Replace(" ", ""));
-        HashSet<string> x = new();
+        HashSet<string> x = [];
         for (int i = 0; i < headers.Count; ++i)
         {
             if (x.Contains(headers[i]))
@@ -104,11 +104,11 @@ public static class DocumentHelper
 
         var (headers, rows) = table.GetRowSelector();
 
-        List<Dictionary<string, List<string>>> res = new();
+        List<Dictionary<string, List<string>>> res = [];
 
         foreach (var row in table.Rows.Skip(1))
         {
-            Dictionary<string, List<string>> _res = new();
+            Dictionary<string, List<string>> _res = [];
 
             var cells = row.Cells;
 
@@ -126,7 +126,7 @@ public static class DocumentHelper
                     {
                         var urlKey = key + suffix;
                         if (!_res.ContainsKey(urlKey))
-                            _res[urlKey] = new();
+                            _res[urlKey] = [];
                         _res[urlKey].Add(link);
                     }
                     // cell = link;

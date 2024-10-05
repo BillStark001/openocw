@@ -22,7 +22,7 @@ public class TrieNode<T> where T: notnull
         Character = word;
         CountEnd = cend;
         CountPref = cpref;
-        Children = new();
+        Children = [];
     }
 }
 

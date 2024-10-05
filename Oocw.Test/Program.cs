@@ -49,7 +49,7 @@ if (true)
 
     var (cl1, cl2, nr1, nr2) = FileUtils.Load<(List<CourseRecord>, List<CourseRecord>, int, int)>(Meta.SAVEPATH_COURSE_LIST_RAW);
 
-    List<Task> tasks = new();
+    List<Task> tasks = [];
     
     foreach (var (code, course) in courses)
         foreach (var (year, (courseJa, courseEn)) in course)

@@ -20,7 +20,7 @@ public static class QueryUtils
     public static string FormSearchKeyWords(string inStr)
     {
         // TODO add support of quoted string
-        string tokens = string.Join(" ", TokenUtils.TokenizeJapanese(inStr));
+        string tokens = string.Join(" ", SearchUtils.TokenizeJapanese(inStr));
         return tokens;
     }
 

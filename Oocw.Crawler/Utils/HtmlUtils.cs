@@ -43,7 +43,7 @@ public static class HtmlUtils
         if (cookieTokens.Length == 0 || (
             cookieTokens.Length == 1 && string.IsNullOrWhiteSpace(cookieTokens[0])
             ))
-            return new();
+            return [];
 
         var ret = new List<(string, string)>();
         foreach (var cookieToken in cookieTokens)

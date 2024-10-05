@@ -8,18 +8,18 @@ using System.Text.RegularExpressions;
 
 namespace Oocw.Base;
 
-public static class TokenUtils
+public static class SearchUtils
 {
     private static readonly MeCabTagger Tagger;
     private static readonly ImmutableHashSet<string> Stopwords;
 
     private static readonly Regex LineReturn = new(@"\r?\n");
 
-    static TokenUtils()
+    static SearchUtils()
     {
         var param = new MeCabParam();
         Tagger = MeCabTagger.Create(param);
-        
+
         var stopwords = new HashSet<string>();
         foreach (var file in new string[] {
             Resources.stopwords_py,
@@ -35,10 +35,15 @@ public static class TokenUtils
         Stopwords = stopwords.ToImmutableHashSet();
     }
 
-    public static IEnumerable<string> TokenizeJapanese(string inStr)
+    public static IEnumerable<string> TokenizeJapanese(string? inStr)
     {
-        Dictionary<string, bool> tokens = new();
-       
+        if (string.IsNullOrWhiteSpace(inStr))
+        {
+            return [];
+        }
+
+        Dictionary<string, bool> tokens = [];
+
         foreach (var node in Tagger.ParseToNodes(inStr))
         {
             if (node.Feature == null)
@@ -55,6 +60,20 @@ public static class TokenUtils
             tokens[orig] = true;
         }
         return tokens.Keys;
+    }
+
+    public static IEnumerable<string> TokenizeEnglish(string? input)
+    {
+        if (string.IsNullOrWhiteSpace(input))
+        {
+            return [];
+        }
+        var words = Regex.Split(input.ToLower(), @"\W+")
+            .Where(word => !string.IsNullOrWhiteSpace(word));
+
+        var filteredWords = words.Where(word => !Stopwords.Contains(word)).ToList();
+
+        return filteredWords;
     }
 
 }

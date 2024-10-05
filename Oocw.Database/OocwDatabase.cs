@@ -57,17 +57,38 @@ public class OocwDatabase
 
         Database = Client.GetDatabase(Definitions.DB_SET_NAME);
 
-        Users = Database.GetCollection<User>(typeof(User).Name);
-        Notifications = Database.GetCollection<Notification>(typeof(Notification).Name);
+        Users = Database.GetCollection<User>(nameof(User));
+        Notifications = Database.GetCollection<Notification>(nameof(Notification));
 
-        Courses = Database.GetCollection<Course>(typeof(Course).Name);
-        Classes = Database.GetCollection<Class>(typeof(Class).Name);
-        ClassInstances = Database.GetCollection<ClassInstance>(typeof(ClassInstance).Name);
+        // database definition
 
+        Courses = Database.GetCollection<Course>(nameof(Course));
+        Classes = Database.GetCollection<Class>(nameof(Class));
+        ClassInstances = Database.GetCollection<ClassInstance>(nameof(ClassInstance));
 
-        CourseDiscussions = Database.GetCollection<CourseDiscussion>(typeof(CourseDiscussion).Name);
-        CourseSelections = Database.GetCollection<CourseSelection>(typeof(CourseSelection).Name);
-        AssignmentSubmissions = Database.GetCollection<AssignmentSubmission>(typeof(AssignmentSubmission).Name);
+        CourseDiscussions = Database.GetCollection<CourseDiscussion>(nameof(CourseDiscussion));
+        CourseSelections = Database.GetCollection<CourseSelection>(nameof(CourseSelection));
+        AssignmentSubmissions = Database.GetCollection<AssignmentSubmission>(nameof(AssignmentSubmission));
+
+        // indices
+
+        CreateDataModelUniqueIdIndex(Courses);
+        CreateDataModelUniqueIdIndex(Classes);
+        CreateDataModelUniqueIdIndex(ClassInstances);
+
+        CreateDataModelUniqueIdIndex(CourseDiscussions);
+        CreateDataModelUniqueIdIndex(CourseSelections);
+        CreateDataModelUniqueIdIndex(AssignmentSubmissions);
+
+        // text indices
+
+        Courses.Indexes.CreateOne(new CreateIndexModel<Course>(Builders<Course>.IndexKeys.Text(x => x.Meta.SearchRecord)));
+
+    }
+
+    protected static void CreateDataModelUniqueIdIndex<T>(IMongoCollection<T> collection) where T: DataModel{
+        var uniqueOptions = new CreateIndexOptions { Unique = true };
+        collection.Indexes.CreateOne(new CreateIndexModel<T>(Builders<T>.IndexKeys.Ascending(x => x.Id), uniqueOptions));
     }
 
     protected static MongoClient GetClientByString(string connStr = DEFAULT_HOST)

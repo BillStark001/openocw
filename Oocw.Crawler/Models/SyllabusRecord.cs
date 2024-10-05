@@ -146,9 +146,9 @@ public class SyllabusRecord
     public string NameEn { get; set; } = "";
     public SummaryRecord Summary { get; set; } = new();
     public DetailRecord Detail { get; set; } = new();
-    public List<FacultyRecord> Faculties { get; set; } = new();
+    public List<FacultyRecord> Faculties { get; set; } = [];
     public bool[] Skills { get; set; } = new bool[5];
-    public List<(int, string, string)> Schedule { get; set; } = new();
-    public List<(string, string)> Related { get; set; } = new();
-    public List<NoteRecord> Notes { get; set; } = new();
+    public List<(int, string, string)> Schedule { get; set; } = [];
+    public List<(string, string)> Related { get; set; } = [];
+    public List<NoteRecord> Notes { get; set; } = [];
 }

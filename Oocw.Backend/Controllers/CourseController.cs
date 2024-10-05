@@ -13,6 +13,8 @@ using Oocw.Backend.Services;
 using Oocw.Utils;
 using Oocw.Database.Models;
 using System;
+using System.Threading.Tasks;
+using Oocw.Backend.Models;
 
 namespace Oocw.Backend.Controllers;
 
@@ -22,24 +24,24 @@ public class CourseController : ControllerBase
 {
     // var defs
     [FromServices] public DatabaseService DbService { get; set; } = null!;
+    [FromServices] public SearchService SearchService { get; set; } = null!;
     // api
 
 
     [HttpGet("search")]
-    public IEnumerable<CourseBrief> SearchCourse(string queryStr, string? restrictions, int? dispCount, int? page, string? lang, string? sort, string? filter)
+    public async Task<ListResult<CourseBrief>> SearchCourse(
+        string queryStr, 
+        [FromQuery] PaginationParams pagination,
+        string? lang, 
+        string? restrictions, int? dispCount, int? page, string? sort, string? filter)
     {
+        pagination ??= new();
+        pagination.Sanitize();
 
-        var tokens = QueryUtils.FormSearchKeyWords(queryStr);
-        lang = lang ?? this.TryGetLanguage();
-        var (dCount, dPage) = QueryUtils.GetPageInfo(dispCount, page);
+        lang ??= this.TryGetLanguage();
+        var list = await SearchService.SearchCourse(queryStr, pagination, lang);
 
-        var query = Builders<Course>.Filter.Text(tokens);
-        var projection = Builders<Course>.Projection.MetaTextScore(Definitions.MetaTextScoreTarget);
-        var sorter = Builders<Course>.Sort.MetaTextScore(Definitions.MetaTextScoreTarget);
-
-        // TODO target db!
-        var cls = DbService.Wrapper.Courses.Find(query).Project<Course>(projection).Sort(sorter);
-        cls = cls.Skip(dPage * dCount - dPage).Limit(dCount);
+        // TODO reform to course brief
 
         throw new NotImplementedException();
     }

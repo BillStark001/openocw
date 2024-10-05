@@ -30,8 +30,10 @@ public class CourseMetadata
 
 
     [BsonIgnoreIfNull]
-    public double? SeacrhScore { get; set; } = null;
+    public double? SearchScore { get; set; } = null;
     [BsonIgnoreIfNull]
     public string? SearchRecord { get; set; } = null;
+
+    public MultiLingualField SearchRecordByLanguage { get; set; } = new();
 
 }

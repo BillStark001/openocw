@@ -35,7 +35,7 @@ public static class FilterUtils
 
     public static NestedDictionary<string, string?> ToNestedDictionary(this NameValueCollection col)
     {
-        NestedDictionary<string, string?> result = new NestedDictionary<string, string?>();
+        NestedDictionary<string, string?> result = [];
         foreach (var k in col.AllKeys)
         {   
             if (k == null)

@@ -43,7 +43,7 @@ public class NestedDictionary<K, V> : Dictionary<K, NestedDictionary<K, V>> wher
         {
             if (!Keys.Contains(key))
             {
-                base[key] = new NestedDictionary<K, V>();
+                base[key] = [];
             }
             return base[key];
         }
@@ -67,7 +67,7 @@ public class NestedDictionaryConverter<K, V> : JsonConverter<NestedDictionary<K,
         {
             if (value.SubValueSet)
             {
-                JObject obj = new JObject();
+                JObject obj = [];
                 foreach (var (k, v) in value)
                     obj.Add(new JProperty(k.ToString() ?? "", v));
                 if (value.ValueSet)

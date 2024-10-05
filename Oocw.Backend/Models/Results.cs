@@ -1,9 +1,14 @@
-﻿namespace Oocw.Backend.Models;
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace Oocw.Backend.Models;
 
 public class StandardResult
 {
-    public int Code { get; private set; } = 0;
-    public string Info { get; private set; } = "Done.";
+    public int Code { get; set; } = 0;
+    public string Info { get; set; } = DEFAULT_INFO;
+
+    public const string DEFAULT_INFO = "Done.";
 
     public StandardResult(int code, string info)
     {
@@ -12,6 +17,11 @@ public class StandardResult
     }
 
     public StandardResult((int, string) code, params object?[] forms): this(code.Item1, string.Format(code.Item2, forms)) { }
+}
+
+public class ListResult<T>(IEnumerable<T>? list) : StandardResult(0, DEFAULT_INFO)
+{
+    public List<T> List { get; set; } = list?.ToList() ?? [];
 }
 
 public class AuthResult: StandardResult

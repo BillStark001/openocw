@@ -13,13 +13,19 @@ using Oocw.Backend.Utils;
 using System;
 using System.IO;
 using System.Text;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 
 // database
 builder.Services.Configure<DatabaseService.Settings>(builder.Configuration.GetSection("Database"));
@@ -27,7 +33,7 @@ builder.Services.AddSingleton<DatabaseService>();
 
 // search
 builder.Services.AddSingleton<SearchService>();
-builder.Services.AddHostedService<RecordUpdateService>();
+builder.Services.AddHostedService<SearchRecordService>();
 
 // session
 builder.Services.AddDistributedMemoryCache();

@@ -106,8 +106,10 @@ public class Crawler
             year = THIS_YEAR;
             if (info.ContainsKey("SubAction"))
             {
-                var _info = new DSS(info);
-                _info["action"] = info["SubAction"];
+                var _info = new DSS(info)
+                {
+                    ["action"] = info["SubAction"]
+                };
                 _info.Remove("SubAction");
                 info = _info;
             }
@@ -228,8 +230,8 @@ public class Crawler
         }
         catch
         {
-            cl1 = new();
-            cl2 = new();
+            cl1 = [];
+            cl2 = [];
             nr1 = 0;
             nr2 = 0;
             FileUtils.Dump((cl1, cl2, nr1, nr2), outPath);
@@ -315,8 +317,8 @@ public class Crawler
         }
         catch
         {
-            details = new();
-            erroredCodes = new();
+            details = [];
+            erroredCodes = [];
             FileUtils.Dump((details, erroredCodes), outPath);
         }
 
@@ -330,7 +332,7 @@ public class Crawler
             Console.WriteLine($"Retrying errored record {errCode} ({erroredCodes.Count + 1} remains)");
 
             if (!details.ContainsKey(errCode))
-                details[errCode] = new();
+                details[errCode] = [];
 
             var detail = details[errCode];
 
@@ -348,7 +350,7 @@ public class Crawler
         foreach (var courseCode in targets.Yaap())
         {
             if (!details.ContainsKey(courseCode))
-                details[courseCode] = new();
+                details[courseCode] = [];
 
             var detail = details[courseCode];
             var isCurrentCodeRecorded = false;

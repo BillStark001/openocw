@@ -58,7 +58,7 @@ public static class DataExtractor
             var anchorSpan = anchor.GetElementsByTagName("span") as IHtmlSpanElement;
             var name = (anchorSpan == null ? anchor.InnerHtml : anchorSpan.InnerHtml).NormalizeWebString();
 
-            DictStrArgs xah = new();
+            DictStrArgs xah = [];
             if (!string.IsNullOrWhiteSpace(anchor.Href))
             {
                 xah = HttpUtility.ParseQueryString(anchor.Href != "#" ? anchor.Href : urlIn).ToNestedDictionary();
@@ -115,7 +115,7 @@ public static class DataExtractor
             return Enumerable.Empty<CourseRecord>();
         }
 
-        List<CourseRecord> infos = new List<CourseRecord>();
+        List<CourseRecord> infos = [];
 
         foreach (var table in tables)
         {
@@ -216,7 +216,7 @@ public static class DataExtractor
 
         // summary
         var dataCells = summaryContainer?.QuerySelectorAll<IHtmlElement>("dl");
-        DSS retSummary = new();
+        DSS retSummary = [];
         DSS retDetail = new() { ["skills"] = "" };
         List<FacultyRecord> faculties = ret.Faculties;
 
@@ -362,7 +362,7 @@ public static class DataExtractor
             ?? Enumerable.Empty<IHtmlListItemElement>();
         if (docsSupp.Count() > 0)
         {
-            HashSet<string> links = new();
+            HashSet<string> links = [];
             foreach (var d in docsSupp)
                 foreach (var a in d.GetAllAnchors().Select(x => x.Item2))
                     if (!string.IsNullOrWhiteSpace(a))
