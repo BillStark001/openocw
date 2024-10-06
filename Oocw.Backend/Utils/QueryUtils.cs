@@ -17,10 +17,12 @@ public static class QueryUtils
     /// 
     /// </summary>
     /// <param name="inStr"></param>
-    public static string FormSearchKeyWords(string inStr)
+    public static string FormSearchKeyWords(string inStr, string lang = "ja")
     {
         // TODO add support of quoted string
-        string tokens = string.Join(" ", SearchUtils.TokenizeJapanese(inStr));
+        string tokens = string.Join(" ", lang?.StartsWith("ja") ?? false 
+            ? SearchUtils.TokenizeJapanese(inStr)
+            : SearchUtils.TokenizeEnglish(inStr));
         return tokens;
     }
 

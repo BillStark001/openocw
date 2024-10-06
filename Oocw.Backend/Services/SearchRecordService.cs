@@ -16,6 +16,7 @@ public class SearchRecordService : BackgroundService
     [FromServices] public ILogger<SearchRecordService> Logger { get; set; } = null!;
     [FromServices] public DatabaseService DbService { get; set; } = null!;
 
+    protected IMongoCollection<CourseRecord> CourseRecords => DbService.Wrapper.CourseRecords;
     protected IMongoCollection<Course> Courses => DbService.Wrapper.Courses;
 
     // TODO use configuration file
@@ -43,32 +44,54 @@ public class SearchRecordService : BackgroundService
         var currentTime = DateTime.UtcNow;
 
         // find at most 128 records needing search record updates
-        var cursor = Courses.Find(x =>
-            x.Meta.Dirty ||
-            x.Meta.SearchRecord == null ||
-            x.Meta.SearchRecord == "" ||
-            (x.UpdateTime != null && x.Meta.UpdateTime < x.UpdateTime)
-        ).Limit(128);
+        var cursor = CourseRecords.Find(x =>
+            x.Dirty ||
+            x.ContentRecord == null ||
+            x.CodeRecord == null ||
+            x.InfoRecord == null
+        ).SortBy(x => x.UpdateTime).Limit(128);
 
         var items = await cursor.ToListAsync(cancellationToken: cancellationToken);
-        foreach (var x in items) {
+        foreach (var record in items) {
+
+            var course = await (await Courses
+                .FindAsync(c => c.Id == record.CourseId && !c.Deleted, cancellationToken: cancellationToken))
+                .FirstAsync(cancellationToken: cancellationToken);
             
+            if (course == null) {
+                await CourseRecords.DeleteOneAsync(r => r.SystemId == record.SystemId, cancellationToken: cancellationToken);
+                continue;
+            }
+            
+            // content search record
+
             // TODO add chinese support
-            var colJa = string.Join(' ', SearchUtils.TokenizeJapanese(x.Content.Ja ?? ""));
-            var colEn = string.Join(' ', SearchUtils.TokenizeJapanese(x.Content.En ?? ""));
             
-            x.Meta.SearchRecordByLanguage = x.Meta.SearchRecordByLanguage ?? new();
-            x.Meta.SearchRecordByLanguage.Ja = colJa;
-            x.Meta.SearchRecordByLanguage.En = colEn;
+            var content = record.Language.StartsWith("ja") 
+                ? SearchUtils.TokenizeJapanese(course.Content.Ja)
+                : SearchUtils.TokenizeEnglish(course.Content.En);
+            
+            record.ContentRecord = string.Join(' ', content);
 
-            x.Meta.SearchRecord = colJa + " " + colEn;
+            var name = record.Language.StartsWith("ja") 
+                ? SearchUtils.TokenizeJapanese(course.Name.Ja)
+                : SearchUtils.TokenizeEnglish(course.Name.En);
+            
+            record.InfoRecord = string.Join(' ', name);
 
-            x.Meta.Dirty = false;
-            x.Meta.UpdateTime = currentTime;
+            record.CodeRecord = course.CourseCode;
+
+            // mark clean
+
+            record.Dirty = false;
+            record.UpdateTime = currentTime;
 
             // TODO aggregate more fields
             
-            await Courses.UpdateOneAsync(c => c.SystemId == x.SystemId, Builders<Course>.Update.Set(c => c, x), cancellationToken: cancellationToken);
+            await CourseRecords.UpdateOneAsync(
+                x => x.SystemId == record.SystemId, 
+                Builders<CourseRecord>.Update.Set(x => x, record), 
+                cancellationToken: cancellationToken);
         }
 
 

@@ -50,8 +50,9 @@ public class WebController : Controller
     }
 
     [HttpGet("/api/root")]
-    public ActionResult<StandardResult> GetApiRoot() {
-        return new StandardResult(Definitions.CODE_SUCC);
+    public ApiResult GetApiRoot()
+    {
+        return new(Definitions.CODE_SUCC);
     }
 }
 

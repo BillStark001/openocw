@@ -34,7 +34,7 @@ public class ClassInstance : DataModel
     }
 
     public string ClassId { get; set; } = "";
-    public HashSet<string> Lecturers { get; set; } = [];
+    public List<string> Lecturers { get; set; } = [];
 
     public AddressInfo Address { get; set; } = new();
 

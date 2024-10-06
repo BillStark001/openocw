@@ -46,7 +46,7 @@ public class User(string loginName, string pwdEnc) : DataModel
     [BsonRepresentation(BsonType.String)]
     public Role Group { get; set; } = Role.Guest;
 
-    public HashSet<string> Departments { get; set; } = [];
+    public List<string> Departments { get; set; } = [];
 
 
     public MultiLingualField Name { get; set; } = new();

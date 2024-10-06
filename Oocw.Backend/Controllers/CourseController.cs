@@ -15,8 +15,11 @@ using Oocw.Database.Models;
 using System;
 using System.Threading.Tasks;
 using Oocw.Backend.Models;
+using Oocw.Backend.Api;
+using System.Net;
 
 namespace Oocw.Backend.Controllers;
+
 
 [ApiController]
 [Route("api/course")]
@@ -30,16 +33,16 @@ public class CourseController : ControllerBase
 
     [HttpGet("search")]
     public async Task<ListResult<CourseBrief>> SearchCourse(
-        string queryStr, 
+        [FromQuery] CourseFilter filter,
         [FromQuery] PaginationParams pagination,
-        string? lang, 
-        string? restrictions, int? dispCount, int? page, string? sort, string? filter)
+        string? lang)
     {
+        filter ??= new();
         pagination ??= new();
         pagination.Sanitize();
-
         lang ??= this.TryGetLanguage();
-        var list = await SearchService.SearchCourse(queryStr, pagination, lang);
+
+        var list = await SearchService.SearchCourse(filter, pagination, lang);
 
         // TODO reform to course brief
 
@@ -47,91 +50,69 @@ public class CourseController : ControllerBase
     }
 
     [HttpGet("list/{id}")]
-    public ActionResult<IEnumerable<CourseBrief>> ByDepartment(string id, int? year, bool? byClass, string? lang, string? sort, string? filter, int? dispCount, int? page)
+    public Task<ListResult<CourseBrief>> ListCourseByDepartment(
+        string? id,
+        [FromQuery] CourseFilter filter,
+        [FromQuery] PaginationParams pagination,
+        string? lang)
     {
-        var (dCount, dPage) = QueryUtils.GetPageInfo(dispCount, page);
-        lang = lang ?? this.TryGetLanguage();
+        filter ??= new();
+        filter.DepartmentExact = [id ?? ""];
+        return ListCourse(filter, pagination, lang);
+    }
 
-        var crsFilter = Builders<Course>.Filter.AnyEq(x => x.Departments, id);
-        if (year != null)
-            crsFilter = Builders<Course>.Filter.And(
-                crsFilter,
-                Builders<Course>.Filter.ElemMatch(x => x.Classes, c => c / 100000 == year)
-                );
+    [HttpGet("list")]
+    public async Task<ListResult<CourseBrief>> ListCourse(
+        [FromQuery] CourseFilter filter,
+        [FromQuery] PaginationParams pagination,
+        string? lang)
+    {
+        filter ??= new();
+        pagination ??= new();
+        pagination.Sanitize();
+        lang ??= this.TryGetLanguage();
 
-        if (byClass != null && byClass.Value)
-        {
-            throw new NotImplementedException();
-        }
-        else
-        {
-            var courses = DbService.Wrapper.Courses.Find(crsFilter);
-            var clist = courses/*.Skip(dPage * dCount - dPage)*/.Limit(dCount).ToList();
-            var cllist = clist.Where(x => x.Classes.Count() > 0).Select(x => x.Classes.Max().ToString());
-            var classes = DbService.Wrapper.Classes.Find(Builders<Class>.Filter.In(x => x.Meta.OcwId, cllist)).ToList();
-
-            Dictionary<string, Class> d = new(classes.Count);
-            foreach (var cls in classes)
-                d[cls.Meta.OcwId!] = cls;
-            var ret = Enumerable.Zip(clist, cllist).Select((val) =>
-            {
-                var crs = val.First;
-                var clsid = val.Second;
-                CourseBrief b;
-                if (d.ContainsKey(clsid))
-                    b = CourseBrief.FromScheme(d[clsid], crs, lang).SetLecturers(d[clsid], DbService.Wrapper, lang);
-                else
-                    b = new(crs, lang);
-                return b;
-            }) ?? Enumerable.Empty<CourseBrief>();
-            return Ok(ret);
-        }
-
+        var cursor = DbService.Wrapper.Courses.Find(filter.GetCourseFilterDefinition());
+        var pagedCursor = cursor
+            .Skip(pagination.Page * pagination.PageSize - pagination.Page)
+            .Limit(pagination.PageSize);
+        
+        var list = await pagedCursor.ToListAsync();
 
         throw new NotImplementedException();
     }
 
-    [HttpGet("info/{id}")]
-    public ActionResult<string> Info(string id, int? year, string? className, string? lang)
+    [HttpGet("info/{code}")]
+    public async Task<CourseSchema> GetCourseInfo(string code, string? classId, string? lang)
     {
-        var query = _f.Eq(x => x.Code, id);
-        if (className != null)
-            query &= _f.Eq(x => x.ClassName, className);
-        if (year != null)
-            query &= _f.Eq(x => x.Year, year);
+        lang ??= this.TryGetLanguage();
 
-
-        var cls = DbService.Wrapper.Classes.Find(query).FirstOrDefault();
-        var crs = cls != null ? DbService.Wrapper.GetCourseInfo(id) : null;
-
-        if (cls == null || crs == null)
+        var crs = await DbService.Wrapper.Courses.Find(x => x.CourseCode == code).FirstOrDefaultAsync();
+        var cls = !string.IsNullOrWhiteSpace(classId) && crs != null
+            ? await DbService.Wrapper.Classes.Find(x => x.CourseId == crs.Id && x.Id == classId).FirstOrDefaultAsync()
+            : null;
+        
+        if (crs == null || (!string.IsNullOrWhiteSpace(classId) && cls == null))
         {
-            return NotFound();
+            throw new ApiException((int) HttpStatusCode.NotFound);
         }
 
-        return crs.ToString() + cls.ToString();
+        // TODO implement a better logic
+        throw new NotImplementedException();
+        // return crs.ToString() + cls?.ToString() ?? "";
 
+    }
+
+
+    [HttpPost("edit")]
+    public async Task Edit(string? lang, [FromBody] CourseSchema course) {
+        
+        lang ??= this.TryGetLanguage();
+        if (string.IsNullOrWhiteSpace(course.Id)) {
+            throw new ApiException((int) HttpStatusCode.NotFound);
+        }
+
+        throw new NotImplementedException();
     }
     
-    [HttpGet("coursebrief/{id}")]
-    public ActionResult<CourseBrief> Brief(string id, int? year, string? className, string? lang)
-    {
-        var query = _f.Eq(Definitions.KEY_CODE, id);
-        if (className != null)
-            query &= _f.Eq(Definitions.KEY_CLASS_NAME, className);
-        if (year != null)
-            query &= _f.Eq(Definitions.KEY_YEAR, year);
-
-        lang = lang ?? this.TryGetLanguage();
-
-        var cls = DbService.Wrapper.Classes.Find(query).FirstOrDefault();
-        var crs = cls != null ? DbService.Wrapper.GetCourseInfo(id) : null;
-
-        if (cls == null || crs == null)
-        {
-            return NotFound();
-        }
-
-        return CourseBrief.FromScheme(cls, crs, lang: lang).SetLecturers(cls, lang: lang, db: DbService.Wrapper);
-    }
 }

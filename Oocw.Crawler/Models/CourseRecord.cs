@@ -20,7 +20,7 @@ public class CourseRecord
     public string Code { get; set; } = "XXX.X000";
     public string Name { get; set; } = "";
     public string Url { get; set; } = "";
-    public IEnumerable<FacultyRecord> Faculties { get; set; } = Enumerable.Empty<FacultyRecord>();
+    public IEnumerable<FacultyRecord> Faculties { get; set; } = [];
     public string Quarter { get; set; } = "";
     public string SyllabusUpdated { get; set; } = "";
     public string NotesUpdated { get; set; } = "";

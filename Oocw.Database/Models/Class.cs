@@ -17,12 +17,11 @@ namespace Oocw.Database.Models;
 
 public class Class : DataModel
 {
-
-
-    public string CourseId {get; set;} = "";
-    public string ClassName { get; set; } = "";
-    public HashSet<string> Lecturers {get; set;} = [];
+    public string CourseId { get; set; } = "";
+    public string Name { get; set; } = "";
+    public List<string> Lecturers { get; set; } = [];
     public string Language { get; set; } = "null";
+
     public MultiLingualField Content { get; set; } = new();
 
 

@@ -36,7 +36,7 @@ public static class SingleUpdate
         }, default);
     }
 
-    public static async Task Course(OocwDatabase db, CourseRecord course, CourseRecord.Additional? add = null, string lang = "ja")
+    public static async Task Course(OocwDatabase db, Crawler.Models.CourseRecord course, Crawler.Models.CourseRecord.Additional? add = null, string lang = "ja")
     {
         // process faculty
         foreach (var f in course.Faculties)

@@ -3,18 +3,13 @@ using Oocw.Database;
 
 namespace Oocw.Backend.Services;
 
-public class DatabaseService
+public class DatabaseService(IOptions<DatabaseService.Settings> settings)
 {
     public class Settings
     {
         public string ConnectionHost { get; set; } = OocwDatabase.DEFAULT_HOST;
     }
 
-    private OocwDatabase _db;
+    private readonly OocwDatabase _db = new(settings.Value.ConnectionHost);
     public OocwDatabase Wrapper => _db;
-
-    public DatabaseService(IOptions<Settings> settings)
-    {
-        _db = new OocwDatabase(settings.Value.ConnectionHost);
-    }
 }

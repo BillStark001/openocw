@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using Oocw.Backend.Api;
 using Oocw.Backend.Models;
 using Oocw.Backend.Services;
 using Oocw.Backend.Utils;
@@ -9,18 +10,11 @@ using System.Threading.Tasks;
 
 namespace Oocw.Backend.Auth;
 
-public class JwtAuthMiddleware
+public class JwtAuthMiddleware(RequestDelegate next, IOptions<JwtConfig> jwtConfig, DatabaseService dbService)
 {
-    private readonly RequestDelegate _next;
-    private readonly JwtConfig _jwtConfig;
-    private readonly DatabaseService _dbService;
-
-    public JwtAuthMiddleware(RequestDelegate next, IOptions<JwtConfig> jwtConfig, DatabaseService dbService)
-    {
-        _next = next;
-        _jwtConfig = jwtConfig.Value;
-        _dbService = dbService;
-    }
+    private readonly RequestDelegate _next = next;
+    private readonly JwtConfig _jwtConfig = jwtConfig.Value;
+    private readonly DatabaseService _dbService = dbService;
 
     public async Task InvokeAsync(HttpContext context)
     {
@@ -63,6 +57,6 @@ public class JwtAuthMiddleware
         }
 
         context.Response.StatusCode = 401;
-        await context.Response.WriteAsJsonAsync(new StandardResult(Definitions.CODE_ERR_AUTH_FAILED));
+        await context.Response.WriteAsJsonAsync(new ApiResult(Definitions.CODE_ERR_AUTH_FAILED));
     }
 }

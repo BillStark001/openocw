@@ -13,12 +13,12 @@ public static class SyntaxParser
     public class SyntaxNode
     {
         public int Type { get; set; }
-        public virtual IEnumerable<SyntaxNode> Nodes { get; set; } = Enumerable.Empty<SyntaxNode>();
+        public virtual IEnumerable<SyntaxNode> Nodes { get; set; } = [];
     }
 
     public class TokenNode: SyntaxNode
     {
-        public override IEnumerable<SyntaxNode> Nodes => Enumerable.Empty<SyntaxNode>();
+        public override IEnumerable<SyntaxNode> Nodes => [];
         public int TokenType { get; set; }
     }
 

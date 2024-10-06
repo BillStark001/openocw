@@ -129,7 +129,7 @@ public class Crawler
                 return DataExtractor.GetCourseList(dom);
             }
         }
-        return Enumerable.Empty<CourseRecord>();
+        return [];
     }
 
     // 

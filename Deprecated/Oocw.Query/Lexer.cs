@@ -16,7 +16,7 @@ public static class Lexer
         public Token(int type, IEnumerable<string>? tokens)
         {
             Type = type;
-            Content = tokens != null && tokens.Count() > 0 ? tokens.ToArray() : Array.Empty<string>();
+            Content = tokens != null && tokens.Count() > 0 ? tokens.ToArray() : [];
         }
 
         public override string ToString()

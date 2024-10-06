@@ -15,6 +15,7 @@ using Oocw.Backend.Auth;
 using Oocw.Database.Utils;
 using Oocw.Database.Models.Technical;
 using System.Threading.Tasks;
+using Oocw.Backend.Api;
 
 namespace Oocw.Backend.Controllers;
 
@@ -38,12 +39,12 @@ public class AuthController : Controller
     
 
     [HttpPost("register")]
-    public async Task<ActionResult<StandardResult>> Register(UnamePwdBody b)
+    public async Task Register(UnamePwdBody b)
     {
         if (!UserUtils.IsValidUsername(b.uname))
-            return BadRequest(new StandardResult(Definitions.CODE_ERR_INVALID_UNAME, b.uname));
+            throw new ApiException(Definitions.CODE_ERR_INVALID_UNAME);
         if (!UserUtils.IsValidPassword(b.pwd))
-            return BadRequest(new StandardResult(Definitions.CODE_ERR_INVALID_PWD, b.pwd));
+            throw new ApiException(Definitions.CODE_ERR_INVALID_PWD);
 
         try
         {
@@ -51,22 +52,21 @@ public class AuthController : Controller
         }
         catch (UserNameConflictException)
         {
-            return BadRequest(new StandardResult(Definitions.CODE_ERR_UNAME_CONFLICT, b.uname));
+            throw new ApiException(Definitions.CODE_ERR_UNAME_CONFLICT);
         }
-        catch (DatabaseInternalException e)
+        catch (DatabaseInternalException)
         {
-            return BadRequest(new StandardResult(Definitions.CODE_ERR_DB_ERR, e));
+            throw new ApiException(Definitions.CODE_ERR_DB_ERR);
         }
-
-        return new StandardResult(Definitions.CODE_SUCC);
+        // successful, do nothing
     }
 
     [HttpPost("auth")]
-    public ActionResult<StandardResult> Auth(UnamePwdBody b)
+    public AuthResult Auth(UnamePwdBody b)
     {
         var u = DbService.Wrapper.QueryUser(b.uname);
         if (u == null || !UserUtils.VerifyPassword(b.pwd, u.PasswordEncrypted))
-            return new StandardResult(Definitions.CODE_ERR_BAD_UNAME_OR_PWD);
+            throw new ApiException(Definitions.CODE_ERR_BAD_UNAME_OR_PWD);
 
         var token = u.GenerateRefreshToken(JwtConfig.Value);
 
@@ -74,41 +74,34 @@ public class AuthController : Controller
     }
 
     [HttpPost("login")]
-    public ActionResult<StandardResult> Login(UnamePwdBody b)
+    public AuthResult Login(UnamePwdBody b)
     {
-        var res = Auth(b);
-        var val = res.Value;
-        if (val == null || val is not AuthResult || val.Code != Definitions.CODE_SUCC.Item1)
-            return res; // auth failed
+        var val = Auth(b);
 
-        Response.Cookies.Append(Definitions.KEY_REFRESH_TOKEN, ((AuthResult)val).Token);
+        Response.Cookies.Append(Definitions.KEY_REFRESH_TOKEN, val.Token);
 
-        return new StandardResult(Definitions.CODE_SUCC);
+        return val;
     }
 
     [HttpPost("forget")]
-    public ActionResult<StandardResult> ForgetPassword(UnameBody b)
+    public void ForgetPassword(UnameBody b)
     {
-        var u = DbService.Wrapper.QueryUser(b.uname);
-        if (u == null)
-            return new StandardResult(Definitions.CODE_ERR_INVALID_UNAME, b.uname);
-
+        var u = DbService.Wrapper.QueryUser(b.uname) ?? throw new ApiException(Definitions.CODE_ERR_INVALID_UNAME);
         throw new NotImplementedException();
     }
 
     [RequireAuth]
     [HttpGet("status")]
-    public ActionResult<StandardResult> Check()
+    public void Check()
     {
-        return new StandardResult(Definitions.CODE_SUCC);
+        // do nothing
     }
 
     [RequireAuth]
     [HttpPost("logout")]
-    public ActionResult<StandardResult> LogOut()
+    public void LogOut()
     {
         Response.Cookies.Delete(Definitions.KEY_REFRESH_TOKEN);
         Response.Cookies.Delete(Definitions.KEY_ACCESS_TOKEN);
-        return new StandardResult(Definitions.CODE_SUCC);
     }
 }

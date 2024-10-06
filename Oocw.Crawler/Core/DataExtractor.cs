@@ -112,7 +112,7 @@ public static class DataExtractor
         if (tables.Count() == 0)
         {
             // no available data
-            return Enumerable.Empty<CourseRecord>();
+            return [];
         }
 
         List<CourseRecord> infos = [];
@@ -220,7 +220,7 @@ public static class DataExtractor
         DSS retDetail = new() { ["skills"] = "" };
         List<FacultyRecord> faculties = ret.Faculties;
 
-        foreach (var dl in dataCells ?? Enumerable.Empty<IHtmlElement>())
+        foreach (var dl in dataCells ?? [])
         {
             var dt = dl.GetElementsByTagName("dt").First();
             var dd = dl.GetElementsByTagName("dd").First();
@@ -359,7 +359,7 @@ public static class DataExtractor
         // docs
 
         var docsSupp = noteContainer?.QuerySelectorAll<IHtmlListItemElement>("dl > dd li")
-            ?? Enumerable.Empty<IHtmlListItemElement>();
+            ?? [];
         if (docsSupp.Count() > 0)
         {
             HashSet<string> links = [];
@@ -377,7 +377,7 @@ public static class DataExtractor
         }
 
         var docsOrig = noteContainer?.QuerySelectorAll<IHtmlDivElement>("div.cont-sec")
-           ?? Enumerable.Empty<IHtmlDivElement>();
+           ?? [];
         foreach (var docOrig in docsOrig)
         {
             var nHead = docOrig.QuerySelector<IHtmlElement>(".note-head");

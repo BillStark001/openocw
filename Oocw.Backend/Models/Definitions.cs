@@ -22,4 +22,6 @@ public static class Definitions
     public const string KEY_REFRESH_TOKEN = ".Oocw.Token.Refresh";
     public const string KEY_ACCESS_TOKEN = ".Oocw.Token.Access";
     public const string KEY_ACCESS_TOKEN_FORMAT = ".Oocw.Token.Access.{0}";
+
+    public const string ACCESS_COURSE_EDIT = "Course.Edit";
 }

@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Oocw.Backend.Api;
 using Oocw.Backend.Auth;
 using Oocw.Backend.Services;
 using Oocw.Backend.Utils;
@@ -20,12 +21,15 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
+    options.JsonSerializerOptions.Converters.Add(new ApiResultJsonConverterFactory());
     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
     options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
 });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// api
+builder.Services.AddScoped<ApiActionFilter>();
 
 // database
 builder.Services.Configure<DatabaseService.Settings>(builder.Configuration.GetSection("Database"));

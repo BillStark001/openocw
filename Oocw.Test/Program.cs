@@ -47,7 +47,7 @@ if (true)
 
     var (courses, codes) = FileUtils.Load<(Dictionary<int, Dictionary<int, (SyllabusRecord?, SyllabusRecord?)>>, List<int>)>(Meta.SAVEPATH_DETAILS_RAW);
 
-    var (cl1, cl2, nr1, nr2) = FileUtils.Load<(List<CourseRecord>, List<CourseRecord>, int, int)>(Meta.SAVEPATH_COURSE_LIST_RAW);
+    var (cl1, cl2, nr1, nr2) = FileUtils.Load<(List<Oocw.Crawler.Models.CourseRecord>, List<Oocw.Crawler.Models.CourseRecord>, int, int)>(Meta.SAVEPATH_COURSE_LIST_RAW);
 
     List<Task> tasks = [];
     
@@ -62,12 +62,12 @@ if (true)
                 tasks.Add(SingleUpdate.Syllabus(db.Wrapper, courseEn, idStr, "en"));
         }
     
-    var course1 = new CourseRecord()
+    var course1 = new Oocw.Crawler.Models.CourseRecord()
     {
         Code = "TST.1145",
         Name = "gansihuangxudong",
     };
-    var course2 = new CourseRecord()
+    var course2 = new Oocw.Crawler.Models.CourseRecord()
     {
         Code = "TST.1145",
         Name = "干死黄旭东",

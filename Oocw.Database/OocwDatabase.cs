@@ -33,6 +33,9 @@ public class OocwDatabase
     public IMongoCollection<CourseSelection> CourseSelections { get; protected set; }
     public IMongoCollection<AssignmentSubmission> AssignmentSubmissions { get; protected set; }
 
+
+    public IMongoCollection<CourseRecord> CourseRecords { get; protected set; }
+
     public const string DEFAULT_HOST = "mongodb://localhost:27017/";
 
 
@@ -72,6 +75,8 @@ public class OocwDatabase
         CourseSelections = Database.GetCollection<CourseSelection>(nameof(CourseSelection));
         AssignmentSubmissions = Database.GetCollection<AssignmentSubmission>(nameof(AssignmentSubmission));
 
+        CourseRecords = Database.GetCollection<CourseRecord>(nameof(CourseRecord));
+
         // indices
 
         CreateDataModelUniqueIdIndex(Courses);
@@ -81,10 +86,27 @@ public class OocwDatabase
         CreateDataModelUniqueIdIndex(CourseDiscussions);
         CreateDataModelUniqueIdIndex(CourseSelections);
         CreateDataModelUniqueIdIndex(AssignmentSubmissions);
+        
+        CourseRecords.Indexes.CreateOne(new CreateIndexModel<CourseRecord>(
+            Builders<CourseRecord>.IndexKeys.Ascending(x => x.CourseId).Ascending(x => x.Language),
+            new CreateIndexOptions { Unique = true }
+        ));
 
         // text indices
 
-        Courses.Indexes.CreateOne(new CreateIndexModel<Course>(Builders<Course>.IndexKeys.Text(x => x.Meta.SearchRecord)));
+        CourseRecords.Indexes.CreateOne(new CreateIndexModel<CourseRecord>(Builders<CourseRecord>.IndexKeys.Text(x => x.ContentRecord)));
+
+        // collection indices
+
+        Courses.Indexes.CreateOne(new CreateIndexModel<Course>(Builders<Course>.IndexKeys.Ascending(x => x.Lecturers)));
+        Courses.Indexes.CreateOne(new CreateIndexModel<Course>(Builders<Course>.IndexKeys.Ascending(x => x.Departments)));
+        Courses.Indexes.CreateOne(new CreateIndexModel<Course>(Builders<Course>.IndexKeys.Ascending(x => x.Tags)));
+
+        Classes.Indexes.CreateOne(new CreateIndexModel<Class>(Builders<Class>.IndexKeys.Ascending(x => x.Lecturers)));
+
+        ClassInstances.Indexes.CreateOne(new CreateIndexModel<ClassInstance>(Builders<ClassInstance>.IndexKeys.Ascending(x => x.Lecturers)));
+
+        Users.Indexes.CreateOne(new CreateIndexModel<User>(Builders<User>.IndexKeys.Ascending(x => x.Departments)));
 
     }
 
